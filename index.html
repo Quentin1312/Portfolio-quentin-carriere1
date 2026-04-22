@@ -2062,7 +2062,7 @@ if (burger) {
     card.addEventListener('click', () => {
       // On retire le mute au clic pour activer le son
       video.muted = false; 
-      
+      video.volume = 0.15;
       if (video.paused) {
         video.play();
         card.classList.add('playing');
