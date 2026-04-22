@@ -1,11 +1,1183 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CV - Quentin Carriere</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Quentin Carriere — Alternant Communication Digitale</title>
+  <meta name="description" content="CV interactif de Quentin Carriere, alternant en communication digitale spécialisé en réseaux sociaux, e-commerce Shopify et stratégie digitale.">
+  <meta name="author" content="Quentin Carriere">
+  <meta property="og:title" content="Quentin Carriere — Alternant Communication Digitale">
+  <meta property="og:description" content="CV interactif animé · Communication digitale · Réseaux sociaux · E-commerce · Design">
+  <meta property="og:type" content="profile">
+  <meta property="og:image" content="photo.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Quentin Carriere",
+    "birthDate": "2005-12-13",
+    "email": "quentincarriere1312@gmail.com",
+    "telephone": "+33665711243",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "23 rue de l'horloge",
+      "postalCode": "03000",
+      "addressLocality": "Moulins",
+      "addressCountry": "FR"
+    },
+    "jobTitle": "Alternant Communication Digitale",
+    "knowsLanguage": ["fr", "en", "es"]
+  }
+  </script>
+  <style>
+    /* ─── CSS VARIABLES ─────────────────────────────────── */
+    :root {
+      --bg:          #0d0d14;
+      --card:        #16161f;
+      --card-alt:    #1c1c28;
+      --blue:        #4a9eff;
+      --blue-light:  #7bb8ff;
+      --blue-dim:    rgba(74,158,255,.12);
+      --blue-border: rgba(74,158,255,.18);
+      --white:       #ffffff;
+      --muted:       #8888aa;
+      --muted2:      #aaaacc;
+      --radius:      16px;
+      --radius-sm:   10px;
+      --shadow:      0 4px 24px rgba(0,0,0,.45);
+      --shadow-blue: 0 12px 40px rgba(74,158,255,.22);
+      --font:        'Inter', system-ui, -apple-system, sans-serif;
+      --transition:  0.32s cubic-bezier(.25,.46,.45,.94);
+    }
+
+    /* Konami golden override */
+    .konami-active {
+      --blue:        #ffd700;
+      --blue-light:  #ffeb66;
+      --blue-dim:    rgba(255,215,0,.12);
+      --blue-border: rgba(255,215,0,.2);
+      --shadow-blue: 0 12px 40px rgba(255,215,0,.22);
+    }
+
+    /* ─── RESET ──────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--white);
+      font-family: var(--font);
+      min-height: 100vh;
+      overflow-x: hidden;
+      transition: background var(--transition), color var(--transition);
+    }
+
+    /* subtle noise grain */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .025;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+    }
+
+    /* ─── LAYOUT ──────────────────────────────────────────── */
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 16px 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 2fr 2fr 1.4fr;
+      grid-template-rows: auto;
+      gap: 14px;
+    }
+
+    /* ─── CELL BASE ───────────────────────────────────────── */
+    .cell {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--blue-border);
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      transition: transform var(--transition), box-shadow var(--transition), border-color var(--transition);
+      will-change: transform;
+    }
+    .cell::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at top left, rgba(74,158,255,.04), transparent 60%);
+      pointer-events: none;
+    }
+    .cell:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-blue);
+      border-color: rgba(74,158,255,.35);
+    }
+
+    /* grid placement */
+    .c-hero       { grid-column: 1/3; grid-row: 1; }
+    .c-photo      { grid-column: 3;   grid-row: 1; }
+    .c-experience { grid-column: 1/3; grid-row: 2/5; }
+    .c-contact    { grid-column: 3;   grid-row: 2; }
+    .c-formation  { grid-column: 3;   grid-row: 3; }
+    .c-skills     { grid-column: 3;   grid-row: 4; }
+    .c-langues    { grid-column: 1;   grid-row: 5; }
+    .c-initiatives{ grid-column: 2/4; grid-row: 5; }
+
+    /* ─── SECTION LABEL ──────────────────────────────────── */
+    .label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 16px;
+    }
+
+    /* ─── HERO ───────────────────────────────────────────── */
+    .c-hero {
+      background: linear-gradient(135deg, #16161f 0%, #1a1a30 100%);
+      min-height: 195px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 36px 40px;
+    }
+
+    .hero-dob {
+      font-size: .78rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+      margin-bottom: 8px;
+    }
+
+    .hero-name {
+      font-size: clamp(2.4rem, 4.5vw, 4.2rem);
+      font-weight: 900;
+      line-height: .92;
+      letter-spacing: -.03em;
+      cursor: pointer;
+      user-select: none;
+      background: linear-gradient(130deg, #fff 20%, var(--blue-light) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      position: relative;
+      display: inline-block;
+    }
+    .hero-name::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(74,158,255,.35) 50%, transparent);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      animation: shimmer 4s ease-in-out infinite;
+      pointer-events: none;
+    }
+    @keyframes shimmer {
+      0%   { background-position: -200% 0; }
+      100% { background-position:  200% 0; }
+    }
+
+    .hero-status {
+      margin-top: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .status-dot {
+      width: 8px; height: 8px;
+      background: #44ee88;
+      border-radius: 50%;
+      flex-shrink: 0;
+      animation: blink 2.4s ease-in-out infinite;
+    }
+    @keyframes blink {
+      0%,100% { opacity:1; transform:scale(1); }
+      50%      { opacity:.45; transform:scale(.75); }
+    }
+    .hero-title { font-size: 1.05rem; font-weight: 500; color: var(--blue); }
+
+    /* ─── PHOTO ───────────────────────────────────────────── */
+    .c-photo {
+      background: var(--card-alt);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 195px;
+    }
+    .photo-wrap {
+      position: relative;
+      width: 136px;
+      height: 136px;
+      cursor: pointer;
+    }
+    .photo-ring {
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(var(--blue) 0deg, var(--blue-light) 120deg, var(--blue) 240deg, transparent 300deg);
+      animation: spin 3.5s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .photo-img {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 3px solid var(--bg);
+      display: block;
+      transition: filter .2s ease;
+    }
+    .photo-fallback {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2a2a40, #1a1a2e);
+      border: 3px solid var(--bg);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+      color: var(--muted);
+    }
+
+    /* glitch easter egg */
+    .photo-wrap.glitching .photo-img,
+    .photo-wrap.glitching .photo-fallback {
+      animation: glitch .55s steps(2) forwards;
+    }
+    @keyframes glitch {
+      0%   { filter:none;                          transform:translate(0); }
+      12%  { filter:hue-rotate(90deg) saturate(4); transform:translate(-4px, 2px); }
+      25%  { filter:hue-rotate(180deg) invert(.3); transform:translate(4px,-2px); }
+      37%  { filter:hue-rotate(270deg) saturate(3);transform:translate(-2px,0); }
+      50%  { filter:sepia(.9) hue-rotate(200deg);  transform:translate(2px,3px); }
+      62%  { filter:saturate(6) brightness(1.6);   transform:translate(-1px,-1px); }
+      75%  { filter:invert(.2) hue-rotate(100deg); transform:translate(1px,2px); }
+      87%  { filter:hue-rotate(60deg) saturate(2); transform:translate(-2px,1px); }
+      100% { filter:none;                          transform:translate(0); }
+    }
+
+    /* ─── CONTACT ─────────────────────────────────────────── */
+    .c-contact { background: var(--card-alt); }
+    .contact-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+    .contact-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      position: relative;
+      transition: background .2s ease;
+    }
+    .contact-item:hover { background: var(--blue-dim); }
+    .contact-icon {
+      width: 30px; height: 30px;
+      background: var(--blue-dim);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+    .contact-text { font-size: .8rem; flex: 1; line-height: 1.35; }
+    .copy-icon {
+      font-size: .7rem;
+      color: var(--muted);
+      opacity: 0;
+      transition: opacity .2s;
+    }
+    .contact-item:hover .copy-icon { opacity: 1; }
+    .copy-tip {
+      position: absolute;
+      right: 8px; top: 50%;
+      transform: translateY(-50%);
+      background: var(--blue);
+      color: #000;
+      font-weight: 700;
+      font-size: .72rem;
+      padding: 3px 10px;
+      border-radius: 6px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity .2s;
+      white-space: nowrap;
+      z-index: 2;
+    }
+    .copy-tip.visible { opacity: 1; }
+
+    /* ─── EXPERIENCE ─────────────────────────────────────── */
+    .c-experience { background: var(--card); }
+    .timeline {
+      position: relative;
+      padding-left: 28px;
+      margin-top: 4px;
+    }
+    .tl-line {
+      position: absolute;
+      left: 6px; top: 0;
+      width: 2px; height: 0;
+      background: linear-gradient(to bottom, var(--blue), rgba(74,158,255,.15));
+      border-radius: 2px;
+      transition: height 1.4s cubic-bezier(.25,.46,.45,.94) .3s;
+    }
+    .tl-line.drawn { height: 100%; }
+
+    .tl-item {
+      position: relative;
+      margin-bottom: 28px;
+      opacity: 0;
+      transform: translateX(-12px);
+      transition: opacity .5s ease, transform .5s ease;
+    }
+    .tl-item.visible { opacity: 1; transform: translateX(0); }
+    .tl-item:last-child { margin-bottom: 0; }
+
+    .tl-dot {
+      position: absolute;
+      left: -25px; top: 7px;
+      width: 10px; height: 10px;
+      background: var(--blue);
+      border-radius: 50%;
+      border: 2px solid var(--card);
+      box-shadow: 0 0 0 3px rgba(74,158,255,.2);
+    }
+
+    .exp-title {
+      font-size: .95rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+    .exp-sub {
+      font-size: .8rem;
+      font-weight: 400;
+      color: var(--muted);
+    }
+    .exp-co {
+      font-size: .78rem;
+      color: var(--blue);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+    .exp-period {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: 1px;
+    }
+    .exp-tasks {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .exp-tasks li {
+      font-size: .8rem;
+      color: var(--muted2);
+      padding-left: 14px;
+      position: relative;
+      line-height: 1.5;
+    }
+    .exp-tasks li::before {
+      content: '›';
+      position: absolute;
+      left: 0;
+      color: var(--blue);
+      font-weight: 700;
+    }
+    .tags {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 5px;
+    }
+    .tag {
+      font-size: .67rem;
+      font-weight: 600;
+      color: var(--blue);
+      background: var(--blue-dim);
+      border: 1px solid var(--blue-border);
+      padding: 3px 9px;
+      border-radius: 20px;
+      transition: background .2s, box-shadow .2s;
+    }
+    .tag:hover {
+      background: rgba(74,158,255,.22);
+      box-shadow: 0 0 10px rgba(74,158,255,.28);
+    }
+
+    /* ─── FORMATION ───────────────────────────────────────── */
+    .c-formation { background: var(--card-alt); }
+    .form-list { list-style: none; display: flex; flex-direction: column; gap: 16px; margin-top: 4px; }
+    .form-item { display: flex; gap: 12px; align-items: flex-start; }
+    .form-dot {
+      width: 8px; height: 8px;
+      background: var(--blue);
+      border-radius: 50%;
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+    .form-title { font-size: .85rem; font-weight: 600; line-height: 1.3; }
+    .form-school { font-size: .72rem; color: var(--muted); margin-top: 2px; }
+
+    /* ─── SKILLS ─────────────────────────────────────────── */
+    .c-skills { background: var(--card-alt); }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .sk-card {
+      background: var(--card);
+      border-radius: var(--radius-sm);
+      padding: 13px;
+      border: 1px solid var(--blue-border);
+      transition: border-color .3s, box-shadow .3s, transform .3s ease;
+      transform-style: preserve-3d;
+      will-change: transform;
+      cursor: default;
+    }
+    .sk-card:hover {
+      border-color: rgba(74,158,255,.42);
+      box-shadow: 0 6px 20px rgba(74,158,255,.16);
+    }
+    .sk-icon { font-size: 1.3rem; display: block; margin-bottom: 7px; }
+    .sk-name { font-size: .78rem; font-weight: 700; }
+    .sk-tools { font-size: .67rem; color: var(--muted); margin-top: 3px; line-height: 1.45; }
+
+    /* pop-in animation */
+    @keyframes popIn {
+      0%   { opacity:0; transform:scale(.4); }
+      65%  { transform:scale(1.1); }
+      100% { opacity:1; transform:scale(1); }
+    }
+    .sk-card.popped { animation: popIn .45s cubic-bezier(.34,1.56,.64,1) forwards; }
+
+    /* ─── LANGUES ────────────────────────────────────────── */
+    .c-langues { background: var(--card-alt); }
+    .lang-list { list-style: none; display: flex; flex-direction: column; gap: 18px; margin-top: 4px; }
+    .lang-item {}
+    .lang-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+    .lang-name { font-size: .88rem; font-weight: 600; }
+    .lang-level { font-size: .7rem; color: var(--muted); }
+    .lang-dots { display: flex; gap: 6px; }
+    .dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      background: rgba(74,158,255,.18);
+      border: 1.5px solid rgba(74,158,255,.28);
+      transition: background .4s cubic-bezier(.34,1.56,.64,1), border-color .4s, box-shadow .4s;
+    }
+    .dot.on {
+      background: var(--blue);
+      border-color: var(--blue);
+      box-shadow: 0 0 8px rgba(74,158,255,.55);
+    }
+
+    /* ─── INITIATIVES ─────────────────────────────────────── */
+    .c-initiatives {
+      background: linear-gradient(135deg, #16161f 0%, #1a1a30 100%);
+    }
+    .init-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .init-header .label { margin-bottom: 0; }
+
+    .ver-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: var(--blue-dim);
+      border: 1px solid var(--blue-border);
+      padding: 5px 13px;
+      border-radius: 20px;
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--blue);
+      cursor: pointer;
+      user-select: none;
+      transition: background .25s, box-shadow .25s;
+      letter-spacing: .04em;
+    }
+    .ver-badge:hover {
+      background: rgba(74,158,255,.2);
+      box-shadow: 0 0 18px rgba(74,158,255,.3);
+    }
+    .ver-dot { width:6px; height:6px; background:var(--blue); border-radius:50%; animation:blink 1.6s infinite; }
+
+    .init-body {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 20px;
+    }
+    .init-list { list-style: none; display:flex; flex-direction:column; gap:8px; }
+    .init-list li {
+      font-size: .83rem;
+      color: var(--muted2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .init-list li::before {
+      content: '';
+      width: 6px; height: 6px;
+      background: var(--blue);
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .qr-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+    .qr-box {
+      width: 76px; height: 76px;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      animation: qr-glow 3s ease-in-out infinite;
+    }
+    @keyframes qr-glow {
+      0%,100% { box-shadow: 0 0 0 0 rgba(74,158,255,.4); }
+      50%      { box-shadow: 0 0 0 7px rgba(74,158,255,0); }
+    }
+    .qr-box img { width:100%; height:100%; object-fit:contain; border-radius:8px; }
+    .qr-label { font-size: .68rem; color: var(--muted); text-align: center; }
+
+    /* ─── CONFETTI CANVAS ─────────────────────────────────── */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ─── TOAST NOTIFICATION ─────────────────────────────── */
+    .toast {
+      position: fixed;
+      top: 20px; right: 20px;
+      background: var(--blue);
+      color: #000;
+      font-family: var(--font);
+      font-weight: 700;
+      font-size: .88rem;
+      padding: 12px 20px;
+      border-radius: 12px;
+      z-index: 9998;
+      transform: translateY(-16px);
+      opacity: 0;
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1), opacity .35s ease;
+      pointer-events: none;
+    }
+    .toast.show { transform: translateY(0); opacity: 1; }
+
+    /* ─── ENTRANCE ANIMATIONS ─────────────────────────────── */
+    .enter-hero  { opacity:0; transform:translateY(-28px); }
+    .enter-photo { opacity:0; transform:scale(.78); filter:blur(10px); }
+    .enter-cell  { opacity:0; transform:translateY(18px); }
+
+    @keyframes entHero  { to { opacity:1; transform:translateY(0); } }
+    @keyframes entPhoto { to { opacity:1; transform:scale(1); filter:blur(0); } }
+    @keyframes entCell  { to { opacity:1; transform:translateY(0); } }
+
+    .run-hero  { animation: entHero  .7s cubic-bezier(.25,.46,.45,.94) forwards; }
+    .run-photo { animation: entPhoto .85s cubic-bezier(.25,.46,.45,.94) forwards; }
+    .run-cell  { animation: entCell  .6s cubic-bezier(.25,.46,.45,.94) forwards; }
+
+    /* rainbow double-click easter egg */
+    @keyframes rainbow {
+      0%   { background: linear-gradient(135deg,#ff0000,#ff7700); -webkit-background-clip:text; background-clip:text; }
+      17%  { background: linear-gradient(135deg,#ff7700,#ffff00); -webkit-background-clip:text; background-clip:text; }
+      34%  { background: linear-gradient(135deg,#ffff00,#00ff88); -webkit-background-clip:text; background-clip:text; }
+      50%  { background: linear-gradient(135deg,#00ff88,#00aaff); -webkit-background-clip:text; background-clip:text; }
+      67%  { background: linear-gradient(135deg,#00aaff,#8844ff); -webkit-background-clip:text; background-clip:text; }
+      84%  { background: linear-gradient(135deg,#8844ff,var(--blue)); -webkit-background-clip:text; background-clip:text; }
+      100% { background: linear-gradient(130deg,#fff 20%,var(--blue-light) 100%); -webkit-background-clip:text; background-clip:text; }
+    }
+    .hero-name.rainbow-anim { animation: rainbow 2s linear forwards; }
+
+    /* ─── FOOTER ──────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 32px 16px;
+      font-size: .72rem;
+      color: var(--muted);
+      opacity: .5;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ─── REDUCED MOTION ─────────────────────────────────── */
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+
+    /* ─── RESPONSIVE 1024 ─────────────────────────────────── */
+    @media (max-width: 1024px) {
+      .grid { grid-template-columns: 1fr 1fr; }
+      .c-hero       { grid-column: 1/2; grid-row: 1; }
+      .c-photo      { grid-column: 2;   grid-row: 1; }
+      .c-experience { grid-column: 1/3; grid-row: 2; }
+      .c-contact    { grid-column: 1;   grid-row: 3; }
+      .c-formation  { grid-column: 2;   grid-row: 3; }
+      .c-skills     { grid-column: 1/3; grid-row: 4; }
+      .c-langues    { grid-column: 1;   grid-row: 5; }
+      .c-initiatives{ grid-column: 2;   grid-row: 5; }
+      .skills-grid  { grid-template-columns: repeat(4,1fr); }
+    }
+
+    /* ─── RESPONSIVE 768 ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .grid { grid-template-columns: 1fr; }
+      .c-hero, .c-photo, .c-contact, .c-experience,
+      .c-formation, .c-skills, .c-langues, .c-initiatives {
+        grid-column: 1; grid-row: auto;
+      }
+      .c-hero { padding: 28px 24px; }
+      .hero-name { font-size: 2.6rem; }
+      .skills-grid { grid-template-columns: 1fr 1fr; }
+      .init-body { flex-direction: column; }
+    }
+  </style>
 </head>
 <body>
-    <h1>Quentin Carriere</h1>
+
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<div class="page">
+  <div class="grid">
+
+    <!-- ── HERO ── -->
+    <div class="cell c-hero enter-hero" data-delay="0">
+      <p class="hero-dob">13 / 12 / 2005</p>
+      <h1
+        class="hero-name"
+        id="hero-name"
+        tabindex="0"
+        title="Double-cliquez pour une surprise ✨"
+        aria-label="Quentin Carriere"
+      >QUENTIN<br>CARRIERE</h1>
+      <div class="hero-status">
+        <span class="status-dot" aria-hidden="true"></span>
+        <span class="hero-title">Alternant Communication Digitale</span>
+      </div>
+    </div>
+
+    <!-- ── PHOTO ── -->
+    <div class="cell c-photo enter-photo" data-delay="160">
+      <div
+        class="photo-wrap"
+        id="photo-wrap"
+        role="button"
+        tabindex="0"
+        aria-label="Photo de Quentin Carriere — cliquez pour un effet"
+      >
+        <div class="photo-ring" aria-hidden="true"></div>
+        <img
+          id="photo-img"
+          src="photo.jpg"
+          alt="Quentin Carriere"
+          class="photo-img"
+        />
+        <div class="photo-fallback" id="photo-fallback" aria-hidden="true">👤</div>
+      </div>
+    </div>
+
+    <!-- ── EXPERIENCE ── -->
+    <div class="cell c-experience enter-cell" data-delay="120">
+      <div class="label">Expérience</div>
+      <div class="timeline" id="timeline">
+        <div class="tl-line" id="tl-line" aria-hidden="true"></div>
+
+        <div class="tl-item">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <p class="exp-title">Alternance en communication digitale</p>
+          <p class="exp-co">Au Fil d'Ariane</p>
+          <p class="exp-period">Sept 2025 – Sept 2026</p>
+          <ul class="exp-tasks" aria-label="Missions">
+            <li>Gestion des réseaux sociaux</li>
+            <li>Gestion du site e-commerce (Shopify)</li>
+            <li>Stratégie de communication (organique, ads)</li>
+          </ul>
+          <div class="tags" aria-label="Soft skills">
+            <span class="tag">Gestion du temps</span>
+            <span class="tag">Force de proposition</span>
+            <span class="tag">Créativité</span>
+            <span class="tag">Esprit critique</span>
+            <span class="tag">Adaptabilité</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <p class="exp-title">Stage de communication <span class="exp-sub">(2ème année de BUT)</span></p>
+          <p class="exp-co">Bloc Zone</p>
+          <p class="exp-period">Avril – Mai 2025</p>
+          <ul class="exp-tasks" aria-label="Missions">
+            <li>Gestion des réseaux sociaux / site internet</li>
+            <li>Identification de nouveaux canaux de développement</li>
+            <li>Conception et mise en œuvre d'une stratégie digitale</li>
+          </ul>
+          <div class="tags" aria-label="Soft skills">
+            <span class="tag">Gestion du temps</span>
+            <span class="tag">Force de proposition</span>
+            <span class="tag">Créativité</span>
+            <span class="tag">Esprit critique</span>
+            <span class="tag">Flexibilité</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <p class="exp-title">SAE multicompétences <span class="exp-sub">(projet formation TC)</span></p>
+          <ul class="exp-tasks" aria-label="Missions">
+            <li>Gestion des réseaux sociaux de l'IUT TC Moulins</li>
+            <li>Création de visuels</li>
+            <li>Feedback questions &amp; recherche d'idées de posts</li>
+          </ul>
+          <div class="tags" aria-label="Soft skills">
+            <span class="tag">Respect des délais</span>
+            <span class="tag">Esprit d'analyse</span>
+            <span class="tag">Force de proposition</span>
+            <span class="tag">Innovant</span>
+          </div>
+        </div>
+
+        <div class="tl-item">
+          <div class="tl-dot" aria-hidden="true"></div>
+          <p class="exp-title">SAE communication <span class="exp-sub">(projet formation TC)</span></p>
+          <ul class="exp-tasks" aria-label="Missions">
+            <li>Établissement d'une stratégie digitale détaillée</li>
+            <li>Création de visuels / concepts de vidéos</li>
+            <li>Identification de nouveaux canaux de communication</li>
+            <li>Planification de la communication</li>
+          </ul>
+          <div class="tags" aria-label="Soft skills">
+            <span class="tag">Développement de solutions</span>
+            <span class="tag">Analyse stratégique</span>
+            <span class="tag">Prise de décision</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── CONTACT ── -->
+    <div class="cell c-contact enter-cell" data-delay="280">
+      <div class="label">Contact</div>
+      <ul class="contact-list" role="list">
+        <li class="contact-item" data-copy="0665711243" tabindex="0" role="button" aria-label="Téléphone 06-65-71-12-43, cliquez pour copier">
+          <div class="contact-icon" aria-hidden="true">📞</div>
+          <span class="contact-text">06-65-71-12-43</span>
+          <span class="copy-icon" aria-hidden="true">⎘</span>
+          <span class="copy-tip">Copié !</span>
+        </li>
+        <li class="contact-item" data-copy="quentincarriere1312@gmail.com" tabindex="0" role="button" aria-label="Email quentincarriere1312@gmail.com, cliquez pour copier">
+          <div class="contact-icon" aria-hidden="true">✉️</div>
+          <span class="contact-text">quentincarriere1312@gmail.com</span>
+          <span class="copy-icon" aria-hidden="true">⎘</span>
+          <span class="copy-tip">Copié !</span>
+        </li>
+        <li class="contact-item" data-copy="23 rue de l'horloge, 03000 Moulins" tabindex="0" role="button" aria-label="Adresse 23 rue de l'horloge 03000 Moulins, cliquez pour copier">
+          <div class="contact-icon" aria-hidden="true">📍</div>
+          <span class="contact-text">23 rue de l'horloge,<br>03000 Moulins</span>
+          <span class="copy-icon" aria-hidden="true">⎘</span>
+          <span class="copy-tip">Copié !</span>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── FORMATION ── -->
+    <div class="cell c-formation enter-cell" data-delay="360">
+      <div class="label">Formation</div>
+      <ul class="form-list" role="list" aria-label="Parcours académique">
+        <li class="form-item">
+          <div class="form-dot" aria-hidden="true"></div>
+          <div>
+            <p class="form-title">3ème Année BUT Techniques de Commercialisation (BUT TC)</p>
+            <p class="form-school">IUT Clermont-Auvergne, Moulins</p>
+          </div>
+        </li>
+        <li class="form-item">
+          <div class="form-dot" aria-hidden="true"></div>
+          <div>
+            <p class="form-title">Bac Général</p>
+            <p class="form-school">Lycée Emile Duclaux, Aurillac</p>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── HARD SKILLS ── -->
+    <div class="cell c-skills enter-cell" data-delay="440">
+      <div class="label">Hard Skills</div>
+      <div class="skills-grid" role="list" aria-label="Compétences techniques">
+        <div class="sk-card" role="listitem" tabindex="0" style="opacity:0">
+          <span class="sk-icon" aria-hidden="true">💼</span>
+          <p class="sk-name">Pack Office</p>
+          <p class="sk-tools">Word, Excel, Powerpoint</p>
+        </div>
+        <div class="sk-card" role="listitem" tabindex="0" style="opacity:0">
+          <span class="sk-icon" aria-hidden="true">🌐</span>
+          <p class="sk-name">Webdesign</p>
+          <p class="sk-tools">Wix, Wordpress, Framer, Shopify</p>
+        </div>
+        <div class="sk-card" role="listitem" tabindex="0" style="opacity:0">
+          <span class="sk-icon" aria-hidden="true">🎨</span>
+          <p class="sk-name">Design</p>
+          <p class="sk-tools">Canva, Figma, Photoshop</p>
+        </div>
+        <div class="sk-card" role="listitem" tabindex="0" style="opacity:0">
+          <span class="sk-icon" aria-hidden="true">🎬</span>
+          <p class="sk-name">Vidéo</p>
+          <p class="sk-tools">Première Pro, Capcut</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── LANGUES ── -->
+    <div class="cell c-langues enter-cell" data-delay="520">
+      <div class="label">Langues</div>
+      <ul class="lang-list" role="list" aria-label="Compétences linguistiques">
+        <li class="lang-item">
+          <div class="lang-head">
+            <span class="lang-name">Anglais</span>
+            <span class="lang-level">Professionnelle</span>
+          </div>
+          <div class="lang-dots" role="img" aria-label="Anglais : niveau 5 sur 5">
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+          </div>
+        </li>
+        <li class="lang-item">
+          <div class="lang-head">
+            <span class="lang-name">Espagnol</span>
+            <span class="lang-level">Niveau B2</span>
+          </div>
+          <div class="lang-dots" role="img" aria-label="Espagnol : niveau 4 sur 5">
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="1"></div>
+            <div class="dot" data-on="0"></div>
+          </div>
+        </li>
+      </ul>
+    </div>
+
+    <!-- ── INITIATIVES ── -->
+    <div class="cell c-initiatives enter-cell" data-delay="600">
+      <div class="init-header">
+        <div class="label">Initiatives</div>
+        <div
+          class="ver-badge"
+          id="ver-badge"
+          role="button"
+          tabindex="0"
+          aria-label="Version interactive — maintenez le survol pour une surprise"
+        >
+          <span class="ver-dot" aria-hidden="true"></span>
+          VERSION INTERACTIVE
+        </div>
+      </div>
+      <div class="init-body">
+        <ul class="init-list" role="list" aria-label="Projets personnels">
+          <li>Freelance Design &amp; Web</li>
+          <li>Identité visuelle</li>
+          <li>Webdesign</li>
+        </ul>
+        <div class="qr-wrap">
+          <div class="qr-box" aria-label="QR code vers le profil LinkedIn">
+            <img
+              src="qr-linkedin.png"
+              alt="QR code LinkedIn de Quentin Carriere"
+              onerror="this.parentElement.innerHTML=`<svg viewBox='0 0 80 80' xmlns='http://www.w3.org/2000/svg' width='64' height='64'><rect x='8' y='8' width='24' height='24' fill='none' stroke='#111' stroke-width='3'/><rect x='12' y='12' width='16' height='16' fill='#111'/><rect x='48' y='8' width='24' height='24' fill='none' stroke='#111' stroke-width='3'/><rect x='52' y='12' width='16' height='16' fill='#111'/><rect x='8' y='48' width='24' height='24' fill='none' stroke='#111' stroke-width='3'/><rect x='12' y='52' width='16' height='16' fill='#111'/><rect x='44' y='44' width='6' height='6' fill='#111'/><rect x='54' y='44' width='6' height='6' fill='#111'/><rect x='64' y='44' width='6' height='6' fill='#111'/><rect x='44' y='54' width='6' height='6' fill='#111'/><rect x='64' y='54' width='6' height='6' fill='#111'/><rect x='44' y='64' width='6' height='6' fill='#111'/><rect x='54' y='64' width='6' height='6' fill='#111'/><rect x='64' y='64' width='6' height='6' fill='#111'/></svg>`"
+            />
+          </div>
+          <span class="qr-label">Mon LinkedIn</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<footer>
+  <p>© 2025 Quentin Carriere &mdash; CV Interactif</p>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ─── PHOTO FALLBACK ─────────────────────────────────── */
+  const photoImg = document.getElementById('photo-img');
+  const photoFallback = document.getElementById('photo-fallback');
+  if (photoImg) {
+    photoImg.addEventListener('error', () => {
+      photoImg.style.display = 'none';
+      photoFallback.style.display = 'flex';
+    });
+  }
+
+  /* ─── ENTRANCE ANIMATIONS ────────────────────────────── */
+  function runEntrances() {
+    const classMap = {
+      'enter-hero':  'run-hero',
+      'enter-photo': 'run-photo',
+      'enter-cell':  'run-cell',
+    };
+    document.querySelectorAll('.enter-hero, .enter-photo, .enter-cell').forEach(el => {
+      const cls = Object.keys(classMap).find(c => el.classList.contains(c));
+      if (!cls) return;
+      const delay = parseInt(el.dataset.delay || '0', 10);
+      setTimeout(() => el.classList.add(classMap[cls]), delay + 80);
+    });
+  }
+
+  if (!reduced) {
+    runEntrances();
+
+    /* timeline line */
+    setTimeout(() => {
+      const line = document.getElementById('tl-line');
+      if (line) line.classList.add('drawn');
+    }, 350);
+
+    /* timeline items via IntersectionObserver */
+    const io = new IntersectionObserver(entries => {
+      entries.forEach((e, i) => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), i * 90);
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.tl-item').forEach(el => io.observe(el));
+
+    /* skill cards pop-in */
+    const skCards = document.querySelectorAll('.sk-card');
+    skCards.forEach((c, i) => {
+      setTimeout(() => {
+        c.style.opacity = '';
+        c.classList.add('popped');
+      }, 680 + i * 95);
+    });
+
+    /* language dots fill */
+    const dots = document.querySelectorAll('.dot[data-on="1"]');
+    dots.forEach((d, i) => {
+      setTimeout(() => d.classList.add('on'), 950 + i * 110);
+    });
+
+  } else {
+    /* no animations: show everything instantly */
+    document.querySelectorAll('.enter-hero, .enter-photo, .enter-cell').forEach(el => {
+      el.style.opacity = '1';
+      el.style.transform = 'none';
+      el.style.filter = 'none';
+    });
+    document.querySelectorAll('.tl-item').forEach(el => el.classList.add('visible'));
+    document.querySelectorAll('.sk-card').forEach(c => { c.style.opacity = '1'; });
+    document.querySelectorAll('.dot[data-on="1"]').forEach(d => d.classList.add('on'));
+    const line = document.getElementById('tl-line');
+    if (line) line.style.height = '100%';
+  }
+
+  /* ─── CLICK-TO-COPY ──────────────────────────────────── */
+  document.querySelectorAll('.contact-item[data-copy]').forEach(item => {
+    function doCopy() {
+      const text = item.dataset.copy;
+      const tip = item.querySelector('.copy-tip');
+      const done = () => {
+        tip.classList.add('visible');
+        setTimeout(() => tip.classList.remove('visible'), 1800);
+      };
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(done).catch(done);
+      } else {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        Object.assign(ta.style, { position:'fixed', opacity:'0' });
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch(e) {}
+        document.body.removeChild(ta);
+        done();
+      }
+    }
+    item.addEventListener('click', doCopy);
+    item.addEventListener('keydown', e => { if (e.key==='Enter'||e.key===' ') { e.preventDefault(); doCopy(); } });
+  });
+
+  /* ─── 3D TILT (skill cards) ──────────────────────────── */
+  if (!reduced) {
+    document.querySelectorAll('.sk-card').forEach(card => {
+      card.addEventListener('mousemove', e => {
+        const r = card.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width  - .5;
+        const y = (e.clientY - r.top)  / r.height - .5;
+        card.style.transform = `perspective(380px) rotateY(${x*12}deg) rotateX(${-y*9}deg) translateZ(5px)`;
+        card.style.transition = 'transform .05s ease, border-color .3s, box-shadow .3s';
+      });
+      card.addEventListener('mouseleave', () => {
+        card.style.transform = '';
+        card.style.transition = 'transform .4s cubic-bezier(.34,1.56,.64,1), border-color .3s, box-shadow .3s';
+      });
+    });
+  }
+
+  /* ─── TOAST HELPER ───────────────────────────────────── */
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.classList.add('show');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3200);
+  }
+
+  /* ─── EASTER EGG 1: KONAMI CODE ─────────────────────── */
+  const KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  let ki = 0;
+  document.addEventListener('keydown', e => {
+    ki = e.key === KONAMI[ki] ? ki + 1 : (e.key === KONAMI[0] ? 1 : 0);
+    if (ki === KONAMI.length) {
+      ki = 0;
+      document.body.classList.toggle('konami-active');
+      toast(document.body.classList.contains('konami-active')
+        ? '🏆 Konami Code ! Thème Or activé !'
+        : '✨ Retour au thème nuit');
+    }
+  });
+
+  /* ─── EASTER EGG 2: PHOTO GLITCH ────────────────────── */
+  const photoWrap = document.getElementById('photo-wrap');
+  if (photoWrap && !reduced) {
+    photoWrap.addEventListener('click', () => {
+      if (photoWrap.classList.contains('glitching')) return;
+      photoWrap.classList.add('glitching');
+      setTimeout(() => photoWrap.classList.remove('glitching'), 600);
+    });
+    photoWrap.addEventListener('keydown', e => { if (e.key==='Enter') photoWrap.click(); });
+  }
+
+  /* ─── EASTER EGG 3: CONFETTI ON VERSION BADGE ───────── */
+  const verBadge = document.getElementById('ver-badge');
+  let hoverTimer = null;
+  if (verBadge) {
+    verBadge.addEventListener('mouseenter', () => {
+      if (reduced) return;
+      hoverTimer = setTimeout(launchConfetti, 2000);
+    });
+    verBadge.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+    verBadge.addEventListener('keydown', e => { if(e.key==='Enter') launchConfetti(); });
+  }
+
+  function launchConfetti() {
+    if (reduced) return;
+    const canvas = document.getElementById('confetti-canvas');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const ctx = canvas.getContext('2d');
+    const colors = ['#4a9eff','#7bb8ff','#ffffff','#ffd700','#ff6b9d','#44ee88','#ff9944'];
+    const particles = Array.from({ length: 140 }, () => ({
+      x: Math.random() * canvas.width,
+      y: -12,
+      vx: (Math.random() - .5) * 5,
+      vy: Math.random() * 4.5 + 1.8,
+      color: colors[Math.floor(Math.random() * colors.length)],
+      size: Math.random() * 9 + 4,
+      rot: Math.random() * 360,
+      rotV: (Math.random() - .5) * 12,
+      shape: Math.random() > .5 ? 'r' : 'c',
+      life: 1,
+    }));
+    let raf;
+    (function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      let alive = false;
+      particles.forEach(p => {
+        if (p.y > canvas.height + 20) return;
+        alive = true;
+        p.x += p.vx; p.y += p.vy; p.vy += .09; p.rot += p.rotV; p.life -= .007;
+        ctx.save();
+        ctx.globalAlpha = Math.max(0, p.life);
+        ctx.translate(p.x, p.y);
+        ctx.rotate(p.rot * Math.PI / 180);
+        ctx.fillStyle = p.color;
+        if (p.shape === 'r') ctx.fillRect(-p.size/2, -p.size/4, p.size, p.size/2);
+        else { ctx.beginPath(); ctx.arc(0,0,p.size/2,0,Math.PI*2); ctx.fill(); }
+        ctx.restore();
+      });
+      if (alive) raf = requestAnimationFrame(draw);
+      else ctx.clearRect(0,0,canvas.width,canvas.height);
+    })();
+  }
+
+  /* ─── EASTER EGG 4: DOUBLE-CLICK NAME RAINBOW ───────── */
+  const heroName = document.getElementById('hero-name');
+  if (heroName) {
+    heroName.addEventListener('dblclick', () => {
+      heroName.classList.remove('rainbow-anim');
+      void heroName.offsetWidth;
+      heroName.classList.add('rainbow-anim');
+      setTimeout(() => heroName.classList.remove('rainbow-anim'), 2200);
+    });
+  }
+
+  /* ─── RESIZE CONFETTI CANVAS ─────────────────────────── */
+  window.addEventListener('resize', () => {
+    const c = document.getElementById('confetti-canvas');
+    c.width = window.innerWidth;
+    c.height = window.innerHeight;
+  });
+
+})();
+</script>
 </body>
 </html>
