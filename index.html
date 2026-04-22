@@ -1933,20 +1933,18 @@ function buildCarousel() {
     const card = document.createElement('div');
     card.className = 'video-card';
     card.innerHTML = `
-      <video src="${src}" loop muted preload="none" playsinline></video>
+      <video src="${src}" loop muted preload="metadata" playsinline></video>
       <div class="vc-overlay">
         <div class="vc-play">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
         </div>
       </div>`;
     const video = card.querySelector('video');
-    card.addEventListener('click', () => {
-      if (video.paused) {
-        document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
-        video.play(); card.classList.add('playing');
-      } else {
-        video.pause(); card.classList.remove('playing');
-      }
+    card.addEventListener('mouseenter', () => {
+      video.play(); card.classList.add('playing');
+    });
+    card.addEventListener('mouseleave', () => {
+      video.pause(); video.currentTime = 0; card.classList.remove('playing');
     });
     return card;
   }
