@@ -906,27 +906,33 @@
   .stat-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #34D399; }
 
   /* ---------- VIDEO CAROUSEL ---------- */
-  .video-carousel-outer { position: relative; overflow: hidden; margin: 0 -48px; }
+  .video-carousel-outer {
+    overflow: hidden; margin: 0 -48px; padding: 8px 0 24px;
+  }
   @media (max-width: 720px) { .video-carousel-outer { margin: 0 -20px; } }
 
   .video-carousel {
     display: flex; gap: 16px;
-    padding: 8px 48px 24px;
-    overflow-x: auto; scroll-snap-type: x mandatory;
-    scrollbar-width: none; -ms-overflow-style: none;
-    cursor: grab; user-select: none;
+    width: max-content;
+    padding-left: 48px;
+    animation: vc-scroll 25s linear infinite;
+    will-change: transform;
   }
-  .video-carousel::-webkit-scrollbar { display: none; }
-  .video-carousel.is-dragging { cursor: grabbing; }
+  .video-carousel-outer:hover .video-carousel { animation-play-state: paused; }
+
+  @keyframes vc-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(var(--vc-offset, -1380px)); }
+  }
 
   .video-card {
     flex: 0 0 260px; height: 462px;
     border-radius: 20px; overflow: hidden;
     background: var(--bg-2); border: 1px solid var(--glass-b);
-    scroll-snap-align: start; position: relative;
+    position: relative;
     transition: border-color .3s ease, transform .3s ease;
   }
-  .video-card:hover { border-color: var(--accent); transform: scale(1.025); }
+  .video-card:hover { border-color: var(--accent); transform: scale(1.03); }
   .video-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
   .vc-overlay {
     position: absolute; inset: 0; background: rgba(0,0,0,0.28);
@@ -942,20 +948,7 @@
     transition: transform .2s ease;
   }
   .video-card:hover .vc-play { transform: scale(1.12); }
-
-  .carousel-dots {
-    display: flex; justify-content: center; align-items: center; gap: 6px;
-    margin-top: 20px;
-  }
-  .carousel-dot {
-    width: 6px; height: 6px; border-radius: 3px;
-    background: rgba(255,255,255,0.15); border: none; cursor: pointer;
-    transition: all .3s cubic-bezier(.2,.8,.2,1);
-  }
-  .carousel-dot.active {
-    background: var(--accent); width: 22px;
-    box-shadow: 0 0 8px var(--accent);
-  }
+  .carousel-dots { display: none; }
 </style>
 </head>
 
@@ -1930,10 +1923,11 @@ const VIDEOS = [
 
 function buildCarousel() {
   const track = document.getElementById('video-carousel');
-  const dotsWrap = document.getElementById('carousel-dots');
-  if (!track || !dotsWrap) return;
+  if (!track) return;
 
-  const CARD_W = 260 + 16; // card width + gap
+  const CARD_W = 260 + 16; // largeur carte + gap
+  const offset = VIDEOS.length * CARD_W;
+  track.style.setProperty('--vc-offset', `-${offset}px`);
 
   function makeCard(src) {
     const card = document.createElement('div');
@@ -1957,68 +1951,8 @@ function buildCarousel() {
     return card;
   }
 
-  // Build originals + 2 cloned sets for seamless loop
-  [...VIDEOS, ...VIDEOS, ...VIDEOS].forEach(src => track.appendChild(makeCard(src)));
-
-  // Dots (one per real video)
-  VIDEOS.forEach((_, i) => {
-    const dot = document.createElement('button');
-    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
-    dot.addEventListener('click', () => {
-      paused = true;
-      // Jump to the real position in the middle set
-      track.scrollTo({ left: CARD_W * VIDEOS.length + i * CARD_W, behavior: 'smooth' });
-      setTimeout(() => { paused = false; }, 1200);
-    });
-    dotsWrap.appendChild(dot);
-  });
-
-  // Start scrolled at the middle set so there's room to loop both ways
-  track.scrollLeft = CARD_W * VIDEOS.length;
-
-  // Update active dot
-  function updateDots() {
-    const pos = ((track.scrollLeft / CARD_W) % VIDEOS.length + VIDEOS.length) % VIDEOS.length;
-    dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === Math.round(pos) % VIDEOS.length));
-  }
-
-  // Auto-scroll loop
-  let paused = false;
-  let raf;
-  const SPEED = 0.6; // px per frame
-
-  function autoScroll() {
-    if (!paused) {
-      track.scrollLeft += SPEED;
-      // Seamless reset: when we reach the end of the 2nd set, jump back to 1st set
-      if (track.scrollLeft >= CARD_W * VIDEOS.length * 2) {
-        track.scrollLeft -= CARD_W * VIDEOS.length;
-      }
-      updateDots();
-    }
-    raf = requestAnimationFrame(autoScroll);
-  }
-  raf = requestAnimationFrame(autoScroll);
-
-  // Pause on hover
-  track.addEventListener('mouseenter', () => { paused = true; });
-  track.addEventListener('mouseleave', () => { paused = false; });
-
-  // Drag to scroll
-  let dragging = false, startX, scrollStart;
-  track.addEventListener('mousedown', e => {
-    dragging = true; paused = true;
-    track.classList.add('is-dragging');
-    startX = e.pageX - track.offsetLeft; scrollStart = track.scrollLeft;
-  });
-  document.addEventListener('mouseup', () => {
-    if (dragging) { dragging = false; track.classList.remove('is-dragging'); paused = false; }
-  });
-  track.addEventListener('mousemove', e => {
-    if (!dragging) return;
-    e.preventDefault();
-    track.scrollLeft = scrollStart - (e.pageX - track.offsetLeft - startX);
-  });
+  // Originaux + clones pour le loop seamless
+  [...VIDEOS, ...VIDEOS].forEach(src => track.appendChild(makeCard(src)));
 }
 buildCarousel();
 
