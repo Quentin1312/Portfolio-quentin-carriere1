@@ -531,7 +531,7 @@
   .skill-chip:hover {
     border-color: var(--accent);
     background: rgba(40,151,255,0.1);
-    transform: scale(1.15);
+    animation-play-state: paused;
     box-shadow: 0 12px 32px rgba(40,151,255,0.3);
   }
   .skill-chip .chip-logo {
@@ -539,7 +539,8 @@
     display: grid; place-items: center;
     transition: transform .3s cubic-bezier(.2,.8,.2,1);
   }
-  .skill-chip .chip-logo svg {
+  .skill-chip .chip-logo svg,
+  .skill-chip .chip-logo img {
     width: 100%; height: 100%; display: block;
     filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
   }
@@ -1267,81 +1268,20 @@ function setAccent(hex) {
 /* =========================================================
    ORBIT OF LOGOS
 ========================================================= */
-// Stylized inline marks — monogram-style, consistent visual language.
-// Not copying brand logos exactly; each is an original 2-letter/shape mark using accent color.
-// Real brand logos as inline SVG, each with its own signature color.
+// Vrais logos via Simple Icons CDN
 const LOGO = {
-  Figma: `<svg viewBox="0 0 38 57" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#1abcfe" d="M19 28.5a9.5 9.5 0 1 1 19 0 9.5 9.5 0 0 1-19 0z"/>
-    <path fill="#0acf83" d="M0 47.5A9.5 9.5 0 0 1 9.5 38H19v9.5a9.5 9.5 0 1 1-19 0z"/>
-    <path fill="#ff7262" d="M19 0v19h9.5a9.5 9.5 0 1 0 0-19H19z"/>
-    <path fill="#f24e1e" d="M0 9.5A9.5 9.5 0 0 0 9.5 19H19V0H9.5A9.5 9.5 0 0 0 0 9.5z"/>
-    <path fill="#a259ff" d="M0 28.5A9.5 9.5 0 0 0 9.5 38H19V19H9.5A9.5 9.5 0 0 0 0 28.5z"/>
-  </svg>`,
-  Photoshop: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="2" width="22" height="20" rx="3.5" fill="#001e36"/>
-    <text x="12" y="16.5" font-family="Satoshi, Helvetica, Arial" font-weight="800" font-size="10" text-anchor="middle" fill="#31a8ff" letter-spacing="-0.5">Ps</text>
-  </svg>`,
-  'Premiere Pro': `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="2" width="22" height="20" rx="3.5" fill="#00005b"/>
-    <text x="12" y="16.5" font-family="Satoshi, Helvetica, Arial" font-weight="800" font-size="10" text-anchor="middle" fill="#ea77ff" letter-spacing="-0.5">Pr</text>
-  </svg>`,
-  Canva: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <radialGradient id="canvaG" cx="0.3" cy="0.3" r="0.9">
-        <stop offset="0" stop-color="#00c4cc"/>
-        <stop offset="0.5" stop-color="#7d2ae8"/>
-        <stop offset="1" stop-color="#01a3a4"/>
-      </radialGradient>
-    </defs>
-    <circle cx="24" cy="24" r="22" fill="url(#canvaG)"/>
-    <path fill="#fff" d="M32.9 28.4c-.3-.3-.8-.3-1.1.1-1.4 1.7-3.1 2.9-5.2 3.2-4 .6-7.2-2.4-7.8-6.5-.5-4 2-8.3 5.9-8.9 1.4-.2 2.5-.1 3.2.2.6.2.9.7.9 1.2 0 .5-.3.9-.8 1.1-.3.1-.7 0-1-.2-.4-.2-.9-.4-1.6-.3-2.4.3-3.8 3.3-3.5 6 .3 2.7 2.2 4.2 4.4 3.9 1.8-.3 3.1-1.4 4-3 .3-.5.9-.7 1.4-.4.5.3.7.9.4 1.4-.2.4-.4.7-.7 1.1.1 0 .2-.1.3-.1 1.3-.4 2.4-1.2 3.4-2.2.4-.4 1-.4 1.4 0 .3.3.3.9-.1 1.3-1.3 1.3-2.8 2.3-4.5 2.8-.3.1-.5.2-.6.3z"/>
-  </svg>`,
-  Framer: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#0055ff" d="M5 2h14v7h-7l7 7h-7v7l-7-7v-7h7L5 2z"/>
-  </svg>`,
-  Shopify: `<svg viewBox="0 0 109 124" xmlns="http://www.w3.org/2000/svg">
-    <path fill="#95bf46" d="M95 24c-.1-.6-.6-1-1-1-.4 0-7.2-.5-7.2-.5s-4.8-4.8-5.3-5.3c-.5-.5-1.6-.4-2-.3 0 0-1 .3-2.7.8-.3-1-.7-2.1-1.2-3.3-1.7-3.2-4.2-4.9-7.2-4.9-.2 0-.4 0-.6.1-.1-.1-.2-.2-.3-.3-1.3-1.4-3-2.1-5-2-3.9.1-7.8 3-10.9 8-2.2 3.5-3.9 8-4.3 11.4-4.5 1.4-7.6 2.4-7.7 2.4-2.3.7-2.3.8-2.6 2.9-.2 1.6-6.1 47.5-6.1 47.5l49 8.5 21.3-5.3S95 24.5 95 24zM74.3 19.1c-1.3.4-2.7.8-4.3 1.3 0-2.2-.3-5.3-1.3-7.9 3.4.6 5 4.4 5.6 6.6zm-7.3 2.2c-2.9.9-6.2 1.9-9.4 2.9.9-3.5 2.7-7 4.8-9.2.8-.9 1.9-1.8 3.3-2.4 1.2 2.7 1.4 6.4 1.3 8.7zm-5.9-12c1.1 0 2 .2 2.8.7-1.2.6-2.4 1.5-3.5 2.7-2.9 3.1-5.1 7.9-5.9 12.6-2.6.8-5.2 1.6-7.6 2.3 1.6-7 7.5-18 14.2-18.3z"/>
-    <path fill="#5e8e3e" d="M94 23c-.4 0-7.2-.5-7.2-.5s-4.8-4.8-5.3-5.3c-.2-.2-.5-.3-.8-.3v83.3l21.3-5.3s-6.9-46.7-7-47.2c-.1-.6-.6-1-1-.7z"/>
-    <path fill="#fff" d="M70 34l-2.5 9.2s-2.7-1.2-6-1c-4.8.3-4.9 3.3-4.8 4.1.3 4.1 11 5 11.6 14.6.5 7.5-4 12.6-10.4 13-7.8.5-12-4.1-12-4.1l1.6-7s4.3 3.3 7.8 3c2.3-.2 3.1-2 3-3.4-.4-5.3-9-5-9.6-13.7-.5-7.4 4.4-14.8 15-15.5 4.1-.3 6.3.8 6.3.8z"/>
-  </svg>`,
-  WordPress: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="12" cy="12" r="11" fill="#21759b"/>
-    <path fill="#fff" d="M3 12c0 3.6 2.1 6.8 5.1 8.3L3.8 8.5C3.3 9.6 3 10.8 3 12zm15.4-.4c0-1.1-.4-1.9-.7-2.5-.5-.8-.9-1.4-.9-2.1 0-.8.6-1.6 1.5-1.6h.1C16.8 3.8 14.5 2.9 12 2.9c-3.4 0-6.4 1.8-8.1 4.4.2 0 .4 0 .5 0 .9 0 2.2-.1 2.2-.1.5 0 .5.6.1.7 0 0-.5 0-1 .1l3.1 9.2 1.8-5.5-1.3-3.7c-.4 0-.9-.1-.9-.1-.5 0-.4-.7 0-.7 0 0 1.4.1 2.2.1.9 0 2.2-.1 2.2-.1.5 0 .5.6.1.7 0 0-.5 0-1 .1l3 9.1.8-2.8c.4-1.2.7-2 .7-2.7zm-6.3 1.3l-2.5 7.4c.8.2 1.6.3 2.4.3 1 0 1.9-.2 2.8-.5l-.1-.2-2.6-7zm7.6-5c0 .3.1.6.1.9 0 .8-.2 1.8-.6 3l-2.6 7.4c2.5-1.5 4.2-4.2 4.2-7.3 0-1.5-.4-2.8-1.1-4z"/>
-  </svg>`,
-  Wix: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <rect x="2" y="2" width="44" height="44" rx="10" fill="#000"/>
-    <text x="24" y="31" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-weight="700" font-size="20" text-anchor="middle" fill="#fff" letter-spacing="-1">Wix</text>
-    <circle cx="15" cy="14" r="1.8" fill="#fbbd71"/>
-  </svg>`,
-  Word: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="3" width="22" height="18" rx="2" fill="#2b579a"/>
-    <text x="12" y="16.5" font-family="Satoshi, Helvetica, Arial" font-weight="900" font-size="12" text-anchor="middle" fill="#fff">W</text>
-  </svg>`,
-  Excel: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="3" width="22" height="18" rx="2" fill="#217346"/>
-    <text x="12" y="16.5" font-family="Satoshi, Helvetica, Arial" font-weight="900" font-size="12" text-anchor="middle" fill="#fff">X</text>
-  </svg>`,
-  PowerPoint: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-    <rect x="1" y="3" width="22" height="18" rx="2" fill="#d24726"/>
-    <text x="12" y="16.5" font-family="Satoshi, Helvetica, Arial" font-weight="900" font-size="12" text-anchor="middle" fill="#fff">P</text>
-  </svg>`,
-  CapCut: `<svg viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
-    <defs>
-      <linearGradient id="capA" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#00f0ff"/>
-        <stop offset="1" stop-color="#0068ff"/>
-      </linearGradient>
-      <linearGradient id="capB" x1="0" y1="0" x2="1" y2="1">
-        <stop offset="0" stop-color="#ff4dff"/>
-        <stop offset="1" stop-color="#6c1eff"/>
-      </linearGradient>
-    </defs>
-    <rect x="2" y="2" width="44" height="44" rx="10" fill="#000"/>
-    <path fill="url(#capA)" d="M15 15.5c-2.5 2.5-2.5 6.5 0 9 1.8 1.8 4.3 2.3 6.5 1.6l-3-3c-.8-.1-1.5-.4-2.1-1-1.4-1.4-1.4-3.6 0-5 1.4-1.4 3.6-1.4 5 0 .6.6.9 1.3 1 2.1l3 3c.7-2.2.2-4.7-1.6-6.5-2.5-2.5-6.3-2.5-8.8-.2z"/>
-    <path fill="url(#capB)" d="M33 32.5c2.5-2.5 2.5-6.5 0-9-1.8-1.8-4.3-2.3-6.5-1.6l3 3c.8.1 1.5.4 2.1 1 1.4 1.4 1.4 3.6 0 5-1.4 1.4-3.6 1.4-5 0-.6-.6-.9-1.3-1-2.1l-3-3c-.7 2.2-.2 4.7 1.6 6.5 2.5 2.5 6.3 2.5 8.8.2z"/>
-    <circle cx="24" cy="24" r="2.8" fill="#fff"/>
-  </svg>`,
+  Figma:          `<img src="https://cdn.simpleicons.org/figma"               alt="Figma">`,
+  Photoshop:      `<img src="https://cdn.simpleicons.org/adobephotoshop"      alt="Photoshop">`,
+  'Premiere Pro': `<img src="https://cdn.simpleicons.org/adobepremierepro"    alt="Premiere Pro">`,
+  Canva:          `<img src="https://cdn.simpleicons.org/canva"               alt="Canva">`,
+  Framer:         `<img src="https://cdn.simpleicons.org/framer"              alt="Framer">`,
+  Shopify:        `<img src="https://cdn.simpleicons.org/shopify"             alt="Shopify">`,
+  WordPress:      `<img src="https://cdn.simpleicons.org/wordpress"           alt="WordPress">`,
+  Wix:            `<img src="https://cdn.simpleicons.org/wix"                 alt="Wix">`,
+  Word:           `<img src="https://cdn.simpleicons.org/microsoftword"       alt="Word">`,
+  Excel:          `<img src="https://cdn.simpleicons.org/microsoftexcel"      alt="Excel">`,
+  PowerPoint:     `<img src="https://cdn.simpleicons.org/microsoftpowerpoint" alt="PowerPoint">`,
+  CapCut:         `<img src="https://cdn.simpleicons.org/capcut"              alt="CapCut">`,
 };
 
 const SKILLS = [
