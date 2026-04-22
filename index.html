@@ -949,6 +949,22 @@
   }
   .video-card:hover .vc-play { transform: scale(1.12); }
   .carousel-dots { display: none; }
+
+  @media (hover: none) {
+    .video-carousel {
+      animation: none !important;
+      overflow-x: auto; scroll-snap-type: x mandatory;
+      scrollbar-width: none; -ms-overflow-style: none;
+      width: auto; padding-left: 20px; cursor: default;
+    }
+    .video-carousel::-webkit-scrollbar { display: none; }
+    .video-card {
+      scroll-snap-align: start;
+      transform: none !important;
+    }
+    .video-card:hover .vc-overlay { opacity: 1; }
+    .video-card.playing .vc-overlay { opacity: 0; }
+  }
 </style>
 </head>
 
@@ -1928,9 +1944,8 @@ function buildCarousel() {
   const track = document.getElementById('video-carousel');
   if (!track) return;
 
-  const CARD_W = 260 + 16; // largeur carte + gap
-  const offset = VIDEOS.length * CARD_W;
-  track.style.setProperty('--vc-offset', `-${offset}px`);
+  const CARD_W = 260 + 16;
+  const isTouch = window.matchMedia('(hover: none)').matches;
 
   function makeCard(src) {
     const card = document.createElement('div');
@@ -1943,17 +1958,32 @@ function buildCarousel() {
         </div>
       </div>`;
     const video = card.querySelector('video');
-    card.addEventListener('mouseenter', () => {
-      video.play(); card.classList.add('playing');
-    });
-    card.addEventListener('mouseleave', () => {
-      video.pause(); video.currentTime = 0; card.classList.remove('playing');
-    });
+
+    if (isTouch) {
+      card.addEventListener('click', () => {
+        if (video.paused) {
+          document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
+          video.play(); card.classList.add('playing');
+        } else {
+          video.pause(); card.classList.remove('playing');
+        }
+      });
+    } else {
+      card.addEventListener('mouseenter', () => { video.play(); card.classList.add('playing'); });
+      card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; card.classList.remove('playing'); });
+    }
     return card;
   }
 
-  // Originaux + clones pour le loop seamless
-  [...VIDEOS, ...VIDEOS].forEach(src => track.appendChild(makeCard(src)));
+  if (isTouch) {
+    // Mobile : 8 cartes, scroll natif, pas de loop
+    VIDEOS.forEach(src => track.appendChild(makeCard(src)));
+  } else {
+    // Desktop : 16 cartes (8 + 8 clones) pour le loop CSS infini
+    const offset = VIDEOS.length * CARD_W;
+    track.style.setProperty('--vc-offset', `-${offset}px`);
+    [...VIDEOS, ...VIDEOS].forEach(src => track.appendChild(makeCard(src)));
+  }
 }
 buildCarousel();
 
