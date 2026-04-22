@@ -950,18 +950,17 @@
   .video-card:hover .vc-play { transform: scale(1.12); }
   .carousel-dots { display: none; }
 
-  @media (hover: none) {
-    .video-carousel-outer { overflow: visible; }
+  @media (max-width: 720px) {
     .video-carousel {
       animation: none !important;
       overflow-x: auto;
       scrollbar-width: none; -ms-overflow-style: none;
       padding-left: 20px; cursor: default;
+      touch-action: pan-x;
       -webkit-overflow-scrolling: touch;
     }
     .video-carousel::-webkit-scrollbar { display: none; }
     .video-card { transform: none !important; }
-    .video-card:hover .vc-overlay { opacity: 1; }
     .video-card.playing .vc-overlay { opacity: 0; }
   }
 </style>
@@ -1944,7 +1943,7 @@ function buildCarousel() {
   if (!track) return;
 
   const CARD_W = 260 + 16;
-  const isTouch = window.matchMedia('(hover: none)').matches;
+  const isTouch = window.innerWidth <= 720;
 
   function makeCard(src) {
     const card = document.createElement('div');
