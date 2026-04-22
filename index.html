@@ -848,6 +848,114 @@
     animation: none !important;
     transition: none !important;
   }
+
+  /* ---------- SCROLL PROGRESS BAR ---------- */
+  #scroll-progress {
+    position: fixed; top: 0; left: 0;
+    width: 100%; height: 2px; z-index: 200;
+    background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    transform-origin: left; transform: scaleX(0);
+    box-shadow: 0 0 8px var(--accent);
+    pointer-events: none;
+  }
+
+  /* ---------- RÉALISATIONS / STATS ---------- */
+  .stats-platforms {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;
+    margin-bottom: 60px;
+  }
+  @media (max-width: 880px) { .stats-platforms { grid-template-columns: 1fr; } }
+
+  .platform-card {
+    padding: 32px; border-radius: 20px;
+    background: var(--glass); backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-b);
+    transition: all .4s cubic-bezier(.2,.8,.2,1);
+    position: relative; overflow: hidden;
+  }
+  .platform-card::before {
+    content: ""; position: absolute; inset: -1px; border-radius: 20px; padding: 1px;
+    background: linear-gradient(135deg, transparent 40%, var(--accent) 70%, transparent);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude;
+    opacity: 0; transition: opacity .4s ease; pointer-events: none;
+  }
+  .platform-card:hover { transform: translateY(-6px); box-shadow: 0 20px 60px rgba(40,151,255,0.15); }
+  .platform-card:hover::before { opacity: 1; }
+
+  .plat-header { display: flex; align-items: center; gap: 14px; margin-bottom: 28px; }
+  .plat-icon {
+    width: 44px; height: 44px; border-radius: 14px;
+    background: var(--accent-soft); border: 1px solid var(--glass-b);
+    display: grid; place-items: center; flex-shrink: 0;
+  }
+  .plat-name { font-size: 16px; font-weight: 600; line-height: 1.2; }
+  .plat-period {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px; letter-spacing: 0.1em; color: var(--ink-mute); margin-top: 3px;
+  }
+  .stat-row { display: flex; flex-direction: column; }
+  .stat-item {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 13px 0; border-bottom: 1px solid var(--hair);
+  }
+  .stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .stat-label { font-size: 13px; color: var(--ink-dim); }
+  .stat-value-wrap { display: flex; align-items: baseline; gap: 7px; }
+  .stat-value { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; color: var(--ink); }
+  .stat-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #34D399; }
+
+  /* ---------- VIDEO CAROUSEL ---------- */
+  .video-carousel-outer { position: relative; overflow: hidden; margin: 0 -48px; }
+  @media (max-width: 720px) { .video-carousel-outer { margin: 0 -20px; } }
+
+  .video-carousel {
+    display: flex; gap: 16px;
+    padding: 8px 48px 24px;
+    overflow-x: auto; scroll-snap-type: x mandatory;
+    scrollbar-width: none; -ms-overflow-style: none;
+    cursor: grab; user-select: none;
+  }
+  .video-carousel::-webkit-scrollbar { display: none; }
+  .video-carousel.is-dragging { cursor: grabbing; }
+
+  .video-card {
+    flex: 0 0 260px; height: 462px;
+    border-radius: 20px; overflow: hidden;
+    background: var(--bg-2); border: 1px solid var(--glass-b);
+    scroll-snap-align: start; position: relative;
+    transition: border-color .3s ease, transform .3s ease;
+  }
+  .video-card:hover { border-color: var(--accent); transform: scale(1.025); }
+  .video-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vc-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.28);
+    display: grid; place-items: center; transition: opacity .3s ease;
+  }
+  .video-card:hover .vc-overlay,
+  .video-card.playing .vc-overlay { opacity: 0; }
+  .vc-play {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: grid; place-items: center;
+    transition: transform .2s ease;
+  }
+  .video-card:hover .vc-play { transform: scale(1.12); }
+
+  .carousel-dots {
+    display: flex; justify-content: center; align-items: center; gap: 6px;
+    margin-top: 20px;
+  }
+  .carousel-dot {
+    width: 6px; height: 6px; border-radius: 3px;
+    background: rgba(255,255,255,0.15); border: none; cursor: pointer;
+    transition: all .3s cubic-bezier(.2,.8,.2,1);
+  }
+  .carousel-dot.active {
+    background: var(--accent); width: 22px;
+    box-shadow: 0 0 8px var(--accent);
+  }
 </style>
 </head>
 
@@ -855,6 +963,7 @@
   <div class="bg-fx"></div>
   <div class="bg-grid"></div>
   <canvas class="particles" id="particles"></canvas>
+  <div id="scroll-progress"></div>
 
   <nav class="nav" id="nav">
     <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false">
@@ -865,6 +974,7 @@
     <a href="#skills" data-s="skills">Compétences</a>
     <a href="#formation" data-s="formation">Formation</a>
     <a href="#langues" data-s="langues">Langues</a>
+    <a href="#realisations" data-s="realisations">Réalisations</a>
     <a href="#contact" data-s="contact">Contact</a>
   </nav>
 
@@ -1173,6 +1283,154 @@
       </div>
     </section>
 
+    <!-- ============ RÉALISATIONS ============ -->
+    <section id="realisations" data-screen-label="06 Réalisations">
+      <div class="reveal">
+        <div class="eyebrow">06 — Réalisations</div>
+        <h2>Les chiffres<br>parlent.</h2>
+      </div>
+
+      <div class="stats-platforms">
+        <!-- Shopify -->
+        <div class="platform-card reveal d1">
+          <div class="plat-header">
+            <div class="plat-icon">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M15.5 3.5c-.1 0-.2 0-.3.1l-1.3.4c-.2-.5-.4-1-.8-1.4C12.4 1.9 11.7 1.5 11 1.5c0 0-.1 0-.1.1-.1-.1-.2-.2-.3-.3-.5-.4-1.1-.6-1.8-.6-.9.1-1.8.7-2.5 1.7C5.8 3.5 5.4 4.4 5.2 5.2l-2.1.6c-.6.2-1.1.4-1.2 1.2L.1 20.2 14 22.5 20 21.3 15.5 3.5z" fill="#95BF47"/>
+                <path d="M20 21.3l-2.8-.6L14 3.5c0 0-.2-.1-.5-.2v19.2l6-1.2z" fill="#5E8E3E"/>
+              </svg>
+            </div>
+            <div>
+              <div class="plat-name">Shopify</div>
+              <div class="plat-period">SEPT. 2025 — AVR. 2026</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <span class="stat-label">Visites</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="5460" data-suffix="">0</span>
+                <span class="stat-delta">↑ 223 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Ventes totales</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="2439" data-suffix=" €">0</span>
+                <span class="stat-delta">↑ 190 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Commandes</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="90" data-suffix="">0</span>
+                <span class="stat-delta">↑ 221 %</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Facebook -->
+        <div class="platform-card reveal d2">
+          <div class="plat-header">
+            <div class="plat-icon" style="background:rgba(24,119,242,0.12);">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="#1877F2"><path d="M13 22v-8h3l.5-4H13V7.5c0-1.1.3-1.9 2-1.9h2V2.1C16.5 2 15.4 2 14.3 2 11.8 2 10 3.5 10 6.3V10H7v4h3v8h3z"/></svg>
+            </div>
+            <div>
+              <div class="plat-name">Facebook</div>
+              <div class="plat-period">SEPT. 2025 — AVR. 2026</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <span class="stat-label">Vues</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="174800" data-format="k">0</span>
+                <span class="stat-delta">↑ 77,7 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Interactions</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="2300" data-format="k">0</span>
+                <span class="stat-delta">↑ 57,6 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Nouveaux followers</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="156" data-suffix="">0</span>
+                <span class="stat-delta">↑ 47,2 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Clics sur lien</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="538" data-suffix="">0</span>
+                <span class="stat-delta">↑ 234 %</span>
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Instagram -->
+        <div class="platform-card reveal d3">
+          <div class="plat-header">
+            <div class="plat-icon" style="background:rgba(193,53,132,0.12);">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke-width="1.8">
+                <defs>
+                  <linearGradient id="ig-g" x1="0" y1="0" x2="1" y2="1">
+                    <stop offset="0%" stop-color="#f09433"/>
+                    <stop offset="50%" stop-color="#dc2743"/>
+                    <stop offset="100%" stop-color="#bc1888"/>
+                  </linearGradient>
+                </defs>
+                <rect x="3" y="3" width="18" height="18" rx="5" stroke="url(#ig-g)"/>
+                <circle cx="12" cy="12" r="4" stroke="url(#ig-g)"/>
+                <circle cx="17.5" cy="6.5" r="0.8" fill="#dc2743" stroke="none"/>
+              </svg>
+            </div>
+            <div>
+              <div class="plat-name">Instagram</div>
+              <div class="plat-period">JANV. — AVR. 2026 · 90 JOURS</div>
+            </div>
+          </div>
+          <div class="stat-row">
+            <div class="stat-item">
+              <span class="stat-label">Vues</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="42416" data-suffix="">0</span>
+                <span class="stat-delta">↑ 376,5 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Comptes touchés</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="21210" data-suffix="">0</span>
+                <span class="stat-delta">↑ 376,5 %</span>
+              </span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Reach non-abonnés</span>
+              <span class="stat-value-wrap">
+                <span class="stat-value" data-count="72" data-suffix=" %">0</span>
+                <span class="stat-delta">audience froide</span>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video carousel -->
+      <div class="reveal d2" style="margin-bottom: 28px;">
+        <div class="eyebrow">Contenus produits</div>
+      </div>
+      <div class="video-carousel-outer reveal d3">
+        <div class="video-carousel" id="video-carousel"></div>
+        <div class="carousel-dots" id="carousel-dots"></div>
+      </div>
+    </section>
+
     <!-- ============ CONTACT ============ -->
     <section class="contact" id="contact" data-screen-label="07 Contact">
       <div class="eyebrow reveal" style="justify-content:center;display:inline-flex;">06 — Contact</div>
@@ -1380,12 +1638,41 @@ sizeOrbit();
 window.addEventListener('resize', sizeOrbit);
 
 /* =========================================================
+   ANIMATED COUNTERS
+========================================================= */
+function animateCounter(el) {
+  const target = +el.dataset.count;
+  const fmt = el.dataset.format || '';
+  const suffix = el.dataset.suffix || '';
+  const duration = 2000;
+  const start = performance.now();
+  function update(now) {
+    const t = Math.min((now - start) / duration, 1);
+    const ease = 1 - Math.pow(1 - t, 3);
+    const v = Math.round(target * ease);
+    if (fmt === 'k') {
+      el.textContent = (v / 1000).toFixed(1).replace('.', ',') + ' K';
+    } else {
+      el.textContent = v.toLocaleString('fr-FR') + suffix;
+    }
+    if (t < 1) requestAnimationFrame(update);
+  }
+  requestAnimationFrame(update);
+}
+
+/* =========================================================
    INTERSECTION REVEAL
 ========================================================= */
 const io = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('in');
+      // Stats counters
+      if (e.target.classList.contains('platform-card')) {
+        e.target.querySelectorAll('.stat-value').forEach(sv => {
+          if (!sv.dataset.animated) { sv.dataset.animated = '1'; animateCounter(sv); }
+        });
+      }
       // Languages: animate fills
       if (e.target.classList.contains('lang')) {
         const pct = +e.target.dataset.fill;
@@ -1425,7 +1712,7 @@ contactIO.observe($('.contact h2'));
 /* =========================================================
    NAV ACTIVE STATE
 ========================================================= */
-const sections = ['hero','experience','skills','formation','langues','contact'].map(id => ({id, el: document.getElementById(id)}));
+const sections = ['hero','experience','skills','formation','langues','initiatives','realisations','contact'].map(id => ({id, el: document.getElementById(id)}));
 const navLinks = $$('.nav a');
 function updateNav() {
   const y = window.scrollY + window.innerHeight * 0.35;
@@ -1457,6 +1744,16 @@ function updateTimelineProgress() {
     const mid = r.top + r.height / 2;
     if (mid < winH * 0.6) el.classList.add('in');
   });
+}
+
+/* =========================================================
+   SCROLL PROGRESS BAR
+========================================================= */
+function updateScrollProgress() {
+  const sp = document.getElementById('scroll-progress');
+  if (!sp) return;
+  const max = document.documentElement.scrollHeight - window.innerHeight;
+  sp.style.transform = `scaleX(${max > 0 ? window.scrollY / max : 0})`;
 }
 
 /* =========================================================
@@ -1546,6 +1843,7 @@ window.addEventListener('scroll', () => {
       updateNav();
       updateTimelineProgress();
       parallax();
+      updateScrollProgress();
       ticking = false;
     });
     ticking = true;
@@ -1619,6 +1917,77 @@ if (window.matchMedia('(hover: hover)').matches) {
     glow.style.top = e.clientY + 'px';
   });
 }
+
+/* =========================================================
+   VIDEO CAROUSEL
+   — Ajoute tes vidéos dans ton repo GitHub :
+     Portfolio-quentin-carriere1/main/videos/reel1.mp4 … reel6.mp4
+========================================================= */
+const VIDEO_BASE = 'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/videos/';
+const VIDEOS = [
+  VIDEO_BASE + 'reel1.mp4',
+  VIDEO_BASE + 'reel2.mp4',
+  VIDEO_BASE + 'reel3.mp4',
+  VIDEO_BASE + 'reel4.mp4',
+  VIDEO_BASE + 'reel5.mp4',
+  VIDEO_BASE + 'reel6.mp4',
+];
+
+function buildCarousel() {
+  const track = document.getElementById('video-carousel');
+  const dotsWrap = document.getElementById('carousel-dots');
+  if (!track || !dotsWrap) return;
+
+  VIDEOS.forEach((src, i) => {
+    const card = document.createElement('div');
+    card.className = 'video-card';
+    card.innerHTML = `
+      <video src="${src}" loop muted preload="none" playsinline></video>
+      <div class="vc-overlay">
+        <div class="vc-play">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><polygon points="6,3 20,12 6,21"/></svg>
+        </div>
+      </div>`;
+
+    const video = card.querySelector('video');
+    card.addEventListener('click', () => {
+      if (video.paused) {
+        document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
+        video.play();
+        card.classList.add('playing');
+      } else {
+        video.pause();
+        card.classList.remove('playing');
+      }
+    });
+    track.appendChild(card);
+
+    const dot = document.createElement('button');
+    dot.className = 'carousel-dot' + (i === 0 ? ' active' : '');
+    dot.addEventListener('click', () => {
+      track.scrollTo({ left: i * (260 + 16), behavior: 'smooth' });
+    });
+    dotsWrap.appendChild(dot);
+  });
+
+  track.addEventListener('scroll', () => {
+    const active = Math.round(track.scrollLeft / (260 + 16));
+    dotsWrap.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === active));
+  }, { passive: true });
+
+  let dragging = false, startX, scrollLeft;
+  track.addEventListener('mousedown', e => {
+    dragging = true; track.classList.add('is-dragging');
+    startX = e.pageX - track.offsetLeft; scrollLeft = track.scrollLeft;
+  });
+  document.addEventListener('mouseup', () => { dragging = false; track.classList.remove('is-dragging'); });
+  track.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    e.preventDefault();
+    track.scrollLeft = scrollLeft - (e.pageX - track.offsetLeft - startX);
+  });
+}
+buildCarousel();
 
 /* =========================================================
    MOBILE BURGER MENU
