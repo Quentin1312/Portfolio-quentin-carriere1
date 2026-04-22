@@ -2055,5 +2055,23 @@ if (burger) {
   }));
 }
 </script>
+<script>
+  document.querySelectorAll('.video-card').forEach(card => {
+    const video = card.querySelector('video');
+    
+    card.addEventListener('click', () => {
+      // On retire le mute au clic pour activer le son
+      video.muted = false; 
+      
+      if (video.paused) {
+        video.play();
+        card.classList.add('playing');
+      } else {
+        video.pause();
+        card.classList.remove('playing');
+      }
+    });
+  });
+</script>
 </body>
 </html>
