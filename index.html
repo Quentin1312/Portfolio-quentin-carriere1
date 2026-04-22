@@ -906,73 +906,92 @@
   .stat-delta { font-family: 'JetBrains Mono', monospace; font-size: 10px; color: #34D399; }
 
   /* ---------- VIDEO CAROUSEL ---------- */
-  <style>
-  /* --- CONTENEUR --- */
   .video-carousel-outer {
-    margin: 0 -48px;
-    padding: 8px 0 24px;
-    overflow-x: auto; /* Permet le scroll manuel */
-    white-space: nowrap;
-    scrollbar-width: none; /* Cache scrollbar Firefox */
-    -webkit-overflow-scrolling: touch; /* Scroll fluide iOS */
+    overflow: hidden; margin: 0 -48px; padding: 8px 0 24px;
   }
+  @media (max-width: 720px) { .video-carousel-outer { margin: 0 -20px; } }
 
-  .video-carousel-outer::-webkit-scrollbar {
-    display: none; /* Cache scrollbar Chrome/Safari */
-  }
-
-  /* --- LE RAIL (L'ANIMATION) --- */
   .video-carousel {
-    display: flex;
-    gap: 16px;
+    display: flex; gap: 16px;
     width: max-content;
     padding-left: 48px;
-    /* On utilise une animation qui ne bloque pas le scroll manuel */
-    animation: vc-scroll-linear 50s linear infinite;
+    animation: vc-scroll 50s linear infinite;
+    will-change: transform;
+  }
+  .video-carousel-outer:hover .video-carousel { animation-play-state: paused; }
+
+  @keyframes vc-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(var(--vc-offset, -1380px)); }
   }
 
-  /* On met l'animation en pause quand on touche/clique */
-  .video-carousel-outer:active .video-carousel,
-  .video-carousel-outer:hover .video-carousel {
-    animation-play-state: paused;
-  }
-
-  @keyframes vc-scroll-linear {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(calc(-100% / 2)); } /* Ajuste selon ton nombre de clones */
-  }
-
-  /* --- LES CARTES --- */
   .video-card {
-    flex: 0 0 260px;
-    height: 462px;
-    border-radius: 20px;
-    overflow: hidden;
-    background: #222;
-    border: 1px solid rgba(255,255,255,0.1);
+    flex: 0 0 260px; height: 462px;
+    border-radius: 20px; overflow: hidden;
+    background: var(--bg-2); border: 1px solid var(--glass-b);
     position: relative;
-    display: inline-block; /* Pour le défilement horizontal */
-    transition: transform .3s ease;
+    transition: border-color .3s ease, transform .3s ease;
   }
-
-  .video-card video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+  .video-card:hover { border-color: var(--accent); transform: scale(1.03); }
+  .video-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vc-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.28);
+    display: grid; place-items: center; transition: opacity .3s ease;
   }
+  .video-card:hover .vc-overlay,
+  .video-card.playing .vc-overlay { opacity: 0; }
+  .vc-play {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: grid; place-items: center;
+    transition: transform .2s ease;
+  }
+  .video-card:hover .vc-play { transform: scale(1.12); }
+  .carousel-dots { display: none; }
 
-  /* --- MOBILE SPECIFIQUE --- */
   @media (max-width: 720px) {
-    .video-carousel-outer {
-      margin: 0 -20px;
-    }
     .video-carousel {
-      padding-left: 20px;
-      /* On peut ralentir un peu l'auto-scroll sur mobile pour que ce soit moins agressif */
-      animation-duration: 60s; 
-    }
+    display: flex; gap: 16px;
+    width: max-content;
+    padding-left: 48px;
+    animation: vc-scroll 50s linear infinite;
+    will-change: transform;
   }
+  .video-carousel-outer:hover .video-carousel { animation-play-state: paused; }
+
+  @keyframes vc-scroll {
+    from { transform: translateX(0); }
+    to   { transform: translateX(var(--vc-offset, -1380px)); }
+  }
+
+  .video-card {
+    flex: 0 0 260px; height: 462px;
+    border-radius: 20px; overflow: hidden;
+    background: var(--bg-2); border: 1px solid var(--glass-b);
+    position: relative;
+    transition: border-color .3s ease, transform .3s ease;
+  }
+  .video-card:hover { border-color: var(--accent); transform: scale(1.03); }
+  .video-card video { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .vc-overlay {
+    position: absolute; inset: 0; background: rgba(0,0,0,0.28);
+    display: grid; place-items: center; transition: opacity .3s ease;
+  }
+  .video-card:hover .vc-overlay,
+  .video-card.playing .vc-overlay { opacity: 0; }
+  .vc-play {
+    width: 52px; height: 52px; border-radius: 50%;
+    background: rgba(255,255,255,0.18); backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255,255,255,0.35);
+    display: grid; place-items: center;
+    transition: transform .2s ease;
+  }
+  .video-card:hover .vc-play { transform: scale(1.12); }
+  .carousel-dots { display: none; }
 </style>
+</head>
+
 <body>
   <div class="bg-fx"></div>
   <div class="bg-grid"></div>
