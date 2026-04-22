@@ -951,17 +951,16 @@
   .carousel-dots { display: none; }
 
   @media (hover: none) {
+    .video-carousel-outer { overflow: visible; }
     .video-carousel {
       animation: none !important;
-      overflow-x: auto; scroll-snap-type: x mandatory;
+      overflow-x: auto;
       scrollbar-width: none; -ms-overflow-style: none;
-      width: auto; padding-left: 20px; cursor: default;
+      padding-left: 20px; cursor: default;
+      -webkit-overflow-scrolling: touch;
     }
     .video-carousel::-webkit-scrollbar { display: none; }
-    .video-card {
-      scroll-snap-align: start;
-      transform: none !important;
-    }
+    .video-card { transform: none !important; }
     .video-card:hover .vc-overlay { opacity: 1; }
     .video-card.playing .vc-overlay { opacity: 0; }
   }
@@ -1718,7 +1717,7 @@ contactIO.observe($('.contact h2'));
 /* =========================================================
    NAV ACTIVE STATE
 ========================================================= */
-const sections = ['hero','experience','skills','formation','langues','initiatives','realisations','contact'].map(id => ({id, el: document.getElementById(id)}));
+const sections = ['hero','experience','realisations','skills','formation','langues','initiatives','contact'].map(id => ({id, el: document.getElementById(id)}));
 const navLinks = $$('.nav a');
 function updateNav() {
   const y = window.scrollY + window.innerHeight * 0.35;
@@ -1976,8 +1975,29 @@ function buildCarousel() {
   }
 
   if (isTouch) {
-    // Mobile : 8 cartes, scroll natif, pas de loop
-    VIDEOS.forEach(src => track.appendChild(makeCard(src)));
+    const loopWidth = VIDEOS.length * CARD_W;
+    [...VIDEOS, ...VIDEOS].forEach(src => {
+      const card = makeCard(src);
+      track.appendChild(card);
+      card.querySelector('video').load();
+    });
+
+    let touching = false;
+    let resumeTimer;
+    (function mobileScroll() {
+      if (!touching) {
+        track.scrollLeft += 0.6;
+        if (track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+      }
+      requestAnimationFrame(mobileScroll);
+    })();
+
+    track.addEventListener('touchstart', () => {
+      touching = true; clearTimeout(resumeTimer);
+    }, { passive: true });
+    track.addEventListener('touchend', () => {
+      resumeTimer = setTimeout(() => { touching = false; }, 2500);
+    }, { passive: true });
   } else {
     // Desktop : 16 cartes (8 + 8 clones) pour le loop CSS infini
     const offset = VIDEOS.length * CARD_W;
