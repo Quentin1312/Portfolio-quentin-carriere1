@@ -1005,6 +1005,46 @@
   }
   .video-card:hover .vc-play { transform: scale(1.12); }
   .carousel-dots { display: none; }
+
+  .scroll-hint {
+    display: none;
+  }
+  @media (max-width: 720px) {
+    .scroll-hint {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      justify-content: center;
+      margin-top: 14px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.08em;
+      color: var(--ink-mute);
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+    .scroll-hint.hidden { opacity: 0; pointer-events: none; }
+    .scroll-hint-arrow {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+    }
+    .scroll-hint-arrow span {
+      display: block;
+      width: 5px; height: 5px;
+      border-right: 1.5px solid var(--accent);
+      border-top: 1.5px solid var(--accent);
+      transform: rotate(45deg);
+      opacity: 0;
+      animation: hint-slide 1.6s ease infinite;
+    }
+    .scroll-hint-arrow span:nth-child(2) { animation-delay: 0.2s; }
+    .scroll-hint-arrow span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes hint-slide {
+      0%, 100% { opacity: 0; transform: rotate(45deg) translate(-2px, -2px); }
+      50%       { opacity: 1; transform: rotate(45deg) translate(2px, 2px); }
+    }
+  }
 </style>
 </head>
 
@@ -1337,6 +1377,7 @@
         <div class="video-carousel" id="video-carousel"></div>
         <div class="carousel-dots" id="carousel-dots"></div>
       </div>
+      <div class="scroll-hint" id="scroll-hint"></div>
     </section>
 
     <!-- ============ SKILLS ============ -->
@@ -2057,6 +2098,14 @@ function buildCarousel() {
       }
       requestAnimationFrame(mobileScroll);
     })();
+
+    const hint = document.getElementById('scroll-hint');
+    if (hint) {
+      hint.innerHTML = '<div class="scroll-hint-arrow"><span></span><span></span><span></span></div>swipe';
+      outer.addEventListener('touchstart', () => {
+        hint.classList.add('hidden');
+      }, { once: true, passive: true });
+    }
 
     outer.addEventListener('touchstart', () => {
       touching = true; clearTimeout(resumeTimer);
