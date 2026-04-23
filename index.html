@@ -2160,51 +2160,6 @@ function buildCarousel() {
 buildCarousel();
 
 /* =========================================================
-   CUSTOM CURSOR
-========================================================= */
-(function() {
-  const dot  = document.createElement('div'); dot.id  = 'cursor-dot';
-  const ring = document.createElement('div'); ring.id = 'cursor-ring';
-  document.body.append(dot, ring);
-
-  const DOT_R  = 3;   // radius dot
-  const RING_R = 15;  // radius ring
-  const LERP   = 0.13;
-
-  let mx = 0, my = 0;
-  let rx = 0, ry = 0;
-  let visible = false;
-
-  document.addEventListener('mousemove', e => {
-    mx = e.clientX; my = e.clientY;
-    if (!visible) {
-      visible = true;
-      dot.style.opacity  = '1';
-      ring.style.opacity = '1';
-    }
-  });
-
-  const interactives = 'a, button, [role="button"], input, textarea, label, select';
-  document.addEventListener('mouseover', e => {
-    if (e.target.closest(interactives)) document.body.classList.add('cursor-hover');
-  });
-  document.addEventListener('mouseout', e => {
-    if (e.target.closest(interactives)) document.body.classList.remove('cursor-hover');
-  });
-  document.addEventListener('mousedown', () => document.body.classList.add('cursor-active'));
-  document.addEventListener('mouseup',   () => document.body.classList.remove('cursor-active'));
-
-  function tick() {
-    dot.style.transform  = `translate3d(${mx - DOT_R}px, ${my - DOT_R}px, 0)`;
-    rx += (mx - rx) * LERP;
-    ry += (my - ry) * LERP;
-    ring.style.transform = `translate3d(${rx - RING_R}px, ${ry - RING_R}px, 0)`;
-    requestAnimationFrame(tick);
-  }
-  requestAnimationFrame(tick);
-})();
-
-/* =========================================================
    MOBILE BURGER MENU
 ========================================================= */
 const burger = document.getElementById('nav-burger');
@@ -2219,6 +2174,59 @@ if (burger) {
     burger.setAttribute('aria-expanded', 'false');
   }));
 }
+</script>
+
+<script>
+(function () {
+  // Force cursor none via injected style (beats any specificity issue)
+  var forceCss = document.createElement('style');
+  forceCss.textContent = 'html,body,*,*::before,*::after{cursor:none!important}';
+  document.head.appendChild(forceCss);
+
+  var dot  = document.createElement('div');
+  var ring = document.createElement('div');
+
+  dot.setAttribute('style',
+    'position:fixed;top:0;left:0;width:6px;height:6px;border-radius:50%;' +
+    'background:#2897FF;pointer-events:none;z-index:99999;opacity:0;' +
+    'will-change:transform;transition:opacity .3s;');
+
+  ring.setAttribute('style',
+    'position:fixed;top:0;left:0;width:30px;height:30px;border-radius:50%;' +
+    'border:1.5px solid rgba(40,151,255,0.5);pointer-events:none;z-index:99998;opacity:0;' +
+    'will-change:transform;transition:opacity .3s,width .2s,height .2s,border-color .2s;');
+
+  document.body.appendChild(dot);
+  document.body.appendChild(ring);
+
+  var mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', function(e) {
+    mx = e.clientX; my = e.clientY;
+    dot.style.opacity = ring.style.opacity = '1';
+  });
+
+  document.addEventListener('mouseover', function(e) {
+    if (e.target && e.target.closest('a,button,input,textarea,label,select,[role=button]')) {
+      ring.style.width = ring.style.height = '46px';
+      ring.style.borderColor = 'rgba(40,151,255,0.25)';
+    }
+  });
+  document.addEventListener('mouseout', function(e) {
+    if (e.target && e.target.closest('a,button,input,textarea,label,select,[role=button]')) {
+      ring.style.width = ring.style.height = '30px';
+      ring.style.borderColor = 'rgba(40,151,255,0.5)';
+    }
+  });
+
+  (function tick() {
+    dot.style.transform  = 'translate3d(' + (mx - 3)  + 'px,' + (my - 3)  + 'px,0)';
+    rx += (mx - rx) * 0.13;
+    ry += (my - ry) * 0.13;
+    ring.style.transform = 'translate3d(' + (rx - 15) + 'px,' + (ry - 15) + 'px,0)';
+    requestAnimationFrame(tick);
+  })();
+})();
 </script>
 </body>
 </html>
