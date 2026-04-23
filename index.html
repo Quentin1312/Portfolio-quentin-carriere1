@@ -495,6 +495,24 @@
     transform: translateY(-1px);
   }
 
+  .exp-logo-wrap { margin-bottom: 16px; }
+  .exp-logo {
+    width: 44px; height: 44px; border-radius: 12px;
+    border: 1px solid var(--glass-b);
+    background: rgba(255,255,255,0.06);
+    object-fit: contain; padding: 6px;
+    display: block;
+  }
+  .exp-logo-initials {
+    width: 44px; height: 44px; border-radius: 12px;
+    border: 1px solid var(--glass-b);
+    background: var(--accent-soft);
+    display: grid; place-items: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.04em;
+    color: var(--accent);
+  }
+
   .exp-tags { display: flex; flex-wrap: wrap; gap: 8px; }
   .tag {
     font-size: 11px; letter-spacing: 0.04em;
@@ -1186,9 +1204,9 @@
           <span>20 ans</span>
         </div>
         <p class="hero-role reveal d3">
-          Je construis des <span class="k">stratégies digitales</span> qui génèrent de l'engagement,
-          des <span class="k">contenus visuels</span> qui convertissent,
-          et des identités de marque qui laissent une impression durable.
+          Alternant en <span class="k">communication digitale</span>, passionné par le
+          <span class="k">webdesign</span>, la création visuelle et la construction
+          d'identités de marque qui ont du caractère.
         </p>
         <p class="hero-pitch reveal d4">
           En alternance chez Au Fil d'Ariane · stratégie, création & exécution — en autonomie.
@@ -1237,6 +1255,9 @@
 
         <div class="exp reveal">
           <div class="exp-card">
+            <div class="exp-logo-wrap">
+              <img class="exp-logo" src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/aufildariane.png" alt="Au Fil d'Ariane" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="exp-logo-initials" style="display:none">FA</span>
+            </div>
             <div class="exp-head">
               <h3>Alternance en communication digitale</h3>
               <span class="exp-date">SEPT 2025 — SEPT 2026</span>
@@ -1273,6 +1294,9 @@
 
         <div class="exp reveal">
           <div class="exp-card">
+            <div class="exp-logo-wrap">
+              <img class="exp-logo" src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/bloczone.png" alt="Bloc Zone" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="exp-logo-initials" style="display:none">BZ</span>
+            </div>
             <div class="exp-head">
               <h3>Stage de communication <span class="paren">(2e année de BUT)</span></h3>
               <span class="exp-date">AVR — MAI 2025</span>
@@ -1300,6 +1324,9 @@
 
         <div class="exp reveal">
           <div class="exp-card">
+            <div class="exp-logo-wrap">
+              <img class="exp-logo" src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/tc.png" alt="IUT TC" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="exp-logo-initials" style="display:none">TC</span>
+            </div>
             <div class="exp-head">
               <h3>SAE multicompétences</h3>
               <span class="exp-date">PROJET · BUT TC</span>
@@ -1322,6 +1349,9 @@
 
         <div class="exp reveal">
           <div class="exp-card">
+            <div class="exp-logo-wrap">
+              <img class="exp-logo" src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/tc.png" alt="IUT TC" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><span class="exp-logo-initials" style="display:none">TC</span>
+            </div>
             <div class="exp-head">
               <h3>SAE communication</h3>
               <span class="exp-date">PROJET · BUT TC</span>
