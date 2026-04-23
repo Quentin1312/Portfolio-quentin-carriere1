@@ -1164,13 +1164,16 @@
     width: 100%; height: 100%;
     object-fit: cover; display: block;
   }
-  .creation-card .creation-placeholder {
+  .creation-placeholder {
     width: 100%; height: 100%;
     display: grid; place-items: center;
-    background: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0 1px, transparent 1px 10px);
+    background:
+      repeating-linear-gradient(45deg, rgba(40,151,255,0.03) 0 1px, transparent 1px 12px),
+      linear-gradient(135deg, rgba(40,151,255,0.06), transparent);
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px; letter-spacing: 0.1em;
+    font-size: 10px; letter-spacing: 0.15em; text-transform: uppercase;
     color: var(--ink-mute);
+    border-radius: 16px;
   }
 
   /* ---------- TILT 3D ---------- */
@@ -1712,18 +1715,18 @@
     </section>
 
     <!-- ============ CRÉATIONS ============ -->
-    <section id="creations" data-screen-label="Créations" style="padding-top:60px;padding-bottom:60px;">
-      <div class="creations-title reveal">MES CRÉATIONS</div>
-      <div class="creations-carousel-outer reveal d1">
+    <section id="creations" data-screen-label="Créations" style="padding:60px 48px;">
+      <div class="creations-title">MES CRÉATIONS</div>
+      <div class="creations-carousel-outer">
         <div class="creations-track">
-          <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere1.jpg" alt="Création 1" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere1.jpg</div>'"></div>
+          <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere1.jpg" alt="Création 1" onerror="creationErr(this)"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere2.jpg" alt="Création 2" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere2.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere3.jpg" alt="Création 3" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere3.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere4.jpg" alt="Création 4" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere4.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere5.jpg" alt="Création 5" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere5.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere6.jpg" alt="Création 6" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere6.jpg</div>'"></div>
           <!-- Doublons pour boucle seamless -->
-          <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere1.jpg" alt="" aria-hidden="true" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere1.jpg</div>'"></div>
+          <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere1.jpg" alt="" aria-hidden="true" onerror="creationErr(this)"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere2.jpg" alt="" aria-hidden="true" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere2.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere3.jpg" alt="" aria-hidden="true" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere3.jpg</div>'"></div>
           <div class="creation-card"><img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/creations/banniere4.jpg" alt="" aria-hidden="true" onerror="this.parentElement.innerHTML='<div class=\'creation-placeholder\'>banniere4.jpg</div>'"></div>
@@ -2587,6 +2590,10 @@ if (burger) {
 </script>
 
 <script>
+/* ---- Création placeholder fallback ---- */
+function creationErr(img) {
+  img.parentElement.innerHTML = '<div class="creation-placeholder">À venir</div>';
+}
 /* ---- Contact form AJAX (Formspree) ---- */
 (function () {
   var form = document.getElementById('contact-form');
