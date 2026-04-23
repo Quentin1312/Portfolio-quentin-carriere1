@@ -1045,6 +1045,38 @@
       50%       { opacity: 1; transform: rotate(45deg) translate(2px, 2px); }
     }
   }
+
+  /* ---------- CUSTOM CURSOR ---------- */
+  * { cursor: none !important; }
+  #cursor-dot,
+  #cursor-ring {
+    position: fixed;
+    top: 0; left: 0;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transform: translate(-50%, -50%);
+    will-change: transform;
+  }
+  #cursor-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    transition: opacity .2s ease, width .2s ease, height .2s ease;
+  }
+  #cursor-ring {
+    width: 28px; height: 28px;
+    border: 1.5px solid rgba(40, 151, 255, 0.55);
+    background: transparent;
+    transition: width .2s ease, height .2s ease, border-color .2s ease, opacity .2s ease;
+  }
+  body.cursor-hover #cursor-dot {
+    width: 8px; height: 8px;
+    opacity: 0.7;
+  }
+  body.cursor-hover #cursor-ring {
+    width: 44px; height: 44px;
+    border-color: rgba(40, 151, 255, 0.35);
+  }
 </style>
 </head>
 
@@ -2127,6 +2159,47 @@ function buildCarousel() {
   }
 }
 buildCarousel();
+
+/* =========================================================
+   CUSTOM CURSOR
+========================================================= */
+(function() {
+  const dot  = document.createElement('div'); dot.id  = 'cursor-dot';
+  const ring = document.createElement('div'); ring.id = 'cursor-ring';
+  document.body.append(dot, ring);
+
+  let mx = -100, my = -100;
+  let rx = -100, ry = -100;
+  const LERP = 0.12;
+
+  document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
+
+  const interactives = 'a, button, [role="button"], input, textarea, label, select';
+  document.addEventListener('mouseover', e => {
+    if (e.target.closest(interactives)) document.body.classList.add('cursor-hover');
+  });
+  document.addEventListener('mouseout', e => {
+    if (e.target.closest(interactives)) document.body.classList.remove('cursor-hover');
+  });
+
+  document.addEventListener('mouseleave', () => {
+    dot.style.opacity = ring.style.opacity = '0';
+  });
+  document.addEventListener('mouseenter', () => {
+    dot.style.opacity = ring.style.opacity = '1';
+  });
+
+  function tick() {
+    dot.style.left  = mx + 'px';
+    dot.style.top   = my + 'px';
+    rx += (mx - rx) * LERP;
+    ry += (my - ry) * LERP;
+    ring.style.left = rx + 'px';
+    ring.style.top  = ry + 'px';
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
 
 /* =========================================================
    MOBILE BURGER MENU
