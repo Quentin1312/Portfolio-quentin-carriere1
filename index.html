@@ -916,7 +916,16 @@
   .video-carousel-outer {
     overflow: hidden; margin: 0 -48px; padding: 8px 0 24px;
   }
-  @media (max-width: 720px) { .video-carousel-outer { margin: 0 -20px; } }
+  @media (max-width: 720px) {
+    .video-carousel-outer {
+      margin: 0 -20px;
+      overflow-x: scroll;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .video-carousel-outer::-webkit-scrollbar { display: none; }
+  }
 
   .video-carousel {
     display: flex; gap: 16px;
@@ -2003,11 +2012,14 @@ function buildCarousel() {
         if (dx < 12 && dy < 12 && Date.now() - tapT < 350) {
           e.preventDefault();
           if (video.paused) {
-            document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
+            document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.muted = true; v.closest('.video-card').classList.remove('playing'); });
+            video.muted = false;
+            video.volume = 1;
             video.play().catch(() => {});
             card.classList.add('playing');
           } else {
             video.pause();
+            video.muted = true;
             card.classList.remove('playing');
           }
         }
@@ -2027,20 +2039,23 @@ function buildCarousel() {
       card.querySelector('video').load();
     });
 
+    const outer = track.parentElement;
+    track.style.animation = 'none';
+
     let touching = false;
     let resumeTimer;
     (function mobileScroll() {
       if (!touching) {
-        track.scrollLeft += 0.6;
-        if (track.scrollLeft >= loopWidth) track.scrollLeft -= loopWidth;
+        outer.scrollLeft += 0.6;
+        if (outer.scrollLeft >= loopWidth) outer.scrollLeft -= loopWidth;
       }
       requestAnimationFrame(mobileScroll);
     })();
 
-    track.addEventListener('touchstart', () => {
+    outer.addEventListener('touchstart', () => {
       touching = true; clearTimeout(resumeTimer);
     }, { passive: true });
-    track.addEventListener('touchend', () => {
+    outer.addEventListener('touchend', () => {
       resumeTimer = setTimeout(() => { touching = false; }, 2500);
     }, { passive: true });
   } else {
