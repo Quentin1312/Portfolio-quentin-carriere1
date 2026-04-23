@@ -1991,14 +1991,27 @@ function buildCarousel() {
     const video = card.querySelector('video');
 
     if (isTouch) {
-      card.addEventListener('click', () => {
-        if (video.paused) {
-          document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
-          video.play(); card.classList.add('playing');
-        } else {
-          video.pause(); card.classList.remove('playing');
+      let tapX, tapY, tapT;
+      card.addEventListener('touchstart', (e) => {
+        tapX = e.touches[0].clientX;
+        tapY = e.touches[0].clientY;
+        tapT = Date.now();
+      }, { passive: true });
+      card.addEventListener('touchend', (e) => {
+        const dx = Math.abs(e.changedTouches[0].clientX - tapX);
+        const dy = Math.abs(e.changedTouches[0].clientY - tapY);
+        if (dx < 12 && dy < 12 && Date.now() - tapT < 350) {
+          e.preventDefault();
+          if (video.paused) {
+            document.querySelectorAll('.video-card video').forEach(v => { v.pause(); v.closest('.video-card').classList.remove('playing'); });
+            video.play().catch(() => {});
+            card.classList.add('playing');
+          } else {
+            video.pause();
+            card.classList.remove('playing');
+          }
         }
-      });
+      }, { passive: false });
     } else {
       card.addEventListener('mouseenter', () => { video.play(); card.classList.add('playing'); });
       card.addEventListener('mouseleave', () => { video.pause(); video.currentTime = 0; card.classList.remove('playing'); });
@@ -2054,24 +2067,6 @@ if (burger) {
     burger.setAttribute('aria-expanded', 'false');
   }));
 }
-</script>
-<script>
-  document.querySelectorAll('.video-card').forEach(card => {
-    const video = card.querySelector('video');
-    
-    card.addEventListener('click', () => {
-      // On retire le mute au clic pour activer le son
-      video.muted = false; 
-      video.volume = 0.15;
-      if (video.paused) {
-        video.play();
-        card.classList.add('playing');
-      } else {
-        video.pause();
-        card.classList.remove('playing');
-      }
-    });
-  });
 </script>
 </body>
 </html>
