@@ -2042,12 +2042,18 @@ function buildCarousel() {
     const outer = track.parentElement;
     track.style.animation = 'none';
 
+    // Padding aligné sur le début de la première carte pour un loop sans saut
+    const PAD = 20;
+    track.style.paddingLeft = PAD + 'px';
+    const resetAt = PAD + loopWidth;
+    outer.scrollLeft = PAD;
+
     let touching = false;
     let resumeTimer;
     (function mobileScroll() {
       if (!touching) {
         outer.scrollLeft += 0.6;
-        if (outer.scrollLeft >= loopWidth) outer.scrollLeft -= loopWidth;
+        if (outer.scrollLeft >= resetAt) outer.scrollLeft -= loopWidth;
       }
       requestAnimationFrame(mobileScroll);
     })();
@@ -2056,7 +2062,13 @@ function buildCarousel() {
       touching = true; clearTimeout(resumeTimer);
     }, { passive: true });
     outer.addEventListener('touchend', () => {
-      resumeTimer = setTimeout(() => { touching = false; }, 2500);
+      clearTimeout(resumeTimer);
+      resumeTimer = setTimeout(() => {
+        // Normalise la position dans [PAD, resetAt) pour éviter tout saut visible
+        const pos = PAD + ((outer.scrollLeft - PAD) % loopWidth + loopWidth) % loopWidth;
+        outer.scrollLeft = pos;
+        touching = false;
+      }, 2500);
     }, { passive: true });
   } else {
     // Desktop : 16 cartes (8 + 8 clones) pour le loop CSS infini
