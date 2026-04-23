@@ -1048,10 +1048,7 @@
 
   /* ---------- TILT 3D ---------- */
   .portrait-wrap { will-change: transform; }
-  #tilt-inner {
-    position: absolute; inset: 0;
-    transform-style: preserve-3d;
-  }
+
   .portrait-glare {
     position: absolute; inset: 18%;
     border-radius: 50%;
@@ -1147,19 +1144,17 @@
         </div>
       </div>
 
-      <div class="portrait-wrap reveal d3">
-        <div id="tilt-inner">
-          <div class="orbit-ring r3"></div>
-          <div class="orbit-ring r2"></div>
-          <div class="orbit-ring"></div>
-          <div class="portrait">
-            <img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/portrait.png" alt="Quentin Carrière" id="portrait-img" />
-            -->
-          </div>
-          <div class="portrait-badge top">★ <b>Creative</b> Designer</div>
-          <div class="portrait-badge bottom"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
-          <div class="portrait-glare" id="portrait-glare"></div>
+      <div class="portrait-wrap reveal d3" id="portrait-wrap">
+        <div class="orbit-ring r3"></div>
+        <div class="orbit-ring r2"></div>
+        <div class="orbit-ring"></div>
+        <div class="portrait">
+          <img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/portrait.png" alt="Quentin Carrière" id="portrait-img" />
+          -->
         </div>
+        <div class="portrait-badge top">★ <b>Creative</b> Designer</div>
+        <div class="portrait-badge bottom"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
+        <div class="portrait-glare" id="portrait-glare"></div>
       </div>
 
       <div class="scroll-cue">
@@ -2204,10 +2199,9 @@ if (burger) {
 (function () {
   if (!window.matchMedia('(hover: hover)').matches) return;
 
-  var wrap  = document.querySelector('.portrait-wrap');
-  var inner = document.getElementById('tilt-inner');
+  var wrap  = document.getElementById('portrait-wrap');
   var glare = document.getElementById('portrait-glare');
-  if (!wrap || !inner) return;
+  if (!wrap) return;
 
   var MAX  = 13;
   var LERP = 0.09;
@@ -2232,8 +2226,9 @@ if (burger) {
   (function tick() {
     cx += (tx - cx) * LERP;
     cy += (ty - cy) * LERP;
-    inner.style.transform =
-      'perspective(900px) rotateX(' + cx.toFixed(3) + 'deg) rotateY(' + cy.toFixed(3) + 'deg)';
+    var py = window.scrollY * 0.1;
+    wrap.style.transform =
+      'translateY(' + py.toFixed(2) + 'px) perspective(900px) rotateX(' + cx.toFixed(3) + 'deg) rotateY(' + cy.toFixed(3) + 'deg)';
     requestAnimationFrame(tick);
   })();
 })();
