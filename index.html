@@ -1046,6 +1046,24 @@
     }
   }
 
+  /* ---------- TILT 3D ---------- */
+  .portrait-wrap { will-change: transform; }
+  #tilt-inner {
+    position: absolute; inset: 0;
+    transform-style: preserve-3d;
+  }
+  .portrait-glare {
+    position: absolute; inset: 18%;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity .4s ease;
+    mix-blend-mode: screen;
+    background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 65%);
+  }
+  .portrait-wrap:hover .portrait-glare { opacity: 1; }
+
   /* ---------- CUSTOM CURSOR ---------- */
   html, body, * { cursor: none !important; }
   #cursor-dot,
@@ -1130,15 +1148,18 @@
       </div>
 
       <div class="portrait-wrap reveal d3">
-        <div class="orbit-ring r3"></div>
-        <div class="orbit-ring r2"></div>
-        <div class="orbit-ring"></div>
-        <div class="portrait">
-          <img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/portrait.png" alt="Quentin Carrière" id="portrait-img" />
-          -->
+        <div id="tilt-inner">
+          <div class="orbit-ring r3"></div>
+          <div class="orbit-ring r2"></div>
+          <div class="orbit-ring"></div>
+          <div class="portrait">
+            <img src="https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/portrait.png" alt="Quentin Carrière" id="portrait-img" />
+            -->
+          </div>
+          <div class="portrait-badge top">★ <b>Creative</b> Designer</div>
+          <div class="portrait-badge bottom"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
+          <div class="portrait-glare" id="portrait-glare"></div>
         </div>
-        <div class="portrait-badge top">★ <b>Creative</b> Designer</div>
-        <div class="portrait-badge bottom"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
       </div>
 
       <div class="scroll-cue">
@@ -2177,6 +2198,48 @@ if (burger) {
 </script>
 
 <script>
+/* =========================================================
+   TILT 3D — portrait card
+========================================================= */
+(function () {
+  if (!window.matchMedia('(hover: hover)').matches) return;
+
+  var wrap  = document.querySelector('.portrait-wrap');
+  var inner = document.getElementById('tilt-inner');
+  var glare = document.getElementById('portrait-glare');
+  if (!wrap || !inner) return;
+
+  var MAX  = 13;
+  var LERP = 0.09;
+  var tx = 0, ty = 0, cx = 0, cy = 0;
+
+  wrap.addEventListener('mousemove', function (e) {
+    var r  = wrap.getBoundingClientRect();
+    var nx = (e.clientX - r.left)  / r.width  - 0.5;
+    var ny = (e.clientY - r.top)   / r.height - 0.5;
+    tx = -ny * MAX;
+    ty =  nx * MAX;
+    if (glare) {
+      var gx = ((nx + 0.5) * 100).toFixed(1);
+      var gy = ((ny + 0.5) * 100).toFixed(1);
+      glare.style.background =
+        'radial-gradient(circle at ' + gx + '% ' + gy + '%, rgba(255,255,255,0.18), transparent 65%)';
+    }
+  });
+
+  wrap.addEventListener('mouseleave', function () { tx = 0; ty = 0; });
+
+  (function tick() {
+    cx += (tx - cx) * LERP;
+    cy += (ty - cy) * LERP;
+    inner.style.transform =
+      'perspective(900px) rotateX(' + cx.toFixed(3) + 'deg) rotateY(' + cy.toFixed(3) + 'deg)';
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+
+<script>
 (function () {
   // Force cursor none via injected style (beats any specificity issue)
   var forceCss = document.createElement('style');
@@ -2226,6 +2289,112 @@ if (burger) {
     ring.style.transform = 'translate3d(' + (rx - 15) + 'px,' + (ry - 15) + 'px,0)';
     requestAnimationFrame(tick);
   })();
+})();
+</script>
+
+<script>
+/* =========================================================
+   EASTER EGG — Konami code
+========================================================= */
+(function () {
+  var KONAMI = ['ArrowUp','ArrowUp','ArrowDown','ArrowDown','ArrowLeft','ArrowRight','ArrowLeft','ArrowRight','b','a'];
+  var idx = 0;
+
+  // Ensure page has focus so keydown fires (needed on GitHub Pages)
+  document.addEventListener('click', function () { window.focus(); }, { once: false });
+  window.addEventListener('load', function () { document.body.focus(); window.focus(); });
+
+  window.addEventListener('keydown', function (e) {
+    if (e.key === KONAMI[idx]) {
+      idx++;
+      if (idx === KONAMI.length) { idx = 0; triggerEgg(); }
+    } else {
+      idx = e.key === KONAMI[0] ? 1 : 0;
+    }
+  });
+
+  function triggerEgg() {
+    burst();
+    toast();
+  }
+
+  /* — Particle burst — */
+  function burst() {
+    var cx = window.innerWidth  / 2;
+    var cy = window.innerHeight / 2;
+    var colors = ['#2897FF','#6FB8FF','#ffffff','#a8d4ff','#0066cc'];
+    var count  = 80;
+
+    for (var i = 0; i < count; i++) {
+      (function(i) {
+        var p = document.createElement('div');
+        var angle  = (Math.PI * 2 / count) * i + (Math.random() - 0.5) * 0.5;
+        var speed  = 180 + Math.random() * 220;
+        var size   = 4 + Math.random() * 6;
+        var color  = colors[Math.floor(Math.random() * colors.length)];
+        var tx = Math.cos(angle) * speed;
+        var ty = Math.sin(angle) * speed;
+
+        p.setAttribute('style',
+          'position:fixed;border-radius:50%;pointer-events:none;z-index:99990;' +
+          'width:' + size + 'px;height:' + size + 'px;' +
+          'background:' + color + ';' +
+          'left:' + cx + 'px;top:' + cy + 'px;' +
+          'transition:transform 1.1s cubic-bezier(.2,.8,.3,1),opacity 1.1s ease;' +
+          'opacity:1;');
+        document.body.appendChild(p);
+
+        requestAnimationFrame(function() {
+          requestAnimationFrame(function() {
+            p.style.transform = 'translate3d(' + tx + 'px,' + ty + 'px,0) scale(0.3)';
+            p.style.opacity   = '0';
+          });
+        });
+
+        setTimeout(function() { p.parentNode && p.parentNode.removeChild(p); }, 1200);
+      })(i);
+    }
+  }
+
+  /* — Toast notification — */
+  function toast() {
+    var t = document.createElement('div');
+    t.innerHTML =
+      '<div style="display:flex;align-items:center;gap:14px;">' +
+        '<div style="font-size:28px;line-height:1;">🏆</div>' +
+        '<div>' +
+          '<div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);font-family:\'JetBrains Mono\',monospace;margin-bottom:3px;">Achievement unlocked</div>' +
+          '<div style="font-size:15px;font-weight:700;color:#fff;letter-spacing:.01em;">Curieux·se par nature</div>' +
+          '<div style="font-size:12px;color:rgba(255,255,255,0.45);margin-top:2px;">Tu as trouvé l\'easter egg 👀</div>' +
+        '</div>' +
+      '</div>';
+
+    t.setAttribute('style',
+      'position:fixed;bottom:32px;right:32px;z-index:99995;' +
+      'background:rgba(8,16,32,0.92);' +
+      'border:1px solid rgba(40,151,255,0.35);' +
+      'border-radius:16px;padding:18px 22px;' +
+      'backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);' +
+      'box-shadow:0 8px 40px rgba(0,0,0,0.5),0 0 0 1px rgba(40,151,255,0.1) inset;' +
+      'font-family:Satoshi,-apple-system,sans-serif;' +
+      'transform:translateY(120px);opacity:0;' +
+      'transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease;');
+
+    document.body.appendChild(t);
+
+    requestAnimationFrame(function() {
+      requestAnimationFrame(function() {
+        t.style.transform = 'translateY(0)';
+        t.style.opacity   = '1';
+      });
+    });
+
+    setTimeout(function() {
+      t.style.transform = 'translateY(120px)';
+      t.style.opacity   = '0';
+      setTimeout(function() { t.parentNode && t.parentNode.removeChild(t); }, 600);
+    }, 4000);
+  }
 })();
 </script>
 </body>
