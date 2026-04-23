@@ -640,6 +640,19 @@
   }
   .skills-info .cat p { margin: 0; font-size: 14px; color: var(--ink-dim); }
 
+  .skill-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+  .skill-item { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+  .skill-item-name { font-size: 13px; color: var(--ink-dim); }
+  .skill-level {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 999px;
+    white-space: nowrap;
+  }
+  .skill-level.expert   { background: rgba(40,151,255,0.15); color: var(--accent); border: 1px solid rgba(40,151,255,0.3); }
+  .skill-level.avance   { background: rgba(52,211,153,0.12); color: #34D399;       border: 1px solid rgba(52,211,153,0.3); }
+  .skill-level.inter    { background: rgba(251,191,36,0.12); color: #FBBF24;       border: 1px solid rgba(251,191,36,0.3); }
+
   /* ---------- FORMATION ---------- */
   .edu-grid {
     display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
@@ -1161,6 +1174,22 @@
     color: var(--ink-mute);
   }
 
+  /* ---------- LANG TOGGLE ---------- */
+  .lang-toggle {
+    display: flex; align-items: center;
+    background: var(--glass); border: 1px solid var(--glass-b);
+    border-radius: 999px; padding: 3px; gap: 2px;
+    margin-left: 4px;
+  }
+  .lang-btn {
+    background: none; border: none; cursor: pointer;
+    padding: 5px 11px; border-radius: 999px;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+    color: var(--ink-dim); transition: all .2s ease;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .lang-btn.active { background: var(--accent); color: #000; }
+
   /* ---------- TILT 3D ---------- */
   .portrait-wrap { will-change: transform; }
 
@@ -1219,13 +1248,17 @@
     <button class="nav-burger" id="nav-burger" aria-label="Menu" aria-expanded="false">
       <span></span><span></span><span></span>
     </button>
-    <a href="#hero" data-s="hero" class="active">Accueil</a>
-    <a href="#experience" data-s="experience">Expérience</a>
-    <a href="#realisations" data-s="realisations">Réalisations</a>
-    <a href="#skills" data-s="skills">Compétences</a>
-    <a href="#formation" data-s="formation">Formation</a>
-    <a href="#langues" data-s="langues">Langues</a>
-    <a href="#contact" data-s="contact">Contact</a>
+    <a href="#hero" data-s="hero" class="active" data-fr="Accueil" data-en="Home">Accueil</a>
+    <a href="#experience" data-s="experience" data-fr="Expérience" data-en="Experience">Expérience</a>
+    <a href="#realisations" data-s="realisations" data-fr="Réalisations" data-en="Results">Réalisations</a>
+    <a href="#skills" data-s="skills" data-fr="Compétences" data-en="Skills">Compétences</a>
+    <a href="#formation" data-s="formation" data-fr="Formation" data-en="Education">Formation</a>
+    <a href="#langues" data-s="langues" data-fr="Langues" data-en="Languages">Langues</a>
+    <a href="#contact" data-s="contact" data-fr="Contact" data-en="Contact">Contact</a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+    </div>
   </nav>
 
   <main>
@@ -1234,7 +1267,7 @@
       <div>
         <div class="hero-tag reveal in">
           <span class="dot"></span>
-          <span>Disponible · Alternance Sept. 2026</span>
+          <span data-fr="Disponible · Alternance Sept. 2026" data-en="Available · Work-Study Sept. 2026">Disponible · Alternance Sept. 2026</span>
         </div>
         <h1>
           <span class="line"><span class="word">Quentin</span></span>
@@ -1245,12 +1278,12 @@
           <span>Moulins, FR</span>
           <span>20 ans</span>
         </div>
-        <p class="hero-role reveal d3">
+        <p class="hero-role reveal d3" data-fr="Alternant en <span class=&quot;k&quot;>communication digitale</span>, passionné par le <span class=&quot;k&quot;>webdesign</span>, la création visuelle et la construction d'identités de marque qui ont du caractère." data-en="Digital communication graduate, passionate about <span class=&quot;k&quot;>web design</span>, visual creation and building <span class=&quot;k&quot;>brand identities</span> with character." data-html="true">
           Alternant en <span class="k">communication digitale</span>, passionné par le
           <span class="k">webdesign</span>, la création visuelle et la construction
           d'identités de marque qui ont du caractère.
         </p>
-        <p class="hero-pitch reveal d4">
+        <p class="hero-pitch reveal d4" data-fr="En alternance chez Au Fil d'Ariane · stratégie, création &amp; exécution — en autonomie." data-en="Work-study at Au Fil d'Ariane · strategy, creation &amp; execution — independently.">
           En alternance chez Au Fil d'Ariane · stratégie, création & exécution — en autonomie.
         </p>
         <div class="hero-cta reveal d4">
