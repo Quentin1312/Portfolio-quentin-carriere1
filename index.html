@@ -157,6 +157,17 @@
     .nav a:first-of-type { border-top: none; }
     .nav.open a { display: block; }
 
+    .lang-toggle {
+      display: none;
+      border-left: none;
+      border-top: 1px solid var(--hair);
+      padding: 10px 14px;
+      margin-left: 0;
+      justify-content: center;
+      gap: 6px;
+    }
+    .nav.open .lang-toggle { display: flex; }
+
     /* ---- Hero ---- */
     .portrait-wrap { max-width: 280px; margin: 0 auto; }
     .portrait-badge { display: none; }
@@ -1258,8 +1269,8 @@
     <a href="#langues" data-s="langues" data-fr="Langues" data-en="Languages">Langues</a>
     <a href="#contact" data-s="contact" data-fr="Contact" data-en="Contact">Contact</a>
     <div class="lang-toggle">
-      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
-      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
+      <a class="lang-btn active" id="btn-fr" href="#" onclick="setLang('fr');return false;">FR</a>
+      <a class="lang-btn" id="btn-en" href="#" onclick="setLang('en');return false;">EN</a>
     </div>
   </nav>
 
