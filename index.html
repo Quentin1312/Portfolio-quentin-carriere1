@@ -1255,6 +1255,9 @@
     <a href="#formation" data-s="formation" data-fr="Formation" data-en="Education">Formation</a>
     <a href="#langues" data-s="langues" data-fr="Langues" data-en="Languages">Langues</a>
     <a href="#contact" data-s="contact" data-fr="Contact" data-en="Contact">Contact</a>
+    <div class="lang-toggle">
+      <button class="lang-btn active" id="btn-fr" onclick="setLang('fr')">FR</button>
+      <button class="lang-btn" id="btn-en" onclick="setLang('en')">EN</button>
     </div>
   </nav>
 
@@ -1273,7 +1276,7 @@
         <div class="hero-meta reveal d2">
           <span><b>{</b> 13.12.2005 <b>}</b></span>
           <span>Moulins, FR</span>
-          <span>20 ans</span>
+          <span data-fr="20 ans" data-en="20 years old">20 ans</span>
         </div>
         <p class="hero-role reveal d3" data-fr="Alternant en <span class=&quot;k&quot;>communication digitale</span>, passionné par le <span class=&quot;k&quot;>webdesign</span>, la création visuelle et la construction d'identités de marque qui ont du caractère." data-en="Digital communication graduate, passionate about <span class=&quot;k&quot;>web design</span>, visual creation and building <span class=&quot;k&quot;>brand identities</span> with character." data-html="true">
           Alternant en <span class="k">communication digitale</span>, passionné par le
@@ -1285,13 +1288,13 @@
         </p>
         <div class="hero-cta reveal d4">
           <a href="#contact" class="btn btn-primary">
-            Me contacter
+            <span data-fr="Me contacter" data-en="Get in touch">Me contacter</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14m-6-6l6 6-6 6"/></svg>
           </a>
-          <a href="#experience" class="btn btn-ghost">Voir mon parcours</a>
+          <a href="#experience" class="btn btn-ghost" data-fr="Voir mon parcours" data-en="See my journey">Voir mon parcours</a>
           <a href="CV_Quentin_Carriere.pdf" download class="btn btn-ghost btn-pdf">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 004.561 21h14.878a2 2 0 001.94-1.515L22 17"/></svg>
-            Télécharger CV PDF
+            <span data-fr="Télécharger CV PDF" data-en="Download PDF resume">Télécharger CV PDF</span>
           </a>
         </div>
       </div>
@@ -1305,7 +1308,7 @@
           -->
         </div>
         <div class="portrait-badge top">★ <b>Creative</b> Designer</div>
-        <div class="portrait-badge bottom"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
+        <div class="portrait-badge bottom" data-fr="BUT&nbsp;TC · 3e&nbsp;année" data-en="BUT&nbsp;TC · 3rd&nbsp;year" data-html="true"><b>BUT&nbsp;TC</b> · 3e&nbsp;année</div>
         <div class="portrait-glare" id="portrait-glare"></div>
       </div>
 
@@ -1318,8 +1321,8 @@
     <!-- ============ EXPERIENCE ============ -->
     <section id="experience" data-screen-label="02 Experience">
       <div class="reveal">
-        <div class="eyebrow">01 — Expérience</div>
-        <h2>Là où j'ai<br>travaillé.</h2>
+        <div class="eyebrow" data-fr="01 — Expérience" data-en="01 — Experience">01 — Expérience</div>
+        <h2 data-fr="Là où j'ai<br>travaillé." data-en="Where I've<br>worked." data-html="true">Là où j'ai<br>travaillé.</h2>
       </div>
 
       <div class="timeline">
@@ -1332,14 +1335,14 @@
               <span class="exp-logo-name">Au Fil d'Ariane</span>
             </div>
             <div class="exp-head">
-              <h3>Alternance en communication digitale</h3>
+              <h3 data-fr="Alternance en communication digitale" data-en="Work-study in digital communication">Alternance en communication digitale</h3>
               <span class="exp-date">SEPT 2025 — SEPT 2026</span>
             </div>
-            <div class="exp-company">Au Fil d'Ariane · <b>alternance en cours</b></div>
+            <div class="exp-company" data-fr="Au Fil d'Ariane · alternance en cours" data-en="Au Fil d'Ariane · ongoing work-study" data-html="true">Au Fil d'Ariane · <b>alternance en cours</b></div>
             <ul class="exp-list">
-              <li>Gestion des réseaux sociaux</li>
-              <li>Gestion du site e-commerce (Shopify)</li>
-              <li>Stratégie de communication (organique + ads)</li>
+              <li data-fr="Gestion des réseaux sociaux" data-en="Social media management">Gestion des réseaux sociaux</li>
+              <li data-fr="Gestion du site e-commerce (Shopify)" data-en="E-commerce website management (Shopify)">Gestion du site e-commerce (Shopify)</li>
+              <li data-fr="Stratégie de communication (organique + ads)" data-en="Communication strategy (organic + ads)">Stratégie de communication (organique + ads)</li>
             </ul>
             <div class="exp-links">
               <a href="https://www.instagram.com/aufildariane03/" target="_blank" rel="noopener" class="exp-link">
@@ -1356,11 +1359,11 @@
               </a>
             </div>
             <div class="exp-tags">
-              <span class="tag">Gestion du temps</span>
-              <span class="tag">Force de proposition</span>
-              <span class="tag">Créativité</span>
-              <span class="tag">Esprit critique</span>
-              <span class="tag">Adaptabilité</span>
+              <span class="tag" data-fr="Gestion du temps" data-en="Time management">Gestion du temps</span>
+              <span class="tag" data-fr="Force de proposition" data-en="Proactivity">Force de proposition</span>
+              <span class="tag" data-fr="Créativité" data-en="Creativity">Créativité</span>
+              <span class="tag" data-fr="Esprit critique" data-en="Critical thinking">Esprit critique</span>
+              <span class="tag" data-fr="Adaptabilité" data-en="Adaptability">Adaptabilité</span>
             </div>
           </div>
         </div>
@@ -1372,14 +1375,14 @@
               <span class="exp-logo-name">Bloc Zone</span>
             </div>
             <div class="exp-head">
-              <h3>Stage de communication <span class="paren">(2e année de BUT)</span></h3>
+              <h3 data-fr="Stage de communication (2e année de BUT)" data-en="Communication internship (2nd year of Bachelor's)">Stage de communication <span class="paren">(2e année de BUT)</span></h3>
               <span class="exp-date">AVR — MAI 2025</span>
             </div>
             <div class="exp-company">Bloc Zone</div>
             <ul class="exp-list">
-              <li>Gestion des réseaux sociaux & du site internet</li>
-              <li>Identification de nouveaux canaux de développement</li>
-              <li>Conception et mise en œuvre d'une stratégie digitale</li>
+              <li data-fr="Gestion des réseaux sociaux & du site internet" data-en="Social media & website management">Gestion des réseaux sociaux & du site internet</li>
+              <li data-fr="Identification de nouveaux canaux de développement" data-en="Identifying new development channels">Identification de nouveaux canaux de développement</li>
+              <li data-fr="Conception et mise en œuvre d'une stratégie digitale" data-en="Designing and implementing a digital strategy">Conception et mise en œuvre d'une stratégie digitale</li>
             </ul>
             <div class="exp-links">
               <a href="https://www.instagram.com/bloczone.escalade/" target="_blank" rel="noopener" class="exp-link">
@@ -1388,10 +1391,10 @@
               </a>
             </div>
             <div class="exp-tags">
-              <span class="tag">Gestion du temps</span>
-              <span class="tag">Créativité</span>
-              <span class="tag">Esprit critique</span>
-              <span class="tag">Adaptabilité</span>
+              <span class="tag" data-fr="Gestion du temps" data-en="Time management">Gestion du temps</span>
+              <span class="tag" data-fr="Créativité" data-en="Creativity">Créativité</span>
+              <span class="tag" data-fr="Esprit critique" data-en="Critical thinking">Esprit critique</span>
+              <span class="tag" data-fr="Adaptabilité" data-en="Adaptability">Adaptabilité</span>
             </div>
           </div>
         </div>
@@ -1403,21 +1406,21 @@
               <span class="exp-logo-name">IUT TC Moulins</span>
             </div>
             <div class="exp-head">
-              <h3>SAE multicompétences</h3>
-              <span class="exp-date">PROJET · BUT TC</span>
+              <h3 data-fr="SAE multicompétences" data-en="Multi-skills academic project">SAE multicompétences</h3>
+              <span class="exp-date" data-fr="PROJET · BUT TC" data-en="PROJECT · BUT TC">PROJET · BUT TC</span>
             </div>
-            <div class="exp-company">Projet dans le cadre de la formation TC</div>
+            <div class="exp-company" data-fr="Projet dans le cadre de la formation TC" data-en="Project as part of the TC program">Projet dans le cadre de la formation TC</div>
             <ul class="exp-list">
-              <li>Gestion des réseaux sociaux de l'IUT TC Moulins</li>
-              <li>Création de visuels</li>
+              <li data-fr="Gestion des réseaux sociaux de l'IUT TC Moulins" data-en="Managing social media for IUT TC Moulins">Gestion des réseaux sociaux de l'IUT TC Moulins</li>
+              <li data-fr="Création de visuels" data-en="Visual creation">Création de visuels</li>
               <li>Feedback questions</li>
-              <li>Recherche d'idées de posts</li>
+              <li data-fr="Recherche d'idées de posts" data-en="Research for post ideas">Recherche d'idées de posts</li>
             </ul>
             <div class="exp-tags">
-              <span class="tag">Respect des délais</span>
-              <span class="tag">Esprit d'analyse</span>
-              <span class="tag">Force de proposition</span>
-              <span class="tag">Innovant</span>
+              <span class="tag" data-fr="Respect des délais" data-en="Meeting deadlines">Respect des délais</span>
+              <span class="tag" data-fr="Esprit d'analyse" data-en="Analytical mindset">Esprit d'analyse</span>
+              <span class="tag" data-fr="Force de proposition" data-en="Proactivity">Force de proposition</span>
+              <span class="tag" data-fr="Innovant" data-en="Innovative">Innovant</span>
             </div>
           </div>
         </div>
@@ -1429,20 +1432,20 @@
               <span class="exp-logo-name">IUT TC Moulins</span>
             </div>
             <div class="exp-head">
-              <h3>SAE communication</h3>
-              <span class="exp-date">PROJET · BUT TC</span>
+              <h3 data-fr="SAE communication" data-en="Communication academic project">SAE communication</h3>
+              <span class="exp-date" data-fr="PROJET · BUT TC" data-en="PROJECT · BUT TC">PROJET · BUT TC</span>
             </div>
-            <div class="exp-company">Projet dans le cadre de la formation TC</div>
+            <div class="exp-company" data-fr="Projet dans le cadre de la formation TC" data-en="Project as part of the TC program">Projet dans le cadre de la formation TC</div>
             <ul class="exp-list">
-              <li>Établissement d'une stratégie digitale détaillée</li>
-              <li>Création de visuels / concepts de vidéos</li>
-              <li>Identification de nouveaux canaux de communication</li>
-              <li>Planification de la communication</li>
+              <li data-fr="Établissement d'une stratégie digitale détaillée" data-en="Developing a detailed digital strategy">Établissement d'une stratégie digitale détaillée</li>
+              <li data-fr="Création de visuels / concepts de vidéos" data-en="Visual creation / video concepts">Création de visuels / concepts de vidéos</li>
+              <li data-fr="Identification de nouveaux canaux de communication" data-en="Identifying new communication channels">Identification de nouveaux canaux de communication</li>
+              <li data-fr="Planification de la communication" data-en="Communication planning">Planification de la communication</li>
             </ul>
             <div class="exp-tags">
-              <span class="tag">Développement de solutions</span>
-              <span class="tag">Analyse stratégique</span>
-              <span class="tag">Prise de décision</span>
+              <span class="tag" data-fr="Développement de solutions" data-en="Solution development">Développement de solutions</span>
+              <span class="tag" data-fr="Analyse stratégique" data-en="Strategic analysis">Analyse stratégique</span>
+              <span class="tag" data-fr="Prise de décision" data-en="Decision making">Prise de décision</span>
             </div>
           </div>
         </div>
@@ -1452,8 +1455,8 @@
     <!-- ============ RÉALISATIONS ============ -->
     <section id="realisations" data-screen-label="02 Réalisations">
       <div class="reveal">
-        <div class="eyebrow">02 — Réalisations</div>
-        <h2>Les chiffres<br>parlent.</h2>
+        <div class="eyebrow" data-fr="02 — Réalisations" data-en="02 — Results">02 — Réalisations</div>
+        <h2 data-fr="Les chiffres<br>parlent." data-en="The numbers<br>speak." data-html="true">Les chiffres<br>parlent.</h2>
       </div>
 
       <div class="stats-platforms">
@@ -1470,21 +1473,21 @@
           </div>
           <div class="stat-row">
             <div class="stat-item">
-              <span class="stat-label">Visites</span>
+              <span class="stat-label" data-fr="Visites" data-en="Visits">Visites</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="5460" data-suffix="">0</span>
                 <span class="stat-delta">↑ 223 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Ventes totales</span>
+              <span class="stat-label" data-fr="Ventes totales" data-en="Total sales">Ventes totales</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="2439" data-suffix=" €">0</span>
                 <span class="stat-delta">↑ 190 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Commandes</span>
+              <span class="stat-label" data-fr="Commandes" data-en="Orders">Commandes</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="90" data-suffix="">0</span>
                 <span class="stat-delta">↑ 221 %</span>
@@ -1506,28 +1509,28 @@
           </div>
           <div class="stat-row">
             <div class="stat-item">
-              <span class="stat-label">Vues</span>
+              <span class="stat-label" data-fr="Vues" data-en="Views">Vues</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="174800" data-format="k">0</span>
                 <span class="stat-delta">↑ 77,7 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Interactions</span>
+              <span class="stat-label" data-fr="Interactions" data-en="Interactions">Interactions</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="2300" data-format="k">0</span>
                 <span class="stat-delta">↑ 57,6 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Nouveaux followers</span>
+              <span class="stat-label" data-fr="Nouveaux followers" data-en="New followers">Nouveaux followers</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="156" data-suffix="">0</span>
                 <span class="stat-delta">↑ 47,2 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Clics sur lien</span>
+              <span class="stat-label" data-fr="Clics sur lien" data-en="Link clicks">Clics sur lien</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="538" data-suffix="">0</span>
                 <span class="stat-delta">↑ 234 %</span>
@@ -1560,21 +1563,21 @@
           </div>
           <div class="stat-row">
             <div class="stat-item">
-              <span class="stat-label">Vues</span>
+              <span class="stat-label" data-fr="Vues" data-en="Views">Vues</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="42416" data-suffix="">0</span>
                 <span class="stat-delta">↑ 376,5 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Comptes touchés</span>
+              <span class="stat-label" data-fr="Comptes touchés" data-en="Accounts reached">Comptes touchés</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="21210" data-suffix="">0</span>
                 <span class="stat-delta">↑ 376,5 %</span>
               </span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Reach non-abonnés</span>
+              <span class="stat-label" data-fr="Reach non-abonnés" data-en="Non-follower reach">Reach non-abonnés</span>
               <span class="stat-value-wrap">
                 <span class="stat-value" data-count="72" data-suffix=" %">0</span>
                 <span class="stat-delta">audience froide</span>
@@ -1586,7 +1589,7 @@
 
       <!-- Video carousel -->
       <div class="reveal d2" style="margin-bottom: 28px;">
-        <div class="eyebrow">Contenus produits</div>
+        <div class="eyebrow" data-fr="Contenus produits" data-en="Content produced">Contenus produits</div>
       </div>
       <div class="video-carousel-outer reveal d3">
         <div class="video-carousel" id="video-carousel"></div>
@@ -1598,8 +1601,8 @@
     <!-- ============ SKILLS ============ -->
     <section id="skills" data-screen-label="03 Skills">
       <div class="reveal">
-        <div class="eyebrow">02 — Hard Skills</div>
-        <h2>Les outils dans<br>mon orbite.</h2>
+        <div class="eyebrow" data-fr="02 — Hard Skills" data-en="02 — Hard Skills">02 — Hard Skills</div>
+        <h2 data-fr="Les outils dans<br>mon orbite." data-en="The tools in<br>my orbit." data-html="true">Les outils dans<br>mon orbite.</h2>
       </div>
 
       <div class="skills-grid">
@@ -1615,11 +1618,11 @@
 
         <div class="skills-info">
           <div class="cat reveal d1">
-            <h4><span class="num">01</span> Pack Office</h4>
+            <h4><span class="num">01</span> <span data-fr="Pack Office" data-en="Office Suite">Pack Office</span></h4>
             <p>Word, Excel, PowerPoint</p>
           </div>
           <div class="cat reveal d2">
-            <h4><span class="num">02</span> Webdesign</h4>
+            <h4><span class="num">02</span> <span data-fr="Webdesign" data-en="Web Design">Webdesign</span></h4>
             <p>Wix, WordPress, Framer, Shopify</p>
           </div>
           <div class="cat reveal d3">
@@ -1627,7 +1630,7 @@
             <p>Canva, Figma, Photoshop</p>
           </div>
           <div class="cat reveal d4">
-            <h4><span class="num">04</span> Vidéo</h4>
+            <h4><span class="num">04</span> <span data-fr="Vidéo" data-en="Video">Vidéo</span></h4>
             <p>Premiere Pro, CapCut</p>
           </div>
         </div>
@@ -1637,19 +1640,19 @@
     <!-- ============ FORMATION ============ -->
     <section id="formation" data-screen-label="04 Formation">
       <div class="reveal">
-        <div class="eyebrow">03 — Formation</div>
-        <h2>D'où<br>je viens.</h2>
+        <div class="eyebrow" data-fr="03 — Formation" data-en="03 — Education">03 — Formation</div>
+        <h2 data-fr="D'où<br>je viens." data-en="Where I<br>come from." data-html="true">D'où<br>je viens.</h2>
       </div>
 
       <div class="edu-grid">
         <div class="edu-card reveal" data-year="2026">
           <div class="year">2023 — 2026</div>
-          <h3>BUT Techniques de Commercialisation</h3>
-          <div class="school">IUT Clermont-Auvergne, Moulins · 3e année</div>
+          <h3 data-fr="BUT Techniques de Commercialisation" data-en="Bachelor's in Sales & Marketing">BUT Techniques de Commercialisation</h3>
+          <div class="school" data-fr="IUT Clermont-Auvergne, Moulins · 3e année" data-en="IUT Clermont-Auvergne, Moulins · 3rd year">IUT Clermont-Auvergne, Moulins · 3e année</div>
         </div>
         <div class="edu-card reveal d1" data-year="2023">
           <div class="year">2020 — 2023</div>
-          <h3>Baccalauréat général</h3>
+          <h3 data-fr="Baccalauréat général" data-en="High School Diploma (Baccalauréat)">Baccalauréat général</h3>
           <div class="school">Lycée Émile Duclaux, Aurillac</div>
         </div>
       </div>
@@ -1658,15 +1661,15 @@
     <!-- ============ LANGUES ============ -->
     <section id="langues" data-screen-label="05 Langues">
       <div class="reveal">
-        <div class="eyebrow">04 — Langues</div>
-        <h2>Ce que<br>je parle.</h2>
+        <div class="eyebrow" data-fr="04 — Langues" data-en="04 — Languages">04 — Langues</div>
+        <h2 data-fr="Ce que<br>je parle." data-en="What I<br>speak." data-html="true">Ce que<br>je parle.</h2>
       </div>
 
       <div class="lang-wrap">
         <div class="lang reveal" data-fill="100">
           <div class="percent">100<span style="font-size:24px;">%</span></div>
           <div class="lang-head">
-            <h3>Anglais</h3>
+            <h3 data-fr="Anglais" data-en="English">Anglais</h3>
           </div>
           <div class="lang-bar"><div class="fill"></div></div>
           <div class="lang-dots">
@@ -1676,7 +1679,7 @@
             <span class="lang-dot" data-i="4"></span>
             <span class="lang-dot" data-i="5"></span>
           </div>
-          <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);letter-spacing:0.1em;">
+          <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);letter-spacing:0.1em;" data-fr="NIVEAU · PROFESSIONNEL" data-en="LEVEL · PROFESSIONAL">
             NIVEAU · PROFESSIONNEL
           </div>
         </div>
@@ -1684,7 +1687,7 @@
         <div class="lang reveal d1" data-fill="60">
           <div class="percent">60<span style="font-size:24px;">%</span></div>
           <div class="lang-head">
-            <h3>Espagnol</h3>
+            <h3 data-fr="Espagnol" data-en="Spanish">Espagnol</h3>
           </div>
           <div class="lang-bar"><div class="fill"></div></div>
           <div class="lang-dots">
@@ -1694,7 +1697,7 @@
             <span class="lang-dot" data-i="4"></span>
             <span class="lang-dot" data-i="5"></span>
           </div>
-          <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);letter-spacing:0.1em;">
+          <div style="margin-top:16px;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--ink-dim);letter-spacing:0.1em;" data-fr="NIVEAU · B2" data-en="LEVEL · B2">
             NIVEAU · B2
           </div>
         </div>
@@ -1704,30 +1707,30 @@
     <!-- ============ INITIATIVES ============ -->
     <section id="initiatives" data-screen-label="06 Initiatives">
       <div class="reveal">
-        <div class="eyebrow">05 — Initiatives</div>
-        <h2>À côté,<br>je crée.</h2>
+        <div class="eyebrow" data-fr="05 — Initiatives" data-en="05 — Side Projects">05 — Initiatives</div>
+        <h2 data-fr="À côté,<br>je crée." data-en="On the side,<br>I create." data-html="true">À côté,<br>je crée.</h2>
       </div>
 
       <div class="init-grid">
         <div class="init-card reveal">
           <div>
             <div class="num">01</div>
-            <h3>Design LinkedIn</h3>
-            <p>Refonte de bannières & visuels pour profils et pages pros.</p>
+            <h3 data-fr="Design LinkedIn" data-en="LinkedIn Design">Design LinkedIn</h3>
+            <p data-fr="Refonte de bannières & visuels pour profils et pages pros." data-en="Redesigning banners & visuals for professional profiles and pages.">Refonte de bannières & visuels pour profils et pages pros.</p>
           </div>
         </div>
         <div class="init-card reveal d1">
           <div>
             <div class="num">02</div>
-            <h3>Sites internet</h3>
-            <p>Création de sites — maquettage Figma, intégration Framer.</p>
+            <h3 data-fr="Sites internet" data-en="Websites">Sites internet</h3>
+            <p data-fr="Création de sites — maquettage Figma, intégration Framer." data-en="Website creation — Figma wireframing, Framer integration.">Création de sites — maquettage Figma, intégration Framer.</p>
           </div>
         </div>
         <a class="init-card reveal d2" href="https://www.linkedin.com/in/quentin-carriere-623773292/" target="_blank" rel="noopener" style="text-decoration:none;color:inherit;display:block;">
           <div>
             <div class="num">03</div>
-            <h3>Mon LinkedIn</h3>
-            <p>Mes projets & ma veille design au quotidien — ça se passe ici.</p>
+            <h3 data-fr="Mon LinkedIn" data-en="My LinkedIn">Mon LinkedIn</h3>
+            <p data-fr="Mes projets & ma veille design au quotidien — ça se passe ici." data-en="My projects & daily design watch — it's all here.">Mes projets & ma veille design au quotidien — ça se passe ici.</p>
           </div>
         </a>
       </div>
@@ -1754,17 +1757,17 @@
 
     <!-- ============ CONTACT ============ -->
     <section class="contact" id="contact" data-screen-label="07 Contact">
-      <div class="eyebrow reveal" style="justify-content:center;display:inline-flex;">06 — Contact</div>
+      <div class="eyebrow reveal" style="justify-content:center;display:inline-flex;" data-fr="06 — Contact" data-en="06 — Contact">06 — Contact</div>
       <h2>
-        <span class="slide-in" data-i="0">On</span>
-        <span class="slide-in" data-i="1">en</span>
-        <span class="slide-in accent" data-i="2">parle</span>
+        <span class="slide-in" data-i="0" data-fr="On" data-en="Let's">On</span>
+        <span class="slide-in" data-i="1" data-fr="en" data-en="">en</span>
+        <span class="slide-in accent" data-i="2" data-fr="parle" data-en="talk">parle</span>
         <span class="slide-in" data-i="3">?</span>
       </h2>
 
       <div class="contact-grid">
         <a class="contact-card reveal" href="tel:+33665711243">
-          <span class="label">Téléphone</span>
+          <span class="label" data-fr="Téléphone" data-en="Phone">Téléphone</span>
           <span class="value">06 65 71 12 43</span>
           <span class="arrow">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 17L17 7M8 7h9v9"/></svg>
@@ -1790,21 +1793,21 @@
       <form class="contact-form reveal" id="contact-form" action="https://formspree.io/f/xlgaarey" method="POST" novalidate>
         <div class="form-row">
           <div class="form-group">
-            <label for="cf-name">Nom</label>
-            <input type="text" id="cf-name" name="name" placeholder="Votre nom" required>
+            <label for="cf-name" data-fr="Nom" data-en="Name">Nom</label>
+            <input type="text" id="cf-name" name="name" placeholder="Votre nom" data-fr="Votre nom" data-en="Your name" required>
           </div>
           <div class="form-group">
-            <label for="cf-email">Email</label>
+            <label for="cf-email" data-fr="Email" data-en="Email">Email</label>
             <input type="email" id="cf-email" name="email" placeholder="votre@email.com" required>
           </div>
         </div>
         <div class="form-group">
-          <label for="cf-msg">Message</label>
-          <textarea id="cf-msg" name="message" placeholder="Votre message…" required></textarea>
+          <label for="cf-msg" data-fr="Message" data-en="Message">Message</label>
+          <textarea id="cf-msg" name="message" placeholder="Votre message…" data-fr="Votre message…" data-en="Your message…" required></textarea>
         </div>
         <div class="form-submit">
           <button type="submit" class="btn btn-primary" id="cf-btn">
-            Envoyer
+            <span data-fr="Envoyer" data-en="Send">Envoyer</span>
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>
           </button>
         </div>
@@ -1818,7 +1821,7 @@
 
     <footer>
       <span>© 2026 — Quentin Carrière</span>
-      <span>CV interactif · v1.0</span>
+      <span data-fr="CV interactif · v1.0" data-en="Interactive CV · v1.0">CV interactif · v1.0</span>
     </footer>
   </main>
 
@@ -2388,6 +2391,35 @@ function buildCarousel() {
 buildCarousel();
 
 /* =========================================================
+   LANG SWITCHER
+========================================================= */
+var CURRENT_LANG = localStorage.getItem('cv-lang') || 'fr';
+
+function setLang(lang) {
+  CURRENT_LANG = lang;
+  localStorage.setItem('cv-lang', lang);
+  document.documentElement.lang = lang;
+  var btnFr = document.getElementById('btn-fr');
+  var btnEn = document.getElementById('btn-en');
+  if (btnFr) btnFr.classList.toggle('active', lang === 'fr');
+  if (btnEn) btnEn.classList.toggle('active', lang === 'en');
+  document.querySelectorAll('[data-fr][data-en]').forEach(function(el) {
+    var txt = lang === 'fr' ? el.dataset.fr : el.dataset.en;
+    if (el.dataset.html === 'true') {
+      el.innerHTML = txt;
+    } else if (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+      el.placeholder = txt;
+    } else {
+      el.textContent = txt;
+    }
+  });
+}
+
+function t(fr, en) { return CURRENT_LANG === 'fr' ? fr : en; }
+
+setLang(CURRENT_LANG);
+
+/* =========================================================
    MOBILE BURGER MENU
 ========================================================= */
 const burger = document.getElementById('nav-burger');
@@ -2643,7 +2675,7 @@ function creationErr(img) {
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     btn.disabled = true;
-    btn.textContent = 'Envoi…';
+    btn.textContent = t('Envoi…', 'Sending…');
     fb.style.display = 'none';
 
     fetch(form.action, {
@@ -2652,7 +2684,7 @@ function creationErr(img) {
       headers: { 'Accept': 'application/json' }
     }).then(function (r) {
       if (r.ok) {
-        fb.textContent = '✓ Message envoyé — je vous réponds rapidement !';
+        fb.textContent = t('✓ Message envoyé — je vous réponds rapidement !', '✓ Message sent — I\'ll get back to you shortly!');
         fb.className = 'form-feedback ok';
         fb.style.display = 'block';
         form.reset();
@@ -2660,12 +2692,12 @@ function creationErr(img) {
         throw new Error();
       }
     }).catch(function () {
-      fb.textContent = '✗ Erreur d\'envoi. Contactez-moi directement par email.';
+      fb.textContent = t('✗ Erreur d\'envoi. Contactez-moi directement par email.', '✗ Send error. Please contact me directly by email.');
       fb.className = 'form-feedback err';
       fb.style.display = 'block';
     }).finally(function () {
       btn.disabled = false;
-      btn.innerHTML = 'Envoyer <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
+      btn.innerHTML = '<span data-fr="Envoyer" data-en="Send">' + t('Envoyer', 'Send') + '</span> <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z"/></svg>';
     });
   });
 })();
