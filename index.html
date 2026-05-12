@@ -3134,45 +3134,356 @@ function creationErr(img) {
 
   // ── Console ──
   var cHist=[],hIdx=-1;
+  var CON_CSS=''
+    +'#kb-con{position:fixed;inset:0;z-index:10001;display:flex;flex-direction:column;font-family:VT323,monospace}'
+    +'#kb-con::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,.08) 3px,rgba(0,0,0,.08) 4px);pointer-events:none;z-index:2}'
+    +'#kb-titlebar{background:#0d0d1a;border-bottom:1px solid #1a1a3a;padding:5px 14px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;z-index:3}'
+    +'#kb-titlebar .tb-dots{display:flex;gap:6px}'
+    +'#kb-titlebar .tb-dot{width:12px;height:12px;border-radius:50%;cursor:pointer}'
+    +'#kb-titlebar .tb-title{color:#555;font-size:.85rem;letter-spacing:1px}'
+    +'#kb-body{flex:1;display:flex;flex-direction:column;background:#0a0a0f;overflow:hidden;z-index:1}'
+    +'#kb-out{flex:1;overflow-y:auto;padding:16px 20px 8px;font-size:1.05rem;line-height:1.7;white-space:pre-wrap}'
+    +'#kb-out::-webkit-scrollbar{width:4px}#kb-out::-webkit-scrollbar-thumb{background:#1a3a1a}'
+    +'#kb-irow{display:flex;align-items:center;padding:8px 20px 14px;border-top:1px solid #0d2b0d;flex-shrink:0}'
+    +'#kb-inp{flex:1;background:transparent;border:none;outline:none;font-family:VT323,monospace;font-size:1.1rem;caret-color:#00ff41}'
+    +'.kb-line{margin:0;line-height:1.65}'
+    +'.kb-prompt em{font-style:normal}'
+    +'.kb-bar{display:inline-block;letter-spacing:0}';
+
   function openConsole(){
     if(document.getElementById('kb-con'))return;
+    if(!document.getElementById('kb-con-css')){
+      var s=document.createElement('style');s.id='kb-con-css';s.textContent=CON_CSS;document.head.appendChild(s);
+    }
     var ov=document.createElement('div');ov.id='kb-con';
-    ov.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.93);z-index:10001;display:flex;flex-direction:column;font-family:VT323,monospace;padding:24px;box-sizing:border-box';
+
+    // title bar
+    var tb=document.createElement('div');tb.id='kb-titlebar';
+    var dots=document.createElement('div');dots.className='tb-dots';
+    var dc=document.createElement('div');dc.className='tb-dot';dc.style.background='#ff5f57';dc.title='Fermer';dc.addEventListener('click',closeConsole);
+    var dm=document.createElement('div');dm.className='tb-dot';dm.style.background='#febc2e';
+    var dg=document.createElement('div');dg.className='tb-dot';dg.style.background='#28c840';
+    dots.appendChild(dc);dots.appendChild(dm);dots.appendChild(dg);
+    var ttl=document.createElement('span');ttl.className='tb-title';ttl.textContent='PORTFOLIO OS — bash';
+    var hint=document.createElement('span');hint.style.cssText='color:#333;font-size:.8rem';hint.textContent='[Échap] fermer';
+    tb.appendChild(dots);tb.appendChild(ttl);tb.appendChild(hint);
+    ov.appendChild(tb);
+
+    // body
+    var body=document.createElement('div');body.id='kb-body';
     var out=document.createElement('div');out.id='kb-out';
-    out.style.cssText='flex:1;overflow-y:auto;color:#00ff41;font-size:1.1rem;line-height:1.5;white-space:pre-wrap';
-    var irow=document.createElement('div');irow.style.cssText='display:flex;align-items:center;margin-top:8px';
-    var pr=document.createElement('span');pr.textContent='visitor@portfolio:~$ ';pr.style.cssText='color:#00ff41;white-space:nowrap;font-size:1.15rem';
-    var inp=document.createElement('input');
-    inp.style.cssText='flex:1;background:transparent;border:none;outline:none;color:#00ff41;font-family:VT323,monospace;font-size:1.15rem;caret-color:#00ff41';
-    irow.appendChild(pr);irow.appendChild(inp);ov.appendChild(out);ov.appendChild(irow);document.body.appendChild(ov);
-    aOut(out,'Quentin Carriere Portfolio OS v2.0\nType "help" pour les commandes.\n','#00ff41');
+    var irow=document.createElement('div');irow.id='kb-irow';
+    var pr=document.createElement('span');pr.id='kb-pr';pr.innerHTML='<em style="color:#28c840">visitor</em><em style="color:#aaa">@</em><em style="color:#2897ff">portfolio</em><em style="color:#aaa">:</em><em style="color:#febc2e">~</em><em style="color:#aaa">$ </em>';
+    var inp=document.createElement('input');inp.id='kb-inp';inp.style.color='#e0e0e0';
+    irow.appendChild(pr);irow.appendChild(inp);
+    body.appendChild(out);body.appendChild(irow);
+    ov.appendChild(body);
+    document.body.appendChild(ov);
+
+    // boot sequence
+    var bootLines=[
+      {t:'▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',c:'#1a3a1a'},
+      {t:'   PORTFOLIO OS v2.0  —  Quentin Carrière    ',c:'#00ff41'},
+      {t:'▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓',c:'#1a3a1a'},
+      {t:'',c:''},
+      {t:'[  OK  ] Chargement des modules design...',c:'#28c840'},
+      {t:'[  OK  ] Connexion GitHub établie',c:'#28c840'},
+      {t:'[  OK  ] Stack marketing chargée',c:'#28c840'},
+      {t:'[ INFO ] Visiteur identifié',c:'#2897ff'},
+      {t:'',c:''},
+      {t:'  Tapez "help" pour voir les commandes disponibles.',c:'#aaa'},
+      {t:'',c:''}
+    ];
+    var bi=0;
+    function nextBoot(){
+      if(bi>=bootLines.length){setTimeout(function(){inp.focus();},50);return;}
+      var l=bootLines[bi++];
+      if(l.t!==undefined)aLine(out,l.t,l.c);
+      setTimeout(nextBoot,bi<4?60:30);
+    }
+    nextBoot();
+
     inp.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){var cmd=inp.value.trim();inp.value='';if(cmd){cHist.unshift(cmd);hIdx=-1;}aOut(out,'visitor@portfolio:~$ '+cmd,'#00ff41');runCmd(out,cmd);}
+      if(e.key==='Enter'){
+        var cmd=inp.value.trim();inp.value='';
+        if(cmd){cHist.unshift(cmd);hIdx=-1;}
+        aPromptLine(out,cmd);
+        runCmd(out,cmd);
+      }
       else if(e.key==='ArrowUp'){hIdx=Math.min(hIdx+1,cHist.length-1);inp.value=cHist[hIdx]||'';e.preventDefault();}
       else if(e.key==='ArrowDown'){hIdx=Math.max(hIdx-1,-1);inp.value=hIdx>=0?cHist[hIdx]:'';e.preventDefault();}
+      else if(e.key==='Tab'){
+        e.preventDefault();
+        var partial=inp.value.trim().toLowerCase();
+        var cmds=['help','whoami','neofetch','skills','projects','experience','contact','ls','cd ','clear','history','echo ','date','theme','inv','gravity','matrix','sudo hire me','exit','coffee','hack','vim','banner'];
+        var match=cmds.filter(function(c){return c.startsWith(partial)&&c!==partial;});
+        if(match.length===1)inp.value=match[0];
+        else if(match.length>1)aLine(out,match.join('  '),'#555');
+      }
     });
-    setTimeout(function(){inp.focus();},40);
   }
-  function aOut(out,txt,col){var sp=document.createElement('span');sp.style.color=col||'#00ff41';sp.textContent=txt+'\n';out.appendChild(sp);out.scrollTop=out.scrollHeight;}
+
+  function aLine(out,txt,col){
+    var p=document.createElement('p');p.className='kb-line';
+    p.style.color=col||'#e0e0e0';p.textContent=txt;
+    out.appendChild(p);out.scrollTop=out.scrollHeight;
+  }
+  function aHtml(out,html){
+    var p=document.createElement('p');p.className='kb-line';
+    p.innerHTML=html;out.appendChild(p);out.scrollTop=out.scrollHeight;
+  }
+  function aPromptLine(out,cmd){
+    var p=document.createElement('p');p.className='kb-line kb-prompt';
+    p.innerHTML='<em style="color:#28c840">visitor</em><em style="color:#aaa">@</em><em style="color:#2897ff">portfolio</em><em style="color:#aaa">:</em><em style="color:#febc2e">~</em><em style="color:#aaa">$ </em><em style="color:#e0e0e0">'+escHtml(cmd)+'</em>';
+    out.appendChild(p);out.scrollTop=out.scrollHeight;
+  }
+  function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function aOut(out,txt,col){aLine(out,txt,col);}
+
+  function aLines(out,lines){lines.forEach(function(l){aLine(out,l[0],l[1]);});}
+
+  function bar(pct,col){
+    var filled=Math.round(pct/5);var empty=20-filled;
+    return '<span class="kb-bar" style="color:'+col+'">'+Array(filled+1).join('█')+'</span>'
+          +'<span class="kb-bar" style="color:#2a2a2a">'+Array(empty+1).join('█')+'</span>'
+          +' <span style="color:#888">'+pct+'%</span>';
+  }
+
   function closeConsole(){var el=document.getElementById('kb-con');if(el)el.remove();}
+
   function runCmd(out,raw){
     var cmd=raw.toLowerCase().trim();
-    if(cmd==='help'){aOut(out,'  whoami       — Qui suis-je ?\n  stack        — Stack de compétences\n  ls           — Sections du portfolio\n  cd <section> — Naviguer\n  sudo hire me — Envoyer une offre\n  matrix       — ???\n  clear / exit','#ffaa00');}
-    else if(cmd==='whoami'){aOut(out,"Quentin Carrière — Master Marketing Digital\nEn recherche d'alternance / stage\nPassionné design, branding, UX",'#2897ff');}
-    else if(cmd==='stack'){aOut(out,'[Design]   Figma ★★★★★  PS ★★★☆  Canva ★★★★\n[Web]      WP ★★★☆  Framer ★★★☆  Wix ★★☆\n[E-com]    Shopify ★★★★\n[Vidéo]    Premiere ★★★★  CapCut ★★★\n[Office]   Word ★★★★  Excel ★★★  PPT ★★★★','#00ff41');}
-    else if(cmd==='ls'){aOut(out,'hero/  experience/  realisations/  skills/  formation/  contact/','#aaa');}
-    else if(cmd.startsWith('cd ')){var sec=cmd.slice(3).trim().replace(/\//,'');var el=document.getElementById(sec);if(el){el.scrollIntoView({behavior:'smooth'});aOut(out,'> Scroll vers #'+sec,'#00ff41');}else aOut(out,'Section introuvable: '+sec,'#f55');}
-    else if(cmd==='clear'){var k=document.getElementById('kb-out');if(k)k.innerHTML='';}
-    else if(cmd==='sudo hire me'){
-      aOut(out,'█████████████████████████████████','#ffaa00');
-      aOut(out,"██   OFFRE D'EMPLOI ENVOYÉE   ██",'#ffaa00');
-      aOut(out,'█████████████████████████████████','#ffaa00');
-      setTimeout(function(){aOut(out,"Bienvenue dans l'équipe Quentin !",'#00ff41');},700);
-      setTimeout(function(){var el=document.getElementById('contact');if(el)el.scrollIntoView({behavior:'smooth'});},1600);
+    if(!cmd)return;
+
+    if(cmd==='help'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e;font-size:1rem">━━━ NAVIGATION ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');
+      aHtml(out,'  <span style="color:#2897ff">ls</span>              <span style="color:#555">—</span> Lister les sections');
+      aHtml(out,'  <span style="color:#2897ff">cd</span> <span style="color:#aaa">&lt;section&gt;</span>   <span style="color:#555">—</span> Naviguer vers une section');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e;font-size:1rem">━━━ PORTFOLIO ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');
+      aHtml(out,'  <span style="color:#2897ff">whoami</span>          <span style="color:#555">—</span> Identité');
+      aHtml(out,'  <span style="color:#2897ff">neofetch</span>        <span style="color:#555">—</span> Info système');
+      aHtml(out,'  <span style="color:#2897ff">skills</span>          <span style="color:#555">—</span> Compétences avec barres');
+      aHtml(out,'  <span style="color:#2897ff">projects</span>        <span style="color:#555">—</span> Réalisations');
+      aHtml(out,'  <span style="color:#2897ff">experience</span>      <span style="color:#555">—</span> Expérience pro');
+      aHtml(out,'  <span style="color:#2897ff">contact</span>         <span style="color:#555">—</span> Coordonnées');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e;font-size:1rem">━━━ ACTIONS ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');
+      aHtml(out,'  <span style="color:#2897ff">theme</span>           <span style="color:#555">—</span> Changer le thème');
+      aHtml(out,'  <span style="color:#2897ff">gravity</span>         <span style="color:#555">—</span> Activer/désactiver la gravité');
+      aHtml(out,'  <span style="color:#2897ff">inv</span>             <span style="color:#555">—</span> Ouvrir l\'inventaire');
+      aHtml(out,'  <span style="color:#2897ff">matrix</span>          <span style="color:#555">—</span> ???');
+      aHtml(out,'  <span style="color:#2897ff">sudo hire me</span>    <span style="color:#555">—</span> 📞');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e;font-size:1rem">━━━ UTILITAIRES ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━</span>');
+      aHtml(out,'  <span style="color:#2897ff">echo</span> <span style="color:#aaa">&lt;texte&gt;</span>    <span style="color:#555">—</span> Afficher du texte');
+      aHtml(out,'  <span style="color:#2897ff">date</span>            <span style="color:#555">—</span> Date et heure');
+      aHtml(out,'  <span style="color:#2897ff">history</span>         <span style="color:#555">—</span> Historique des commandes');
+      aHtml(out,'  <span style="color:#2897ff">banner</span>          <span style="color:#555">—</span> ASCII art');
+      aHtml(out,'  <span style="color:#2897ff">coffee</span>          <span style="color:#555">—</span> Pause café ☕');
+      aHtml(out,'  <span style="color:#2897ff">clear</span> / <span style="color:#2897ff">exit</span>   <span style="color:#555">—</span> Vider / Fermer');
+      aLine(out,'');
     }
-    else if(cmd==='matrix'){trigMatrix();aOut(out,'> MATRIX protocol initiated...','#00ff41');}
-    else if(cmd==='exit'){aOut(out,'Goodbye.','#f55');setTimeout(closeConsole,500);}
-    else aOut(out,'Inconnu: "'+raw+'". Tapez help.','#f55');
+    else if(cmd==='whoami'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41;font-size:1.1rem">Quentin Carrière</span>');
+      aHtml(out,'<span style="color:#aaa">┌──────────────────────────────────────────┐</span>');
+      aHtml(out,'<span style="color:#aaa">│</span> <span style="color:#2897ff">Statut    </span> <span style="color:#aaa">│</span> Master Marketing Digital        <span style="color:#aaa">│</span>');
+      aHtml(out,'<span style="color:#aaa">│</span> <span style="color:#2897ff">Recherche </span> <span style="color:#aaa">│</span> Alternance / Stage               <span style="color:#aaa">│</span>');
+      aHtml(out,'<span style="color:#aaa">│</span> <span style="color:#2897ff">Focus     </span> <span style="color:#aaa">│</span> Design · Branding · UX           <span style="color:#aaa">│</span>');
+      aHtml(out,'<span style="color:#aaa">└──────────────────────────────────────────┘</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='neofetch'){
+      aLine(out,'');
+      var themeNow=TH[ti]?TH[ti].name:'Bleu Électrique';
+      aHtml(out,'<span style="color:#00ff41">      ██████╗ </span>  <span style="color:#2897ff">visitor</span><span style="color:#aaa">@</span><span style="color:#2897ff">portfolio</span>');
+      aHtml(out,'<span style="color:#00ff41">     ██╔═══██╗</span>  <span style="color:#555">──────────────────────</span>');
+      aHtml(out,'<span style="color:#00ff41">     ██║   ██║</span>  <span style="color:#febc2e">OS</span>         Portfolio OS v2.0');
+      aHtml(out,'<span style="color:#00ff41">     ██║▄▄ ██║</span>  <span style="color:#febc2e">Host</span>       GitHub Pages');
+      aHtml(out,'<span style="color:#00ff41">     ╚██████╔╝</span>  <span style="color:#febc2e">Shell</span>      kb-console 2.0');
+      aHtml(out,'<span style="color:#00ff41">      ╚══▀▀═╝ </span>  <span style="color:#febc2e">Kernel</span>     Vanilla JS ES5');
+      aHtml(out,'<span style="color:#00ff41">             </span>  <span style="color:#febc2e">Thème</span>      '+themeNow);
+      aHtml(out,'<span style="color:#00ff41">             </span>  <span style="color:#febc2e">CPU</span>        Cerveau humain @ ~4Hz');
+      aHtml(out,'<span style="color:#00ff41">             </span>  <span style="color:#febc2e">Carburant</span>  Café (64 unités/jour)');
+      aHtml(out,'             <span style="background:#ff5f57;color:#ff5f57">██</span><span style="background:#febc2e;color:#febc2e">██</span><span style="background:#28c840;color:#28c840">██</span><span style="background:#2897ff;color:#2897ff">██</span><span style="background:#A335EE;color:#A335EE">██</span><span style="background:#FFAA00;color:#FFAA00">██</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='skills'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">COMPÉTENCES ─────────────────────────────────</span>');
+      aLine(out,'');
+      var sk=[
+        ['Figma        ',100,'#A335EE'],['Shopify      ',80,'#0070FF'],
+        ['WordPress    ',65,'#1EFF00'],['Premiere Pro ',80,'#0070FF'],
+        ['Photoshop    ',65,'#1EFF00'],['Canva        ',85,'#9D9D9D'],
+        ['Framer       ',70,'#0070FF'],['CapCut       ',70,'#9D9D9D'],
+        ['Word         ',85,'#9D9D9D'],['Excel        ',65,'#1EFF00'],
+        ['PowerPoint   ',85,'#9D9D9D']
+      ];
+      sk.forEach(function(s){
+        aHtml(out,'<span style="color:#aaa">'+s[0]+'</span> '+bar(s[1],s[2]));
+      });
+      aLine(out,'');
+    }
+    else if(cmd==='projects'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">RÉALISATIONS ────────────────────────────────</span>');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41">01</span> <span style="color:#2897ff">Projets E-commerce</span>  <span style="color:#555">— Shopify / WordPress</span>');
+      aHtml(out,'   Boutiques complètes, fiche produit, tunnel de vente');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41">02</span> <span style="color:#2897ff">Campagnes Social Media</span>  <span style="color:#555">— Canva / Premiere</span>');
+      aHtml(out,'   Contenus vidéo, visuels, stratégie de contenu');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41">03</span> <span style="color:#2897ff">Sites Web</span>  <span style="color:#555">— Figma / Framer / Wix</span>');
+      aHtml(out,'   UI/UX, maquettes, intégration no-code');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#555">→ cd realisations  pour voir tous les projets</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='experience'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">EXPÉRIENCE ──────────────────────────────────</span>');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41">▸</span> <span style="color:#2897ff">Alternance Marketing Digital</span>');
+      aHtml(out,'  Missions : contenus, campagnes, analyse de données');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41">▸</span> <span style="color:#2897ff">Projets freelance Design</span>');
+      aHtml(out,'  Identités visuelles, supports de communication');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#555">→ cd experience  pour les détails</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='contact'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">CONTACT ─────────────────────────────────────</span>');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#2897ff">📧</span>  quentincarriere1312@gmail.com');
+      aHtml(out,'<span style="color:#2897ff">🐙</span>  github.com/Quentin1312');
+      aLine(out,'');
+      aHtml(out,'<span style="color:#555">→ cd contact  pour le formulaire</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='ls'){
+      aLine(out,'');
+      aHtml(out,''
+        +'<span style="color:#2897ff">hero</span>/    '
+        +'<span style="color:#2897ff">experience</span>/    '
+        +'<span style="color:#2897ff">realisations</span>/    '
+        +'<span style="color:#2897ff">skills</span>/    '
+        +'<span style="color:#2897ff">formation</span>/    '
+        +'<span style="color:#2897ff">contact</span>/');
+      aLine(out,'');
+    }
+    else if(cmd.startsWith('cd ')){
+      var sec=cmd.slice(3).trim().replace(/\//,'');
+      var el=document.getElementById(sec);
+      if(el){
+        el.scrollIntoView({behavior:'smooth'});
+        aHtml(out,'<span style="color:#28c840">→ Scroll vers </span><span style="color:#2897ff">#'+sec+'</span>');
+      }else{
+        aHtml(out,'<span style="color:#f55">bash: cd: '+sec+': Section introuvable</span>');
+      }
+    }
+    else if(cmd==='date'){
+      aLine(out,new Date().toLocaleString('fr-FR',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}),'#aaa');
+    }
+    else if(cmd==='history'){
+      if(!cHist.length){aLine(out,'(historique vide)','#555');return;}
+      cHist.slice().reverse().forEach(function(c,i){
+        aHtml(out,'<span style="color:#555">'+(i+1)+'</span>  <span style="color:#aaa">'+escHtml(c)+'</span>');
+      });
+    }
+    else if(cmd.startsWith('echo ')){
+      aLine(out,raw.slice(5),'#e0e0e0');
+    }
+    else if(cmd==='theme'){
+      var names=TH.map(function(t,i){return (i===ti?'<span style="color:#00ff41">▸ ':'  <span style="color:#aaa">')+t.name+'</span>';});
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">THÈMES  <span style="color:#555">(touche T pour cycler)</span></span>');
+      names.forEach(function(n){aHtml(out,n);});
+      aLine(out,'');
+    }
+    else if(cmd==='inv'||cmd==='inventory'){
+      aLine(out,'> Ouverture inventaire...','#aaa');
+      setTimeout(function(){closeConsole();openInventory();},400);
+    }
+    else if(cmd==='gravity'){
+      toggleGravity();
+      aLine(out,gOn?'> Gravité activée':'> Gravité désactivée','#aaa');
+    }
+    else if(cmd==='matrix'){
+      trigMatrix();
+      aLine(out,'> Initialisation MATRIX...','#00ff41');
+    }
+    else if(cmd==='banner'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#00ff41"> ██████╗ ██╗   ██╗███████╗███╗  ██╗████████╗██╗███╗  ██╗</span>');
+      aHtml(out,'<span style="color:#00ff41"> ██╔═══██╗██║   ██║██╔════╝████╗ ██║╚══██╔══╝██║████╗ ██║</span>');
+      aHtml(out,'<span style="color:#00ff41"> ██║   ██║██║   ██║█████╗  ██╔██╗██║   ██║   ██║██╔██╗██║</span>');
+      aHtml(out,'<span style="color:#00ff41"> ██║▄▄ ██║██║   ██║██╔══╝  ██║╚████║   ██║   ██║██║╚████║</span>');
+      aHtml(out,'<span style="color:#00ff41"> ╚██████╔╝╚██████╔╝███████╗██║ ╚███║   ██║   ██║██║ ╚███║</span>');
+      aHtml(out,'<span style="color:#1a3a1a">  ╚══▀▀═╝  ╚═════╝ ╚══════╝╚═╝  ╚══╝   ╚═╝   ╚═╝╚═╝  ╚══╝</span>');
+      aHtml(out,'<span style="color:#2897ff">                                        Carrière — portfolio</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='coffee'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">     ( (</span>');
+      aHtml(out,'<span style="color:#febc2e">      ) )</span>');
+      aHtml(out,'<span style="color:#febc2e">   .____.</span>');
+      aHtml(out,'<span style="color:#febc2e">   |    |</span>  Pause café activée');
+      aHtml(out,'<span style="color:#febc2e">   |____|</span>  +10 en concentration');
+      aHtml(out,'<span style="color:#febc2e">   (____)</span>  Stack : 63/64 restants');
+      aLine(out,'');
+    }
+    else if(cmd==='hack'){
+      aLine(out,'> Initialisation hack.exe...','#00ff41');
+      var fakeLines=['[BREACH] Firewall contourné...','[SCAN]  Analyse des ports...','[FOUND] 3 vulnérabilités détectées','[EXPL]  CVE-2024-PORTFOLIO exploitée','[ROOT]  Accès root obtenu !','[DATA]  Téléchargement des compétences...','[DONE]  Figma, Shopify, Premiere exfiltrés','','  Just kidding — hire me instead 😄'];
+      var fi=0;
+      var fiv=setInterval(function(){
+        if(fi>=fakeLines.length){clearInterval(fiv);return;}
+        aLine(out,fakeLines[fi],'#00ff41');fi++;
+      },180);
+    }
+    else if(cmd==='vim'||cmd==='nano'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#aaa">  ~</span>');
+      aHtml(out,'<span style="color:#aaa">  ~</span>');
+      aHtml(out,'<span style="color:#2897ff">  "portfolio.js" [readonly] 1,1  All</span>');
+      aHtml(out,'<span style="color:#555">  (Conseil : tapez "exit" pour fermer ce terminal)</span>');
+      aLine(out,'');
+    }
+    else if(cmd==='sudo hire me'){
+      aLine(out,'');
+      aHtml(out,'<span style="color:#febc2e">████████████████████████████████████</span>');
+      aHtml(out,'<span style="color:#febc2e">██                                ██</span>');
+      aHtml(out,"<span style=\"color:#febc2e\">██   OFFRE D'EMPLOI ENVOYÉE ✓    ██</span>");
+      aHtml(out,'<span style="color:#febc2e">██                                ██</span>');
+      aHtml(out,'<span style="color:#febc2e">████████████████████████████████████</span>');
+      setTimeout(function(){aHtml(out,"<span style=\"color:#28c840\">✓ Bienvenue dans l'équipe !</span>");},600);
+      setTimeout(function(){aLine(out,'> Redirection vers #contact...','#555');},1200);
+      setTimeout(function(){var el=document.getElementById('contact');if(el)el.scrollIntoView({behavior:'smooth'});},1800);
+    }
+    else if(cmd==='clear'){
+      var k=document.getElementById('kb-out');if(k)k.innerHTML='';
+    }
+    else if(cmd==='exit'){
+      aLine(out,'Au revoir !','#f55');
+      setTimeout(closeConsole,500);
+    }
+    else if(cmd==='sudo'||cmd.startsWith('sudo ')){
+      aHtml(out,'<span style="color:#f55">'+escHtml(raw)+': commande sudo non reconnue. Essayez "sudo hire me"</span>');
+    }
+    else if(cmd==='rm -rf /'||cmd==='rm -rf *'){
+      aHtml(out,'<span style="color:#f55">Permission denied. (et non, ça ne marchera pas)</span>');
+    }
+    else{
+      aHtml(out,'<span style="color:#f55">bash: '+escHtml(raw)+': commande introuvable</span>');
+      aHtml(out,'<span style="color:#555">Tapez "help" pour la liste des commandes.</span>');
+    }
   }
 
   // ── Matrix ──
