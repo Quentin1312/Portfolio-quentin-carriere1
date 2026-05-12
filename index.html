@@ -2731,83 +2731,212 @@ function creationErr(img) {
   lnk.href='https://fonts.googleapis.com/css2?family=VT323&display=swap';
   document.head.appendChild(lnk);
 
-  var themes=[
-    {name:'Bleu Electrique',accent:'#2897FF'},
-    {name:'Vert Matrix',accent:'#00FF41'},
-    {name:'Violet Cyber',accent:'#BF00FF'},
-    {name:'Dore Legendaire',accent:'#FFAA00'},
-    {name:'Rose Sakura',accent:'#FF6B9D'}
+  var mcStyle=document.createElement('style');
+  mcStyle.textContent=
+    '#mc-overlay{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.73);z-index:10000;display:flex;align-items:center;justify-content:center;font-family:VT323,monospace}'+
+    '#mc-inv{background:#C6C6C6;padding:8px;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;image-rendering:pixelated}'+
+    '.mc-slot{width:36px;height:36px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;box-sizing:border-box}'+
+    '.mc-slot img{width:28px;height:28px;object-fit:contain;image-rendering:pixelated;pointer-events:none}'+
+    '.mc-slot span.mc-em{font-size:1.4rem;pointer-events:none;line-height:1}'+
+    '.mc-slot .mc-count{position:absolute;bottom:1px;right:2px;font-size:.75rem;color:#fff;text-shadow:1px 1px 0 #000,-1px 0 0 #000,0 -1px 0 #000;pointer-events:none;line-height:1}'+
+    '.mc-slot:hover{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF,inset 0 0 0 36px rgba(255,255,255,.15)}'+
+    '.mc-sec-label{font-size:12px;color:#404040;margin:6px 0 3px;letter-spacing:.5px}'+
+    '.mc-hotbar-wrap{margin-top:4px;padding-top:4px}'+
+    '#mc-tip{position:fixed;background:#100010;border:1px solid #4d00a8;color:#fff;padding:7px 10px;font-family:VT323,monospace;z-index:99999;pointer-events:none;max-width:200px;min-width:120px;box-shadow:2px 2px 0 rgba(0,0,0,.5)}'+
+    '@keyframes gFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(25deg);opacity:0}}'+
+    '@keyframes gRise{0%{transform:translateY(110vh) rotate(25deg);opacity:0}100%{transform:translateY(0) rotate(0);opacity:1}}'+
+    '.grav-fall{animation:gFall 1.2s ease-in forwards!important}.grav-rise{animation:gRise .8s ease-out forwards!important}';
+  document.head.appendChild(mcStyle);
+
+  var RARITIES={legendary:'#FFAA00',epic:'#A335EE',rare:'#0070FF',uncommon:'#1EFF00',common:'#9D9D9D'};
+  var RAR_LABELS={legendary:'Legendaire',epic:'Epique',rare:'Rare',uncommon:'Peu commun',common:'Commun'};
+  var BASE='https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/';
+
+  var HOTBAR_ITEMS=[
+    {id:'figma',name:'Figma',rarity:'epic',img:BASE+'figma.png',tip:'Maitrise avancee de Figma - Prototypage, design system, composants'},
+    {id:'shopify',name:'Shopify',rarity:'rare',img:BASE+'shopify.png',tip:'Creation et gestion de boutiques Shopify'},
+    {id:'wordpress',name:'WordPress',rarity:'uncommon',img:BASE+'wordpress.png',tip:'Developpement WordPress - themes, plugins, SEO'},
+    {id:'premiere',name:'Premiere Pro',rarity:'rare',img:BASE+'premiere.png',tip:'Montage video professionnel - reels, publicites'},
+    {id:'photoshop',name:'Photoshop',rarity:'uncommon',img:BASE+'photoshop.png',tip:'Retouche et creation graphique'},
+    {id:'canva',name:'Canva',rarity:'common',img:BASE+'canva.png',tip:'Creation rapide de visuels'},
+    {id:'framer',name:'Framer',rarity:'rare',img:BASE+'framer.png',tip:'Sites interactifs haut de gamme avec Framer'},
+    {id:'wix',name:'Wix',rarity:'common',img:BASE+'wix.png',tip:'Creation de sites Wix'},
+    {id:'capcut',name:'CapCut',rarity:'common',img:BASE+'capcut.png',tip:'Edition video mobile et desktop'}
   ];
-  var themeIdx=0;
-  function cycleTheme(){
-    themeIdx=(themeIdx+1)%themes.length;
-    var t=themes[themeIdx];
-    if(typeof setAccent==='function') setAccent(t.accent);
-    showToast('Theme: '+t.name,'#222','#fff');
-  }
+  var INV_ITEMS=[
+    {id:'word',name:'Word',rarity:'common',img:BASE+'word.png',tip:'Maitrise de Microsoft Word'},
+    {id:'excel',name:'Excel',rarity:'uncommon',img:BASE+'excel.png',tip:'Tableaux, formules, dashboards Excel'},
+    {id:'ppt',name:'PowerPoint',rarity:'common',img:BASE+'powerpoint.png',tip:'Presentations impactantes'},
+    {id:'cv',name:'CV Enchante',rarity:'legendary',emoji:'📜',tip:'Item legendaire - +50 en entretiens'},
+    {id:'coffee',name:'Cafe x64',rarity:'common',emoji:'☕',tip:'Consommable - +10 en concentration',count:64},
+    {id:'sword',name:'Epee Deadline',rarity:'epic',emoji:'⚔️',tip:'Arme - Tue les delais dans les temps'},
+    {id:'diamond',name:'Idee Diamant',rarity:'rare',emoji:'💎',tip:'Materiau - Pour crafter des projets legendaires'},
+    {id:'door',name:'Reunion Evitee',rarity:'uncommon',emoji:'🚪',tip:'Esquive - Evite une reunion inutile'},
+    {id:'mana',name:'Brief Magique',rarity:'rare',emoji:'🔮',tip:'Parchemin - Transforme le client en allie'}
+  ];
+  var ARMOR=[
+    {e:'🪖',n:'Casque Strategie',r:'epic'},
+    {e:'🦺',n:'Plastron Vision',r:'rare'},
+    {e:'👖',n:'Jambiere Execution',r:'uncommon'},
+    {e:'👟',n:'Bottes Livraison',r:'common'}
+  ];
 
-  function showToast(msg,bg,col){
-    var d=document.getElementById('kb-toast');
-    if(!d){
-      d=document.createElement('div');d.id='kb-toast';
-      d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:4px;font-family:VT323,monospace;font-size:1.3rem;z-index:99999;pointer-events:none;transition:opacity .4s';
-      document.body.appendChild(d);
-    }
-    d.textContent=msg;d.style.background=bg||'#222';d.style.color=col||'#fff';
-    d.style.opacity='1';clearTimeout(d._t);
-    d._t=setTimeout(function(){d.style.opacity='0';},1800);
-  }
-
-  var gravityOn=false;
-  var gravStyle=null;
-  function toggleGravity(){
-    gravityOn=!gravityOn;
-    if(!gravStyle){
-      gravStyle=document.createElement('style');
-      gravStyle.id='grav-style';
-      gravStyle.textContent='@keyframes gFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(25deg);opacity:0}}@keyframes gRise{0%{transform:translateY(110vh) rotate(25deg);opacity:0}100%{transform:translateY(0) rotate(0);opacity:1}}.grav-fall{animation:gFall 1.2s ease-in forwards!important}.grav-rise{animation:gRise .8s ease-out forwards!important}';
-      document.head.appendChild(gravStyle);
-    }
-    var els=document.querySelectorAll('section,nav,.hero-inner,footer');
-    if(gravityOn){
-      els.forEach(function(el,i){
-        el.classList.remove('grav-rise');
-        el.style.animationDelay=(i*0.06)+'s';
-        el.classList.add('grav-fall');
-      });
-      showToast('⚠ Gravite activee','#1a1a1a','#ffaa00');
+  function mkSlot(item){
+    var s=document.createElement('div');
+    s.className='mc-slot';
+    if(!item){return s;}
+    s.dataset.id=item.id;
+    if(item.emoji){
+      var em=document.createElement('span');em.className='mc-em';em.textContent=item.emoji;s.appendChild(em);
     } else {
-      els.forEach(function(el,i){
-        el.classList.remove('grav-fall');
-        el.style.animationDelay=(i*0.04)+'s';
-        el.classList.add('grav-rise');
-      });
-      showToast('✨ Gravite desactivee','#1a1a1a','#2897ff');
+      var img=document.createElement('img');img.src=item.img;
+      img.onerror=function(){this.style.display='none';var fb=document.createElement('span');fb.className='mc-em';fb.style.fontSize='1rem';fb.textContent=item.name[0];s.appendChild(fb);};
+      s.appendChild(img);
     }
+    if(item.count){var cnt=document.createElement('span');cnt.className='mc-count';cnt.textContent=item.count;s.appendChild(cnt);}
+    s.style.outline='2px solid '+RARITIES[item.rarity];
+    s.style.outlineOffset='-2px';
+    s.addEventListener('mouseenter',function(e){showTip(item,e);});
+    s.addEventListener('mouseleave',hideTip);
+    return s;
   }
 
-  var consoleOpen=false;
-  var consoleHistory=[];
-  var histIdx=-1;
+  function mkArmorSlot(a){
+    var s=document.createElement('div');
+    s.className='mc-slot';
+    s.style.outline='2px solid '+RARITIES[a.r];
+    s.style.outlineOffset='-2px';
+    var em=document.createElement('span');em.className='mc-em';em.textContent=a.e;s.appendChild(em);
+    s.addEventListener('mouseenter',function(e){showTip({name:a.n,rarity:a.r,tip:'Equipement - Slot armure'},e);});
+    s.addEventListener('mouseleave',hideTip);
+    return s;
+  }
+
+  var _tip=null;
+  function showTip(item,e){
+    hideTip();
+    var t=document.createElement('div');t.id='mc-tip';
+    var c=RARITIES[item.rarity];
+    t.innerHTML=
+      '<div style="color:'+c+';font-size:1.1rem;margin-bottom:2px">'+item.name+'</div>'+
+      '<div style="color:'+c+';font-size:.8rem;margin-bottom:4px;opacity:.8">['+RAR_LABELS[item.rarity]+']</div>'+
+      '<div style="color:#aaa;font-size:.9rem">'+item.tip+'</div>';
+    t.style.borderColor=c;
+    document.body.appendChild(t);_tip=t;moveTip(e);
+  }
+  function moveTip(e){if(!_tip)return;_tip.style.left=(e.clientX+14)+'px';_tip.style.top=Math.max(4,e.clientY-10)+'px';}
+  function hideTip(){if(_tip){_tip.remove();_tip=null;}}
+  document.addEventListener('mousemove',moveTip);
+
+  function openInventory(){
+    if(document.getElementById('mc-overlay'))return;
+    var ov=document.createElement('div');ov.id='mc-overlay';
+    var panel=document.createElement('div');panel.id='mc-inv';
+
+    // ── TOP ROW: armor | player | crafting 2x2 ──
+    var topRow=document.createElement('div');
+    topRow.style.cssText='display:flex;gap:4px;align-items:flex-start;margin-bottom:2px';
+
+    // Armor col
+    var armorCol=document.createElement('div');
+    armorCol.style.cssText='display:flex;flex-direction:column;gap:2px';
+    ARMOR.forEach(function(a){armorCol.appendChild(mkArmorSlot(a));});
+    topRow.appendChild(armorCol);
+
+    // Player preview
+    var playerWrap=document.createElement('div');
+    playerWrap.style.cssText='display:flex;flex-direction:column;gap:2px';
+    var playerBox=document.createElement('div');
+    playerBox.style.cssText='width:66px;height:76px;background:#1a1a1a;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:2.8rem';
+    playerBox.textContent='🧑‍💻';
+    playerWrap.appendChild(playerBox);
+    // Offhand slot below player
+    var offhandRow=document.createElement('div');
+    offhandRow.style.cssText='display:flex;align-items:center;gap:4px';
+    var offSlot=document.createElement('div');offSlot.className='mc-slot';
+    offSlot.style.cssText+=';outline:2px solid #666;outline-offset:-2px';
+    var offEm=document.createElement('span');offEm.className='mc-em';offEm.textContent='🛡️';offSlot.appendChild(offEm);
+    offhandRow.appendChild(offSlot);
+    playerWrap.appendChild(offhandRow);
+    topRow.appendChild(playerWrap);
+
+    // Crafting 2x2
+    var craftWrap=document.createElement('div');
+    craftWrap.style.cssText='display:flex;flex-direction:column;gap:4px;margin-left:6px';
+    var craftLabel=document.createElement('div');
+    craftLabel.className='mc-sec-label';craftLabel.textContent='Craft';craftLabel.style.marginTop='0';
+    craftWrap.appendChild(craftLabel);
+    var craftRow=document.createElement('div');
+    craftRow.style.cssText='display:flex;align-items:center;gap:4px';
+    var grid2=document.createElement('div');
+    grid2.style.cssText='display:grid;grid-template-columns:repeat(2,36px);gap:2px';
+    for(var i=0;i<4;i++)grid2.appendChild(document.createElement('div').setAttribute('class','mc-slot')||mkEmptySlot());
+    var arrDiv=document.createElement('div');
+    arrDiv.style.cssText='color:#404040;font-size:1.4rem;padding:0 2px';arrDiv.textContent='→';
+    var resSlot=mkEmptySlot();resSlot.style.width='40px';resSlot.style.height='40px';
+    craftRow.appendChild(grid2);craftRow.appendChild(arrDiv);craftRow.appendChild(resSlot);
+    craftWrap.appendChild(craftRow);
+    // Recipe book btn
+    var rbRow=document.createElement('div');rbRow.style.cssText='display:flex;justify-content:flex-end;margin-top:2px';
+    var rbBtn=document.createElement('div');
+    rbBtn.style.cssText='width:36px;height:36px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #373737;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.4rem';
+    rbBtn.textContent='📖';rbBtn.title='Livre de recettes (crafting 3x3)';
+    rbBtn.addEventListener('click',openCraftingTable);
+    rbRow.appendChild(rbBtn);craftWrap.appendChild(rbRow);
+    topRow.appendChild(craftWrap);
+    panel.appendChild(topRow);
+
+    // ── MAIN INVENTORY ──
+    var invLabel=document.createElement('div');invLabel.className='mc-sec-label';invLabel.textContent='Inventaire';
+    panel.appendChild(invLabel);
+    var mainGrid=document.createElement('div');
+    mainGrid.style.cssText='display:grid;grid-template-columns:repeat(9,36px);gap:2px';
+    // Row 1: first 9 inv items
+    INV_ITEMS.forEach(function(it){mainGrid.appendChild(mkSlot(it));});
+    // Rows 2-3: empty
+    for(var j=0;j<18;j++)mainGrid.appendChild(mkEmptySlot());
+    panel.appendChild(mainGrid);
+
+    // ── HOTBAR ──
+    var hotbarWrap=document.createElement('div');hotbarWrap.className='mc-hotbar-wrap';
+    var hotGrid=document.createElement('div');
+    hotGrid.style.cssText='display:grid;grid-template-columns:repeat(9,36px);gap:2px';
+    HOTBAR_ITEMS.forEach(function(it){hotGrid.appendChild(mkSlot(it));});
+    hotbarWrap.appendChild(hotGrid);
+    panel.appendChild(hotbarWrap);
+
+    // hint
+    var hint=document.createElement('div');
+    hint.style.cssText='font-size:.8rem;color:#555;margin-top:6px;text-align:right';
+    hint.textContent='[E] / [Echap] fermer  |  📖 crafting 3x3';
+    panel.appendChild(hint);
+
+    ov.appendChild(panel);
+    document.body.appendChild(ov);
+  }
+
+  function mkEmptySlot(){
+    var s=document.createElement('div');s.className='mc-slot';return s;
+  }
+
+  function closeInventory(){
+    var el=document.getElementById('mc-overlay');if(el){el.remove();hideTip();}
+    var ct=document.getElementById('mc-crafting-table');if(ct)ct.remove();
+  }
+
+  // ──────────────────── CONSOLE ────────────────────
+  var consoleHistory=[];var histIdx=-1;
   function openConsole(){
-    if(document.getElementById('kb-console')) return;
-    consoleOpen=true;
-    var ov=document.createElement('div');
-    ov.id='kb-console';
-    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:10000;display:flex;flex-direction:column;font-family:VT323,monospace;padding:24px;box-sizing:border-box';
-    var out=document.createElement('div');
-    out.id='kb-out';
+    if(document.getElementById('kb-console'))return;
+    var ov=document.createElement('div');ov.id='kb-console';
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:10001;display:flex;flex-direction:column;font-family:VT323,monospace;padding:24px;box-sizing:border-box';
+    var out=document.createElement('div');out.id='kb-out';
     out.style.cssText='flex:1;overflow-y:auto;color:#00ff41;font-size:1.1rem;line-height:1.5;white-space:pre-wrap';
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;color:#00ff41;margin-top:8px';
-    var pr=document.createElement('span');
-    pr.textContent='visitor@portfolio:~$ ';
-    pr.style.cssText='white-space:nowrap;font-size:1.2rem';
-    var inp=document.createElement('input');
-    inp.id='kb-inp';
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;color:#00ff41;margin-top:8px';
+    var pr=document.createElement('span');pr.textContent='visitor@portfolio:~$ ';pr.style.cssText='white-space:nowrap;font-size:1.2rem';
+    var inp=document.createElement('input');inp.id='kb-inp';
     inp.style.cssText='flex:1;background:transparent;border:none;outline:none;color:#00ff41;font-family:VT323,monospace;font-size:1.2rem;caret-color:#00ff41';
-    row.appendChild(pr);row.appendChild(inp);
-    ov.appendChild(out);ov.appendChild(row);
+    row.appendChild(pr);row.appendChild(inp);ov.appendChild(out);ov.appendChild(row);
     document.body.appendChild(ov);
     appendOut(out,'Quentin Carriere Portfolio OS v2.0\nType "help" pour voir les commandes disponibles.\n','#00ff41');
     inp.addEventListener('keydown',function(e){
@@ -2816,241 +2945,164 @@ function creationErr(img) {
         if(cmd){consoleHistory.unshift(cmd);histIdx=-1;}
         appendOut(out,'visitor@portfolio:~$ '+cmd,'#00ff41');
         runCmd(out,cmd);
-      } else if(e.key==='ArrowUp'){
-        histIdx=Math.min(histIdx+1,consoleHistory.length-1);
-        inp.value=consoleHistory[histIdx]||'';e.preventDefault();
-      } else if(e.key==='ArrowDown'){
-        histIdx=Math.max(histIdx-1,-1);
-        inp.value=histIdx>=0?consoleHistory[histIdx]:'';e.preventDefault();
-      }
+      }else if(e.key==='ArrowUp'){histIdx=Math.min(histIdx+1,consoleHistory.length-1);inp.value=consoleHistory[histIdx]||'';e.preventDefault();}
+      else if(e.key==='ArrowDown'){histIdx=Math.max(histIdx-1,-1);inp.value=histIdx>=0?consoleHistory[histIdx]:'';e.preventDefault();}
     });
     setTimeout(function(){inp.focus();},50);
   }
-  function appendOut(out,txt,col){
-    var sp=document.createElement('span');
-    sp.style.color=col||'#00ff41';
-    sp.textContent=txt+'\n';
-    out.appendChild(sp);
-    out.scrollTop=out.scrollHeight;
-  }
-  function closeConsole(){
-    var el=document.getElementById('kb-console');
-    if(el){el.remove();consoleOpen=false;}
-  }
+  function appendOut(out,txt,col){var sp=document.createElement('span');sp.style.color=col||'#00ff41';sp.textContent=txt+'\n';out.appendChild(sp);out.scrollTop=out.scrollHeight;}
+  function closeConsole(){var el=document.getElementById('kb-console');if(el)el.remove();}
   function runCmd(out,raw){
     var cmd=raw.toLowerCase().trim();
     if(cmd==='help'){
       appendOut(out,'Commandes disponibles:\n  whoami      - Qui suis-je ?\n  stack       - Ma stack de competences\n  clear       - Vider le terminal\n  ls          - Lister les sections\n  cd <sec>    - Naviguer vers une section\n  sudo hire me - Envoyer une offre\n  matrix      - ???\n  exit        - Fermer le terminal','#ffaa00');
-    } else if(cmd==='whoami'){
+    }else if(cmd==='whoami'){
       appendOut(out,"Quentin Carriere\nEtudiant en Master Marketing Digital & Communication\nEn recherche d'emploi - Alternance / Stage\nPassionne de design, branding et experiences utilisateur.",'#2897ff');
-    } else if(cmd==='stack'){
+    }else if(cmd==='stack'){
       appendOut(out,'>>> COMPETENCES TECHNIQUES <<<\n\n[Design]      Figma ★★★★★  Photoshop ★★★☆☆  Canva ★★★★☆\n[Web]         WordPress ★★★☆☆  Framer ★★★☆☆  Wix ★★☆☆☆\n[E-commerce]  Shopify ★★★★☆\n[Video]       Premiere Pro ★★★★☆  CapCut ★★★☆☆\n[Office]      Word ★★★★☆  Excel ★★★☆☆  PowerPoint ★★★★☆','#00ff41');
-    } else if(cmd==='ls'){
+    }else if(cmd==='ls'){
       appendOut(out,'hero/\nexperience/\nrealisations/\nskills/\nformation/\nlangues/\ninitiatives/\ncontact/','#aaa');
-    } else if(cmd.startsWith('cd ')){
+    }else if(cmd.startsWith('cd ')){
       var sec=cmd.slice(3).trim().replace(/\//,'');
       var el=document.getElementById(sec);
       if(el){el.scrollIntoView({behavior:'smooth'});appendOut(out,'> Navigating to #'+sec+' ...','#00ff41');}
       else appendOut(out,'Section introuvable: '+sec,'#ff4444');
-    } else if(cmd==='clear'){
-      var kb=document.getElementById('kb-out');if(kb) kb.innerHTML='';
-    } else if(cmd==='sudo hire me'){
+    }else if(cmd==='clear'){
+      var kb=document.getElementById('kb-out');if(kb)kb.innerHTML='';
+    }else if(cmd==='sudo hire me'){
       appendOut(out,'██████████████████████████████','#ffaa00');
       appendOut(out,"██  OFFRE D'EMPLOI ENVOYEE  ██",'#ffaa00');
       appendOut(out,'██████████████████████████████','#ffaa00');
       setTimeout(function(){appendOut(out,"Felicitations ! Vous rejoignez l'equipe Quentin.",'#00ff41');},600);
       setTimeout(function(){appendOut(out,'> Redirect vers contact...','#aaa');},1200);
       setTimeout(function(){var el=document.getElementById('contact');if(el)el.scrollIntoView({behavior:'smooth'});},1800);
-    } else if(cmd==='matrix'){
-      trigMatrix();
-      appendOut(out,'> Initialisation protocole MATRIX...','#00ff41');
-    } else if(cmd==='exit'){
-      appendOut(out,'Goodbye.','#ff4444');
-      setTimeout(closeConsole,600);
-    } else {
+    }else if(cmd==='matrix'){
+      trigMatrix();appendOut(out,'> Initialisation protocole MATRIX...','#00ff41');
+    }else if(cmd==='exit'){
+      appendOut(out,'Goodbye.','#ff4444');setTimeout(closeConsole,600);
+    }else{
       appendOut(out,'Commande inconnue: "'+raw+'". Tapez "help".','#ff4444');
     }
   }
 
+  // ──────────────────── MATRIX ────────────────────
   function trigMatrix(){
-    var canvas=document.getElementById('mc-mat');
-    if(canvas){canvas.remove();return;}
-    canvas=document.createElement('canvas');
-    canvas.id='mc-mat';
+    var canvas=document.getElementById('mc-mat');if(canvas){canvas.remove();return;}
+    canvas=document.createElement('canvas');canvas.id='mc-mat';
     canvas.style.cssText='position:fixed;top:0;left:0;z-index:9998;pointer-events:none';
     canvas.width=window.innerWidth;canvas.height=window.innerHeight;
     document.body.appendChild(canvas);
     var ctx=canvas.getContext('2d');
-    var cols=Math.floor(canvas.width/16);
-    var drops=Array(cols).fill(1);
+    var cols=Math.floor(canvas.width/16);var drops=Array(cols).fill(1);
     var iv=setInterval(function(){
-      ctx.fillStyle='rgba(0,0,0,.05)';
-      ctx.fillRect(0,0,canvas.width,canvas.height);
-      ctx.fillStyle='#00ff41';
-      ctx.font='16px VT323,monospace';
+      ctx.fillStyle='rgba(0,0,0,.05)';ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#00ff41';ctx.font='16px VT323,monospace';
       drops.forEach(function(y,i){
-        var ch=String.fromCharCode(0x30A0+Math.random()*96);
-        ctx.fillText(ch,i*16,y*16);
-        if(y*16>canvas.height&&Math.random()>.975) drops[i]=0;
-        drops[i]++;
+        var ch=String.fromCharCode(0x30A0+Math.random()*96);ctx.fillText(ch,i*16,y*16);
+        if(y*16>canvas.height&&Math.random()>.975)drops[i]=0;drops[i]++;
       });
     },40);
-    canvas._iv=iv;
-    setTimeout(function(){clearInterval(canvas._iv);canvas.remove();},8000);
+    canvas._iv=iv;setTimeout(function(){clearInterval(canvas._iv);canvas.remove();},8000);
   }
 
-  var SKILLS=[
-    {id:'figma',name:'Figma',rarity:'epic',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/figma.png',tip:'Maitrise avancee de Figma - Prototypage, design system, composants'},
-    {id:'shopify',name:'Shopify',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/shopify.png',tip:'Creation et gestion de boutiques Shopify'},
-    {id:'wordpress',name:'WordPress',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wordpress.png',tip:'Developpement WordPress - themes, plugins, SEO'},
-    {id:'premiere',name:'Premiere Pro',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/premiere.png',tip:'Montage video professionnel - reels, publicites'},
-    {id:'photoshop',name:'Photoshop',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/photoshop.png',tip:'Retouche et creation graphique'},
-    {id:'canva',name:'Canva',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/canva.png',tip:'Creation rapide de visuels'},
-    {id:'framer',name:'Framer',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/framer.png',tip:'Sites interactifs haut de gamme avec Framer'},
-    {id:'wix',name:'Wix',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wix.png',tip:'Creation de sites Wix'},
-    {id:'capcut',name:'CapCut',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/capcut.png',tip:'Edition video mobile et desktop'},
-    {id:'word',name:'Word',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/word.png',tip:'Maitrise de Microsoft Word'},
-    {id:'excel',name:'Excel',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/excel.png',tip:'Tableaux, formules, dashboards Excel'},
-    {id:'ppt',name:'PowerPoint',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/powerpoint.png',tip:'Presentations impactantes'}
-  ];
-  var FUN=[
-    {id:'cv',name:'CV Enchante',rarity:'legendary',emoji:'📜',tip:'Item legendaire - +50 en entretiens'},
-    {id:'coffee',name:'Cafe x64',rarity:'common',emoji:'☕',tip:'Consommable - +10 en concentration'},
-    {id:'sword',name:'Epee Deadline',rarity:'epic',emoji:'⚔️',tip:'Arme - Tue les delais dans les temps'},
-    {id:'diamond',name:'Idee Diamant',rarity:'rare',emoji:'💎',tip:'Materiau - Pour crafter des projets legendaires'},
-    {id:'door',name:'Reunion Evitee',rarity:'uncommon',emoji:'🚪',tip:'Esquive - Evite une reunion inutile'},
-    {id:'mana',name:'Brief Magique',rarity:'rare',emoji:'🔮',tip:'Parchemin - Transforme le client en allie'}
-  ];
-  var RARITIES={legendary:'#FFAA00',epic:'#A335EE',rare:'#0070FF',uncommon:'#1EFF00',common:'#9D9D9D'};
+  // ──────────────────── THEMES ────────────────────
+  var themes=[{name:'Bleu Electrique',accent:'#2897FF'},{name:'Vert Matrix',accent:'#00FF41'},{name:'Violet Cyber',accent:'#BF00FF'},{name:'Dore Legendaire',accent:'#FFAA00'},{name:'Rose Sakura',accent:'#FF6B9D'}];
+  var themeIdx=0;
+  function cycleTheme(){themeIdx=(themeIdx+1)%themes.length;var t=themes[themeIdx];if(typeof setAccent==='function')setAccent(t.accent);showToast('Theme: '+t.name,'#222','#fff');}
 
-  function openInventory(){
-    if(document.getElementById('mc-overlay')) return;
-    var ov=document.createElement('div');
-    ov.id='mc-overlay';
-    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;font-family:VT323,monospace';
-    var box=document.createElement('div');
-    box.id='mc-inv';
-    box.style.cssText='background:#C6C6C6;padding:16px;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;min-width:540px;position:relative';
-    var title=document.createElement('div');
-    title.textContent='Inventaire de Quentin';
-    title.style.cssText='font-size:1.2rem;color:#3f3f3f;margin-bottom:10px';
-    box.appendChild(title);
-    var sg=document.createElement('div');
-    sg.style.cssText='display:grid;grid-template-columns:repeat(6,48px);gap:4px;margin-bottom:12px';
-    SKILLS.forEach(function(sk){sg.appendChild(makeSlot(sk,false));});
-    box.appendChild(sg);
-    var fg=document.createElement('div');
-    fg.style.cssText='display:flex;gap:4px;margin-bottom:12px';
-    FUN.forEach(function(it){fg.appendChild(makeSlot(it,true));});
-    box.appendChild(fg);
-    var al=document.createElement('div');
-    al.textContent='Armure';
-    al.style.cssText='font-size:1rem;color:#3f3f3f;margin-bottom:4px';
-    box.appendChild(al);
-    var ar=document.createElement('div');
-    ar.style.cssText='display:flex;gap:4px;margin-bottom:12px';
-    [{e:'🎯',n:'Casque Strategie'},{e:'👁️',n:'Plastron Vision'},{e:'⚡',n:'Jambiere Execution'},{e:'🚀',n:'Bottes Livraison'}].forEach(function(a){
-      var s=document.createElement('div');
-      s.style.cssText='width:48px;height:48px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:default';
-      s.title=a.n;s.textContent=a.e;ar.appendChild(s);
-    });
-    box.appendChild(ar);
-    var port=document.createElement('div');
-    port.style.cssText='position:absolute;top:16px;right:16px;width:80px;height:100px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:3rem';
-    port.textContent='🧑‍💻';
-    box.appendChild(port);
-    var cph=document.createElement('div');cph.id='mc-craft-ph';box.appendChild(cph);
-    var hint=document.createElement('div');
-    hint.textContent='[E] ou [Echap] pour fermer';
-    hint.style.cssText='font-size:.9rem;color:#666;margin-top:8px;text-align:right';
-    box.appendChild(hint);
-    ov.appendChild(box);
-    document.body.appendChild(ov);
-  }
-
-  function makeSlot(item,isFun){
-    var s=document.createElement('div');
-    s.className='mc-slot';
-    s.dataset.id=item.id;
-    s.style.cssText='width:48px;height:48px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative';
-    if(isFun){
-      var em=document.createElement('span');em.style.fontSize='1.8rem';em.textContent=item.emoji;s.appendChild(em);
-    } else {
-      var img=document.createElement('img');
-      img.src=item.img;
-      img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';
-      img.onerror=function(){this.style.display='none';var fb=document.createElement('span');fb.textContent=item.name[0];fb.style.cssText='font-size:1.4rem;color:#333';s.appendChild(fb);};
-      s.appendChild(img);
+  // ──────────────────── GRAVITY ────────────────────
+  var gravityOn=false;
+  function toggleGravity(){
+    gravityOn=!gravityOn;
+    var els=document.querySelectorAll('section,nav,.hero-inner,footer');
+    if(gravityOn){
+      els.forEach(function(el,i){el.classList.remove('grav-rise');el.style.animationDelay=(i*0.06)+'s';el.classList.add('grav-fall');});
+      showToast('⚠ Gravite activee','#1a1a1a','#ffaa00');
+    }else{
+      els.forEach(function(el,i){el.classList.remove('grav-fall');el.style.animationDelay=(i*0.04)+'s';el.classList.add('grav-rise');});
+      showToast('✨ Gravite desactivee','#1a1a1a','#2897ff');
     }
-    s.style.outline='2px solid '+RARITIES[item.rarity];
-    s.style.outlineOffset='-2px';
-    s.addEventListener('mouseenter',function(e){showMCTip(item,e);});
-    s.addEventListener('mouseleave',hideMCTip);
-    return s;
   }
 
-  var _tip=null;
-  function showMCTip(item,e){
-    hideMCTip();
-    var t=document.createElement('div');
-    t.id='mc-tip';
-    t.style.cssText='position:fixed;background:#100010;border:1px solid '+RARITIES[item.rarity]+';color:#fff;padding:8px 12px;font-family:VT323,monospace;font-size:1rem;z-index:99999;pointer-events:none;max-width:220px;box-shadow:2px 2px 0 rgba(0,0,0,.5)';
-    t.innerHTML='<div style="color:'+RARITIES[item.rarity]+';font-size:1.2rem">'+item.name+'</div><div style="color:'+RARITIES[item.rarity]+';font-size:.85rem;margin-bottom:4px">['+item.rarity+']</div><div style="color:#aaa;font-size:.9rem">'+item.tip+'</div>';
-    document.body.appendChild(t);_tip=t;moveTip(e);
+  // ──────────────────── TOAST ────────────────────
+  function showToast(msg,bg,col){
+    var d=document.getElementById('kb-toast');
+    if(!d){d=document.createElement('div');d.id='kb-toast';d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:0;font-family:VT323,monospace;font-size:1.3rem;z-index:99999;pointer-events:none;transition:opacity .4s';document.body.appendChild(d);}
+    d.textContent=msg;d.style.background=bg||'#222';d.style.color=col||'#fff';
+    d.style.opacity='1';clearTimeout(d._t);d._t=setTimeout(function(){d.style.opacity='0';},1800);
   }
-  function moveTip(e){if(!_tip)return;_tip.style.left=(e.clientX+14)+'px';_tip.style.top=(e.clientY-10)+'px';}
-  function hideMCTip(){if(_tip){_tip.remove();_tip=null;}}
-  function closeInventory(){var el=document.getElementById('mc-overlay');if(el){el.remove();hideMCTip();}}
 
+  // ──────────────────── KEYBOARD ────────────────────
   document.addEventListener('keydown',function(e){
-    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
     var key=e.key.toUpperCase();
-    if(key==='I'||key==='E'){
-      if(document.getElementById('mc-overlay')) closeInventory();
-      else openInventory();
-    } else if(key==='C'){
-      if(document.getElementById('kb-console')) closeConsole();
-      else openConsole();
-    } else if(key==='T'){
-      cycleTheme();
-    } else if(key==='G'){
-      toggleGravity();
-    } else if(e.key==='Escape'){
-      closeInventory();closeConsole();
-    }
+    if(key==='I'||key==='E'){if(document.getElementById('mc-overlay'))closeInventory();else openInventory();}
+    else if(key==='C'){if(document.getElementById('kb-console'))closeConsole();else openConsole();}
+    else if(key==='T')cycleTheme();
+    else if(key==='G')toggleGravity();
+    else if(e.key==='Escape'){closeInventory();closeConsole();}
   });
 
-  document.addEventListener('mousemove',moveTip);
-})();
-</script>
-
-<script>
-/* ===== CRAFTING SYSTEM ===== */
-(function(){
-  var RARITIES={legendary:'#FFAA00',epic:'#A335EE',rare:'#0070FF',uncommon:'#1EFF00',common:'#9D9D9D'};
-  var heldItem=null;
-  var heldDiv=null;
-
-  function getOrCreateHeld(){
-    if(!heldDiv){
-      heldDiv=document.createElement('div');
-      heldDiv.id='mc-held';
-      heldDiv.style.cssText='position:fixed;pointer-events:none;z-index:99999;width:40px;height:40px;display:none;align-items:center;justify-content:center;font-size:1.6rem;transform:translate(-50%,-50%)';
-      document.body.appendChild(heldDiv);
-      document.addEventListener('mousemove',function(e){
-        heldDiv.style.left=e.clientX+'px';heldDiv.style.top=e.clientY+'px';
-      });
+  // ──────────────────── CRAFTING TABLE (3x3) ────────────────────
+  function openCraftingTable(){
+    if(document.getElementById('mc-crafting-table'))return;
+    var ct=document.createElement('div');ct.id='mc-crafting-table';
+    ct.style.cssText='position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#C6C6C6;padding:8px;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;z-index:10002;font-family:VT323,monospace;min-width:320px';
+    var lbl=document.createElement('div');lbl.className='mc-sec-label';lbl.style.marginTop='0';lbl.textContent='Table de Craft';ct.appendChild(lbl);
+    var row=document.createElement('div');row.style.cssText='display:flex;align-items:center;gap:8px;margin-bottom:8px';
+    var grid3=document.createElement('div');grid3.style.cssText='display:grid;grid-template-columns:repeat(3,36px);gap:2px';
+    var craftSlots=[];
+    for(var i=0;i<9;i++){
+      (function(idx){
+        var s=mkEmptySlot();
+        s.addEventListener('click',function(){
+          if(window._mcHeld){
+            s.innerHTML='';
+            if(window._mcHeld.emoji){var em=document.createElement('span');em.className='mc-em';em.textContent=window._mcHeld.emoji;s.appendChild(em);}
+            else{var img=document.createElement('img');img.src=window._mcHeld.img;img.style.cssText='width:28px;height:28px;object-fit:contain;image-rendering:pixelated';s.appendChild(img);}
+            s.style.outline='2px solid '+RARITIES[window._mcHeld.rarity];
+            s.dataset.itemId=window._mcHeld.id;
+            setHeld(null);checkCraft3(craftSlots,resSlot3);
+          }else if(s.innerHTML.trim()){
+            var id=s.dataset.itemId;var found=findItemById(id);
+            if(found)setHeld(found);
+            s.innerHTML='';s.style.outline='none';s.dataset.itemId='';checkCraft3(craftSlots,resSlot3);
+          }
+        });
+        craftSlots.push(s);grid3.appendChild(s);
+      })(i);
     }
-    return heldDiv;
-  }
+    var arr=document.createElement('div');arr.style.cssText='color:#404040;font-size:1.4rem;padding:0 4px';arr.textContent='→';
+    var resSlot3=mkEmptySlot();resSlot3.style.cssText+='width:40px;height:40px';
+    resSlot3.addEventListener('click',function(){
+      if(!resSlot3.dataset.result)return;
+      var res=JSON.parse(resSlot3.dataset.result);craftToast(res);
+      craftSlots.forEach(function(s){s.innerHTML='';s.style.outline='none';s.dataset.itemId='';});
+      resSlot3.innerHTML='';resSlot3.dataset.result='';resSlot3.style.outline='none';
+    });
+    row.appendChild(grid3);row.appendChild(arr);row.appendChild(resSlot3);ct.appendChild(row);
 
-  function setHeld(item){
-    heldItem=item;
-    var hd=getOrCreateHeld();
-    if(!item){hd.style.display='none';hd.innerHTML='';return;}
-    hd.style.display='flex';
-    if(item.emoji){hd.innerHTML='<span>'+item.emoji+'</span>';}
-    else{hd.innerHTML='<img src="'+item.img+'" style="width:36px;height:36px;object-fit:contain;image-rendering:pixelated">';}
+    // recipe book
+    var rbBtn2=document.createElement('button');
+    rbBtn2.textContent='📖 Recettes';
+    rbBtn2.style.cssText='background:#8B8B8B;border:none;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #373737;font-family:VT323,monospace;font-size:1rem;padding:3px 8px;cursor:pointer;margin-bottom:6px';
+    rbBtn2.addEventListener('click',function(){toggleRecipeBook(ct,craftSlots,function(){checkCraft3(craftSlots,resSlot3);});});
+    ct.appendChild(rbBtn2);
+
+    // make inventory slots clickable for picking up
+    document.querySelectorAll('#mc-overlay .mc-slot[data-id]').forEach(function(slot){
+      if(!slot._craftBound){
+        slot._craftBound=true;
+        slot.addEventListener('click',function(){
+          if(window._mcHeld)return;
+          var id=slot.dataset.id;var found=findItemById(id);if(found)setHeld(found);
+        });
+      }
+    });
+
+    var hint2=document.createElement('div');hint2.style.cssText='font-size:.8rem;color:#555;text-align:right';hint2.textContent='[Echap] fermer';
+    ct.appendChild(hint2);
+    document.body.appendChild(ct);
   }
 
   var RECIPES=[
@@ -3065,29 +3117,21 @@ function creationErr(img) {
     {inputs:{coffee:3},result:{name:'Overdose Cafeine',emoji:'💀',rarity:'epic',tip:'Attention : effets secondaires possibles'}}
   ];
 
-  function slotToItem(slot){
-    var img=slot.querySelector('img');
-    if(img){var m=img.src.match(/\/logos\/(\w+)\.png/);if(m)return m[1];}
-    var em=slot.querySelector('span');
-    if(em){
-      var txt=em.textContent.trim();
-      var emap={'📜':'cv','☕':'coffee','⚔️':'sword','💎':'diamond','🚪':'door','🔮':'mana'};
-      return emap[txt]||null;
-    }
-    return null;
-  }
-
-  function matchRecipe(grid){
+  function checkCraft3(slots,resSlot){
     var counts={};
-    grid.forEach(function(slot){if(!slot)return;var id=slotToItem(slot);if(id)counts[id]=(counts[id]||0)+1;});
+    slots.forEach(function(s){if(!s.dataset.itemId)return;var id=s.dataset.itemId;counts[id]=(counts[id]||0)+1;});
+    resSlot.innerHTML='';resSlot.dataset.result='';resSlot.style.outline='none';
     for(var i=0;i<RECIPES.length;i++){
-      var r=RECIPES[i];var match=true;
-      var rkeys=Object.keys(r.inputs);var ckeys=Object.keys(counts);
-      if(rkeys.length!==ckeys.length){match=false;}
-      else{for(var k=0;k<rkeys.length;k++){if(counts[rkeys[k]]!==r.inputs[rkeys[k]]){match=false;break;}}}
-      if(match)return r;
+      var r=RECIPES[i];var rkeys=Object.keys(r.inputs);var ckeys=Object.keys(counts);
+      if(rkeys.length!==ckeys.length)continue;
+      var match=rkeys.every(function(k){return counts[k]===r.inputs[k];});
+      if(match){
+        var sp=document.createElement('span');sp.className='mc-em';sp.style.fontSize='1.6rem';
+        sp.style.filter='drop-shadow(0 0 5px '+RARITIES[r.result.rarity]+')';sp.textContent=r.result.emoji;
+        resSlot.appendChild(sp);resSlot.dataset.result=JSON.stringify(r.result);
+        resSlot.style.outline='2px solid '+RARITIES[r.result.rarity];break;
+      }
     }
-    return null;
   }
 
   function craftToast(result){
@@ -3098,159 +3142,54 @@ function creationErr(img) {
     setTimeout(function(){d.style.opacity='0';d.style.transition='opacity .5s';setTimeout(function(){d.remove();},500);},2800);
   }
 
+  function toggleRecipeBook(container,craftSlots,checkFn){
+    var existing=container.querySelector('#mc-recipe-book');if(existing){existing.remove();return;}
+    var rb=document.createElement('div');rb.id='mc-recipe-book';
+    rb.style.cssText='background:#C6C6C6;border:2px solid #373737;padding:8px;margin-top:4px;max-height:200px;overflow-y:auto';
+    var rbt=document.createElement('div');rbt.className='mc-sec-label';rbt.style.marginTop='0';rbt.textContent='Recettes connues :';rb.appendChild(rbt);
+    RECIPES.forEach(function(r){
+      var rw=document.createElement('div');
+      rw.style.cssText='display:flex;align-items:center;gap:6px;padding:3px 2px;cursor:pointer;border-bottom:1px solid #aaa;font-size:.95rem';
+      rw.innerHTML='<span style="font-size:1.1rem">'+r.result.emoji+'</span><span style="color:'+RARITIES[r.result.rarity]+'">'+r.result.name+'</span><span style="color:#666;font-size:.8rem"> = '+Object.entries(r.inputs).map(function(e){return e[0]+(e[1]>1?' x'+e[1]:'');}).join(' + ')+'</span>';
+      rw.addEventListener('click',function(){
+        craftSlots.forEach(function(s){s.innerHTML='';s.style.outline='none';s.dataset.itemId='';});
+        var keys=Object.keys(r.inputs);var idx2=0;
+        keys.forEach(function(k){for(var c=0;c<r.inputs[k];c++){if(idx2<craftSlots.length){
+          var item=findItemById(k);if(item){
+            craftSlots[idx2].innerHTML='';
+            if(item.emoji){var em=document.createElement('span');em.className='mc-em';em.textContent=item.emoji;craftSlots[idx2].appendChild(em);}
+            else{var img=document.createElement('img');img.src=item.img;img.style.cssText='width:28px;height:28px;object-fit:contain;image-rendering:pixelated';craftSlots[idx2].appendChild(img);}
+            craftSlots[idx2].style.outline='2px solid '+RARITIES[item.rarity];
+            craftSlots[idx2].dataset.itemId=k;
+          }idx2++;
+        }}});
+        checkFn();rb.remove();
+      });
+      rb.appendChild(rw);
+    });
+    container.appendChild(rb);
+  }
+
+  var _heldItem=null,_heldDiv=null;
+  function setHeld(item){
+    _heldItem=item;window._mcHeld=item;
+    if(!_heldDiv){
+      _heldDiv=document.createElement('div');_heldDiv.id='mc-held';
+      _heldDiv.style.cssText='position:fixed;pointer-events:none;z-index:99999;width:36px;height:36px;display:none;align-items:center;justify-content:center;transform:translate(-50%,-50%)';
+      document.body.appendChild(_heldDiv);
+      document.addEventListener('mousemove',function(e){_heldDiv.style.left=e.clientX+'px';_heldDiv.style.top=e.clientY+'px';});
+    }
+    if(!item){_heldDiv.style.display='none';_heldDiv.innerHTML='';return;}
+    _heldDiv.style.display='flex';
+    if(item.emoji)_heldDiv.innerHTML='<span style="font-size:1.5rem">'+item.emoji+'</span>';
+    else _heldDiv.innerHTML='<img src="'+item.img+'" style="width:28px;height:28px;object-fit:contain;image-rendering:pixelated">';
+  }
+
   function findItemById(id){
-    var all=[
-      {id:'figma',name:'Figma',rarity:'epic',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/figma.png'},
-      {id:'shopify',name:'Shopify',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/shopify.png'},
-      {id:'wordpress',name:'WordPress',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wordpress.png'},
-      {id:'premiere',name:'Premiere Pro',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/premiere.png'},
-      {id:'photoshop',name:'Photoshop',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/photoshop.png'},
-      {id:'canva',name:'Canva',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/canva.png'},
-      {id:'framer',name:'Framer',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/framer.png'},
-      {id:'wix',name:'Wix',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wix.png'},
-      {id:'capcut',name:'CapCut',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/capcut.png'},
-      {id:'word',name:'Word',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/word.png'},
-      {id:'excel',name:'Excel',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/excel.png'},
-      {id:'ppt',name:'PowerPoint',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/powerpoint.png'},
-      {id:'cv',name:'CV Enchante',rarity:'legendary',emoji:'📜'},
-      {id:'coffee',name:'Cafe x64',rarity:'common',emoji:'☕'},
-      {id:'sword',name:'Epee Deadline',rarity:'epic',emoji:'⚔️'},
-      {id:'diamond',name:'Idee Diamant',rarity:'rare',emoji:'💎'},
-      {id:'door',name:'Reunion Evitee',rarity:'uncommon',emoji:'🚪'},
-      {id:'mana',name:'Brief Magique',rarity:'rare',emoji:'🔮'}
-    ];
+    var all=HOTBAR_ITEMS.concat(INV_ITEMS);
     for(var i=0;i<all.length;i++)if(all[i].id===id)return all[i];
     return null;
   }
-
-  function patchInv(ov){
-    var ph=ov.querySelector('#mc-craft-ph');
-    if(!ph||ph.dataset.patched)return;
-    ph.dataset.patched='1';
-    var ct=document.createElement('div');
-    ct.textContent='Atelier de Craft';
-    ct.style.cssText='font-size:1.1rem;color:#3f3f3f;margin-bottom:6px';
-    ph.appendChild(ct);
-    var row=document.createElement('div');
-    row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
-    var grid=document.createElement('div');
-    grid.style.cssText='display:grid;grid-template-columns:repeat(3,44px);gap:3px';
-    var craftSlots=[];
-    for(var i=0;i<9;i++){
-      (function(idx){
-        var s=document.createElement('div');
-        s.className='mc-craft-slot';
-        s.style.cssText='width:44px;height:44px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative';
-        s.addEventListener('click',function(){
-          if(heldItem){
-            s.innerHTML='';
-            if(heldItem.emoji){var em=document.createElement('span');em.style.fontSize='1.6rem';em.textContent=heldItem.emoji;s.appendChild(em);}
-            else{var img=document.createElement('img');img.src=heldItem.img;img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';s.appendChild(img);}
-            s.dataset.itemId=heldItem.id;
-            setHeld(null);checkCraft();
-          } else if(s.innerHTML.trim()){
-            var id=s.dataset.itemId;var found=findItemById(id);
-            if(found)setHeld(found);
-            s.innerHTML='';s.dataset.itemId='';checkCraft();
-          }
-        });
-        craftSlots.push(s);grid.appendChild(s);
-      })(i);
-    }
-    var arrow=document.createElement('div');
-    arrow.textContent='➡️';
-    arrow.style.cssText='font-size:1.8rem;cursor:pointer';
-    arrow.title='Crafter';
-    var resultSlot=document.createElement('div');
-    resultSlot.id='mc-result-slot';
-    resultSlot.style.cssText='width:52px;height:52px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer';
-
-    function checkCraft(){
-      var recipe=matchRecipe(craftSlots);
-      resultSlot.innerHTML='';resultSlot.dataset.result='';
-      if(recipe){
-        var sp=document.createElement('span');
-        sp.textContent=recipe.result.emoji;
-        sp.style.cssText='font-size:1.8rem;filter:drop-shadow(0 0 6px '+RARITIES[recipe.result.rarity]+')';
-        resultSlot.appendChild(sp);
-        resultSlot.dataset.result=JSON.stringify(recipe.result);
-        resultSlot.style.outline='2px solid '+RARITIES[recipe.result.rarity];
-      } else {resultSlot.style.outline='none';}
-    }
-
-    resultSlot.addEventListener('click',function(){
-      if(!resultSlot.dataset.result)return;
-      var res=JSON.parse(resultSlot.dataset.result);
-      craftToast(res);
-      craftSlots.forEach(function(s){s.innerHTML='';s.dataset.itemId='';});
-      resultSlot.innerHTML='';resultSlot.dataset.result='';resultSlot.style.outline='none';
-    });
-    arrow.addEventListener('click',function(){if(resultSlot.dataset.result)resultSlot.click();});
-
-    row.appendChild(grid);row.appendChild(arrow);row.appendChild(resultSlot);
-    ph.appendChild(row);
-
-    var allSlots=ov.querySelectorAll('.mc-slot');
-    allSlots.forEach(function(slot){
-      slot.addEventListener('click',function(){
-        if(heldItem)return;
-        var id=slot.dataset.id;var found=findItemById(id);
-        if(found)setHeld(found);
-      });
-    });
-
-    var rbtn=document.createElement('button');
-    rbtn.textContent='📖 Livre de recettes';
-    rbtn.style.cssText='background:#8B8B8B;border:none;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #373737;font-family:VT323,monospace;font-size:1rem;padding:4px 10px;cursor:pointer;margin-top:4px';
-    rbtn.addEventListener('click',function(){toggleRecipeBook(ph,craftSlots,checkCraft);});
-    ph.appendChild(rbtn);
-  }
-
-  function toggleRecipeBook(ph,craftSlots,checkCraft){
-    var existing=ph.querySelector('#mc-recipe-book');
-    if(existing){existing.remove();return;}
-    var rb=document.createElement('div');
-    rb.id='mc-recipe-book';
-    rb.style.cssText='background:#C6C6C6;border:2px solid #373737;padding:10px;margin-top:8px;max-height:220px;overflow-y:auto;font-family:VT323,monospace';
-    var rbtitle=document.createElement('div');
-    rbtitle.textContent='Recettes connues :';
-    rbtitle.style.cssText='font-size:1rem;color:#3f3f3f;margin-bottom:6px';
-    rb.appendChild(rbtitle);
-    RECIPES.forEach(function(r){
-      var row2=document.createElement('div');
-      row2.style.cssText='display:flex;align-items:center;gap:8px;padding:4px;cursor:pointer;border-bottom:1px solid #aaa';
-      row2.innerHTML='<span style="font-size:1.2rem">'+r.result.emoji+'</span><span style="color:'+RARITIES[r.result.rarity]+'">'+r.result.name+'</span><span style="color:#666;font-size:.85rem"> = '+Object.entries(r.inputs).map(function(e){return e[0]+(e[1]>1?' x'+e[1]:'');}).join(' + ')+'</span>';
-      row2.addEventListener('click',function(){
-        craftSlots.forEach(function(s){s.innerHTML='';s.dataset.itemId='';});
-        var keys=Object.keys(r.inputs);var idx2=0;
-        keys.forEach(function(k){
-          var count=r.inputs[k];
-          for(var c=0;c<count;c++){
-            if(idx2<9){
-              var item=findItemById(k);
-              if(item){
-                craftSlots[idx2].innerHTML='';
-                if(item.emoji){var em=document.createElement('span');em.style.fontSize='1.6rem';em.textContent=item.emoji;craftSlots[idx2].appendChild(em);}
-                else{var img=document.createElement('img');img.src=item.img;img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';craftSlots[idx2].appendChild(img);}
-                craftSlots[idx2].dataset.itemId=k;
-              }
-              idx2++;
-            }
-          }
-        });
-        checkCraft();rb.remove();
-      });
-      rb.appendChild(row2);
-    });
-    ph.appendChild(rb);
-  }
-
-  var observer=new MutationObserver(function(mutations){
-    mutations.forEach(function(m){
-      m.addedNodes.forEach(function(n){if(n.id==='mc-overlay')patchInv(n);});
-    });
-  });
-  observer.observe(document.body,{childList:true});
 })();
 </script>
 
