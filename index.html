@@ -2719,592 +2719,541 @@ function creationErr(img) {
 })();
 </script>
 
+
+
+
+
 <script>
-/* =========================================================
-   KEYBOARD FEATURES  —  I · C · T · G
-   I/E = Inventaire Minecraft  |  C = Console Terminal
-   T   = Cycle accent color    |  G = Gravite
-========================================================= */
-(function () {
-  'use strict';
+/* ===== KEYBOARD FEATURES ===== */
+(function(){
+  var lnk=document.createElement('link');
+  lnk.rel='stylesheet';
+  lnk.href='https://fonts.googleapis.com/css2?family=VT323&display=swap';
+  document.head.appendChild(lnk);
 
-  var BASE = 'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/';
-
-  var RARITY = {
-    common:    { color: '#FFFFFF', label: 'Commun' },
-    uncommon:  { color: '#55FF55', label: 'Peu commun' },
-    rare:      { color: '#5555FF', label: 'Rare' },
-    epic:      { color: '#AA00AA', label: 'Epique' },
-    legendary: { color: '#FFAA00', label: 'Legendaire' }
-  };
-
-  var ITEMS = [
-    { id:'figma',     name:'Figma',         src:BASE+'figma.png',       slot:'head',  rarity:'epic',      desc:'Maitrise UI/UX +15 Creativite' },
-    { id:'shopify',   name:'Shopify',        src:BASE+'shopify.png',     slot:'chest', rarity:'rare',      desc:'E-commerce expert +12 Ventes' },
-    { id:'wordpress', name:'WordPress',      src:BASE+'wordpress.png',   slot:'legs',  rarity:'uncommon',  desc:'CMS + SEO +8 Visibilite' },
-    { id:'premiere',  name:'Premiere Pro',   src:BASE+'premierepro.png', slot:'feet',  rarity:'rare',      desc:'Video editing +10 Impact' },
-    { id:'photoshop', name:'Photoshop',      src:BASE+'photoshop.png',   rarity:'uncommon', desc:'Retouche + Creation graphique' },
-    { id:'canva',     name:'Canva',          src:BASE+'canva.png',       rarity:'common',   desc:'Design express' },
-    { id:'framer',    name:'Framer',         src:BASE+'framer.png',      rarity:'rare',     desc:'Web no-code haut de gamme' },
-    { id:'wix',       name:'Wix',            src:BASE+'wix.png',         rarity:'common',   desc:'Site builder' },
-    { id:'capcut',    name:'CapCut',         src:BASE+'capcut.png',      rarity:'common',   desc:'Montage video mobile' },
-    { id:'word',      name:'Word',           src:BASE+'word.png',        rarity:'common',   desc:'Redaction + Mise en page' },
-    { id:'excel',     name:'Excel',          src:BASE+'excel.png',       rarity:'uncommon', desc:'Data + Analyse' },
-    { id:'ppt',       name:'PowerPoint',     src:BASE+'powerpoint.png',  rarity:'common',   desc:'Presentations percutantes' },
-    { id:'cv',        name:'CV Enchante',    icon:'📜', rarity:'legendary', desc:'+10 Entretiens - Enchante: Persuasion IV' },
-    { id:'coffee',    name:'Cafe x64',       icon:'☕',       rarity:'common',    desc:'Regenere la creativite (64/64)', stack:'64' },
-    { id:'sword',     name:'Epee Deadline',  icon:'⚔️', rarity:'epic',      desc:'Tranche les delais - Degats: Urgent+5' },
-    { id:'diamond',   name:'Idee Diamant',   icon:'💎', rarity:'rare',      desc:'Concept unique +50 XP Creativite' },
-    { id:'door',      name:'Reunion Evitee', icon:'🚪', rarity:'uncommon',  desc:'Sortie de justesse x3 charges' },
-    { id:'mana',      name:'Brief Magique',  icon:'🔮', rarity:'rare',      desc:'+50 Mana de Creativite' }
+  var themes=[
+    {name:'Bleu Electrique',accent:'#2897FF'},
+    {name:'Vert Matrix',accent:'#00FF41'},
+    {name:'Violet Cyber',accent:'#BF00FF'},
+    {name:'Dore Legendaire',accent:'#FFAA00'},
+    {name:'Rose Sakura',accent:'#FF6B9D'}
   ];
-
-  function addCSS(css) { var s=document.createElement('style'); s.textContent=css; document.head.appendChild(s); }
-  function findItem(q) { for (var i=0;i<ITEMS.length;i++) { if(ITEMS[i].slot===q||ITEMS[i].id===q) return ITEMS[i]; } return null; }
-
-  var invOpen=false, mcTip=null;
-
-  addCSS(
-    "@import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');" +
-    "#mc-overlay{position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;animation:mcFI .08s ease;}" +
-    "@keyframes mcFI{from{opacity:0}to{opacity:1}}" +
-    "#mc-inv{font-family:'VT323','Courier New',monospace;color:#3F3F3F;background:#C6C6C6;padding:8px;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737,0 10px 80px rgba(0,0,0,.9);user-select:none;max-width:96vw;}" +
-    ".mc-h{font-size:19px;margin:2px 2px 7px;color:#3F3F3F;text-shadow:1px 1px 0 rgba(255,255,255,.5);}" +
-    ".mc-top{display:flex;gap:8px;align-items:flex-start;}" +
-    ".mc-armor{display:flex;flex-direction:column;gap:2px;}" +
-    ".mc-pcol{display:flex;flex-direction:column;gap:2px;}" +
-    ".mc-pbox{width:72px;height:88px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -1px -1px 0 rgba(255,255,255,.3);overflow:hidden;display:flex;align-items:center;justify-content:center;}" +
-    ".mc-pbox img{width:100%;height:100%;object-fit:cover;object-position:top;filter:saturate(.9) contrast(1.05);}" +
-    ".mc-off{display:flex;gap:2px;}" +
-    ".mc-ccol{flex:1;}" +
-    ".mc-ch{font-size:15px;margin:0 0 5px;color:#3F3F3F;}" +
-    ".mc-crow{display:flex;align-items:center;gap:4px;}" +
-    ".mc-3x3{display:grid;grid-template-columns:repeat(3,36px);gap:2px;}" +
-    ".mc-arw{font-size:20px;color:#666;padding:0 3px;line-height:1;}" +
-    ".mc-res{width:44px;height:44px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;}" +
-    ".mc-sb{margin-top:7px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -1px -1px 0 rgba(255,255,255,.3);padding:4px 8px;font-size:14px;color:#F2F5FA;text-shadow:1px 1px 0 #000;line-height:1.8;}" +
-    ".mc-sep{height:4px;margin:6px 0;}" +
-    ".mc-ig{display:grid;grid-template-columns:repeat(9,36px);gap:2px;margin-bottom:2px;}" +
-    ".mc-hb{display:grid;grid-template-columns:repeat(9,36px);gap:2px;border-top:2px solid #9E9E9E;padding-top:4px;}" +
-    ".mc-sl{width:36px;height:36px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4);display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative;flex-shrink:0;transition:background .07s;}" +
-    ".mc-sl:hover{background:#9E9E9E;}" +
-    ".mc-sl.mc-act{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFF;}" +
-    ".mc-sl[data-r='uncommon']:hover{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 10px #55FF5555;}" +
-    ".mc-sl[data-r='rare']:hover{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 10px #5555FF55;}" +
-    ".mc-sl[data-r='epic']:hover{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 12px #AA00AA66;}" +
-    ".mc-sl[data-r='legendary']:hover{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 14px #FFAA0088;}" +
-    ".mc-sl img{width:28px;height:28px;image-rendering:pixelated;object-fit:contain;}" +
-    ".mc-em{font-size:22px;line-height:1;}" +
-    ".mc-stk{position:absolute;bottom:1px;right:2px;font-size:12px;color:#fff;text-shadow:1px 1px 0 #000,-1px 0 0 #000,0 -1px 0 #000;font-family:'VT323',monospace;pointer-events:none;}" +
-    ".mc-hint{text-align:right;font-size:13px;color:#888;margin-top:4px;}" +
-    "#mc-tip{position:fixed;z-index:100000;pointer-events:none;background:rgba(16,0,16,.96);border:1px solid #1A0030;box-shadow:2px 2px 0 #373737,inset 0 0 0 1px #550085;padding:6px 10px;max-width:220px;font-family:'VT323',monospace;}" +
-    "#mc-tip .tn{font-size:18px;}#mc-tip .tr{font-size:13px;opacity:.85;}#mc-tip hr{border:none;border-top:1px solid #555;margin:4px 0;}#mc-tip .td{font-size:14px;color:#AAA;}"
-  );
-
-  function makeSlot(item) {
-    var sl=document.createElement('div'); sl.className='mc-sl';
-    if (!item) return sl;
-    sl.dataset.r=item.rarity;
-    if (item.src) { var img=document.createElement('img'); img.src=item.src; img.alt=item.name; sl.appendChild(img); }
-    else if (item.icon) { var em=document.createElement('span'); em.className='mc-em'; em.textContent=item.icon; sl.appendChild(em); }
-    if (item.stack) { var stk=document.createElement('span'); stk.className='mc-stk'; stk.textContent=item.stack; sl.appendChild(stk); }
-    sl.addEventListener('mouseenter',function(e){showTip(e,item);}); sl.addEventListener('mousemove',function(e){moveTip(e);}); sl.addEventListener('mouseleave',hideTip);
-    return sl;
-  }
-  function showTip(e,item){ hideTip(); var r=RARITY[item.rarity]; mcTip=document.createElement('div'); mcTip.id='mc-tip'; mcTip.innerHTML='<div class="tn" style="color:'+r.color+'">'+item.name+'</div><div class="tr" style="color:'+r.color+'">'+r.label+'</div><hr><div class="td">'+(item.desc||'')+'</div>'; document.body.appendChild(mcTip); moveTip(e); }
-  function moveTip(e){ if(!mcTip)return; var x=e.clientX+16,y=e.clientY+14; if(x+230>window.innerWidth)x=e.clientX-235; if(y+120>window.innerHeight)y=e.clientY-115; mcTip.style.left=x+'px'; mcTip.style.top=y+'px'; }
-  function hideTip(){ if(mcTip){mcTip.remove();mcTip=null;} }
-
-  function openInventory() {
-    if (invOpen) return; invOpen=true;
-    var overlay=document.createElement('div'); overlay.id='mc-overlay';
-    overlay.addEventListener('click',function(e){if(e.target===overlay)closeInventory();});
-    var inv=document.createElement('div'); inv.id='mc-inv';
-    var h=document.createElement('div'); h.className='mc-h'; h.textContent='Inventaire'; inv.appendChild(h);
-    var top=document.createElement('div'); top.className='mc-top';
-    var armor=document.createElement('div'); armor.className='mc-armor';
-    ['head','chest','legs','feet'].forEach(function(sl){armor.appendChild(makeSlot(findItem(sl)));});
-    var pcol=document.createElement('div'); pcol.className='mc-pcol';
-    var pbox=document.createElement('div'); pbox.className='mc-pbox';
-    var pi=document.createElement('img');
-    pi.src='https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/portrait.png';
-    pi.alt='Quentin'; pbox.appendChild(pi); pcol.appendChild(pbox);
-    var off=document.createElement('div'); off.className='mc-off';
-    off.appendChild(makeSlot(findItem('diamond'))); off.appendChild(makeSlot(findItem('mana'))); pcol.appendChild(off);
-    var ccol=document.createElement('div'); ccol.className='mc-ccol';
-    var ch=document.createElement('div'); ch.className='mc-ch'; ch.textContent='Fabrication'; ccol.appendChild(ch);
-    var crow=document.createElement('div'); crow.className='mc-crow';
-    var g3=document.createElement('div'); g3.className='mc-3x3';
-    [findItem('figma'),findItem('shopify'),null,findItem('cv'),null,findItem('photoshop'),null,null,null].forEach(function(it){g3.appendChild(makeSlot(it));});
-    var arw=document.createElement('div'); arw.className='mc-arw'; arw.textContent='▶';
-    var res=document.createElement('div'); res.className='mc-res';
-    var sw=findItem('sword'); res.dataset.r=sw.rarity;
-    var swem=document.createElement('span'); swem.className='mc-em'; swem.style.fontSize='28px'; swem.textContent=sw.icon; res.appendChild(swem);
-    res.addEventListener('mouseenter',function(e){showTip(e,sw);}); res.addEventListener('mousemove',function(e){moveTip(e);}); res.addEventListener('mouseleave',hideTip);
-    crow.appendChild(g3); crow.appendChild(arw); crow.appendChild(res); ccol.appendChild(crow);
-    var sb=document.createElement('div'); sb.className='mc-sb';
-    sb.innerHTML='❤ Disponible &nbsp;⚡ En recherche d'emploi<br>✉ quentin.carriere@uca.fr';
-    ccol.appendChild(sb);
-    top.appendChild(armor); top.appendChild(pcol); top.appendChild(ccol); inv.appendChild(top);
-    var sep=document.createElement('div'); sep.className='mc-sep'; inv.appendChild(sep);
-    var ih=document.createElement('div'); ih.className='mc-h'; ih.style.fontSize='14px'; ih.textContent='Inventaire'; inv.appendChild(ih);
-    var ig=document.createElement('div'); ig.className='mc-ig';
-    var invItems=ITEMS.filter(function(it){return !it.slot;});
-    for (var i=0;i<27;i++) ig.appendChild(makeSlot(invItems[i]||null));
-    inv.appendChild(ig);
-    var hb=document.createElement('div'); hb.className='mc-hb';
-    [findItem('figma'),findItem('shopify'),findItem('premiere'),findItem('photoshop'),findItem('framer'),findItem('coffee'),findItem('cv'),null,null].forEach(function(it,hi){
-      var sl=makeSlot(it); if(hi===0) sl.classList.add('mc-act'); hb.appendChild(sl);
-    });
-    inv.appendChild(hb);
-    var hint=document.createElement('div'); hint.className='mc-hint'; hint.textContent='[E] ou [I] pour fermer'; inv.appendChild(hint);
-    overlay.appendChild(inv); document.body.appendChild(overlay);
-  }
-  function closeInventory(){ var el=document.getElementById('mc-overlay'); if(el) el.remove(); hideTip(); invOpen=false; }
-
-  var conOpen=false, cmdHist=[], histIdx=-1;
-  addCSS(
-    "#term-ov{position:fixed;inset:0;z-index:99999;pointer-events:none;display:flex;align-items:flex-end;justify-content:center;padding:0 0 36px;}" +
-    "#term-w{width:640px;max-width:95vw;background:rgba(6,10,20,.97);border:1px solid rgba(40,151,255,.35);border-radius:10px;overflow:hidden;box-shadow:0 0 40px rgba(40,151,255,.12),0 24px 80px rgba(0,0,0,.9);pointer-events:all;transform:translateY(50px);opacity:0;transition:transform .32s cubic-bezier(.22,1,.36,1),opacity .25s ease;}" +
-    "#term-w.open{transform:translateY(0);opacity:1;}" +
-    "#term-bar{background:rgba(40,151,255,.08);border-bottom:1px solid rgba(40,151,255,.18);padding:8px 14px;display:flex;align-items:center;gap:7px;}" +
-    ".tdot{width:11px;height:11px;border-radius:50%;}" +
-    "#term-bar .tlbl{margin-left:auto;font-family:'JetBrains Mono','Courier New',monospace;font-size:11px;color:rgba(255,255,255,.35);}" +
-    "#term-out{padding:12px 16px;height:210px;overflow-y:auto;font-family:'JetBrains Mono','Courier New',monospace;font-size:13px;color:#9AA7BD;line-height:1.65;white-space:pre-wrap;}" +
-    "#term-out .tok{color:#55FF55;}#term-out .terr{color:#FF5555;}#term-out .tinf{color:#2897FF;}#term-out .twrn{color:#FFAA00;}#term-out .tcmd{color:#F2F5FA;}" +
-    "#term-ir{display:flex;align-items:center;padding:9px 16px;border-top:1px solid rgba(40,151,255,.12);gap:8px;}" +
-    "#term-pr{color:#2897FF;font-family:'JetBrains Mono','Courier New',monospace;font-size:13px;white-space:nowrap;flex-shrink:0;}" +
-    "#term-f{flex:1;background:none;border:none;outline:none;color:#F2F5FA;font-family:'JetBrains Mono','Courier New',monospace;font-size:13px;caret-color:#2897FF;}"
-  );
-
-  var CMDS={
-    help:function(){return ['<span class="tinf">Commandes :</span>','  <span class="tok">skills</span>      · section competences','  <span class="tok">contact</span>     · section contact','  <span class="tok">about</span>       · retour en haut','  <span class="tok">experience</span>  · experiences','  <span class="tok">formation</span>   · formation','  <span class="tok">whoami</span>      · infos Quentin','  <span class="tok">stack</span>       · outils maittrises','  <span class="tok">matrix</span>      · 🟩 ?','  <span class="tok">clear</span>       · effacer','  <span class="tok">exit</span>        · fermer','  <span class="twrn">sudo hire me</span> · ...'].join('\n');},
-    skills:    function(){scr('skills');    return '<span class="tok">→ #skills</span>';},
-    contact:   function(){scr('contact');   return '<span class="tok">→ #contact</span>';},
-    about:     function(){window.scrollTo({top:0,behavior:'smooth'}); return '<span class="tok">→ top</span>';},
-    experience:function(){scr('experience');return '<span class="tok">→ #experience</span>';},
-    formation: function(){scr('formation'); return '<span class="tok">→ #formation</span>';},
-    whoami:function(){return ['<span class="tinf">┌─ Quentin Carriere ──────────────────────</span>','|  Role    : Communication + Marketing digital','|  Statut  : <span class="tok">Disponible</span>','|  Stack   : Figma · Shopify · WordPress · Premiere Pro','|  Langues : FR (natif) · EN (B2) · ES (A2)','<span class="tinf">└─────────────────────────────────────────</span>'].join('\n');},
-    stack:function(){return ['🎨 Design   Figma · Photoshop · Canva · Premiere Pro','🌐 Web      Shopify · WordPress · Wix · Framer','📊 Office   Excel · Word · PowerPoint · CapCut'].join('\n');},
-    matrix:function(){trigMatrix(); return '<span class="tok">Wake up, Neo…</span>';},
-    clear: function(){var o=document.getElementById('term-out');if(o)o.innerHTML='';return null;},
-    exit:  function(){closeConsole();return null;},
-    'sudo hire me':function(){return ['<span class="twrn">🔐 Elevation de privileges…</span>','<span class="tok">✓ Permission accordee</span>','<span class="tok">✓ Recrutement en cours… ████████ 100%</span>','🎉 Bienvenue dans l'equipe !','   → quentin.carriere@uca.fr'].join('\n');}
-  };
-
-  function scr(id){var el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
-  function openConsole(){
-    if(conOpen)return; conOpen=true;
-    var ov=document.createElement('div'); ov.id='term-ov';
-    var w=document.createElement('div'); w.id='term-w';
-    var bar=document.createElement('div'); bar.id='term-bar';
-    bar.innerHTML='<div class="tdot" style="background:#FF5F57"></div><div class="tdot" style="background:#FEBC2E"></div><div class="tdot" style="background:#28C840"></div><span class="tlbl">quentin@portfolio — bash</span>';
-    var out=document.createElement('div'); out.id='term-out';
-    out.innerHTML='<span class="tinf">Portfolio Console v1.0</span>\nTape <span class="tok">help</span> pour les commandes.\n';
-    var ir=document.createElement('div'); ir.id='term-ir';
-    var pr=document.createElement('span'); pr.id='term-pr'; pr.textContent='quentin@portfolio:~
-</html>
-
-;
-    var f=document.createElement('input'); f.id='term-f'; f.type='text'; f.autocomplete='off'; f.spellcheck=false;
-    f.addEventListener('keydown',function(e){
-      if(e.key==='Enter'){
-        e.preventDefault(); var cmd=f.value.trim(); f.value=''; histIdx=-1;
-        if(!cmd)return; cmdHist.unshift(cmd);
-        tprint('<span class="tcmd">$ '+eH(cmd)+'</span>',out);
-        var fn=CMDS[cmd.toLowerCase()];
-        var res=fn?fn():'<span class="terr">Inconnu : '+eH(cmd)+'. Tape "help".</span>';
-        if(res!==null&&res!==undefined)tprint(res,out);
-      } else if(e.key==='ArrowUp'){e.preventDefault();histIdx=Math.min(histIdx+1,cmdHist.length-1);if(cmdHist[histIdx])f.value=cmdHist[histIdx];}
-      else if(e.key==='ArrowDown'){e.preventDefault();histIdx=Math.max(histIdx-1,-1);f.value=histIdx>=0?cmdHist[histIdx]:'';}
-      else if(e.key==='Escape'){closeConsole();}
-    });
-    ir.appendChild(pr); ir.appendChild(f);
-    w.appendChild(bar); w.appendChild(out); w.appendChild(ir);
-    ov.appendChild(w); document.body.appendChild(ov);
-    requestAnimationFrame(function(){requestAnimationFrame(function(){w.classList.add('open');f.focus();});});
-  }
-  function tprint(html,out){out=out||document.getElementById('term-out');if(!out)return;out.innerHTML+=html+'\n';out.scrollTop=out.scrollHeight;}
-  function eH(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-  function closeConsole(){var w=document.getElementById('term-w');if(w)w.classList.remove('open');setTimeout(function(){var o=document.getElementById('term-ov');if(o)o.remove();conOpen=false;},330);}
-
-  var thIdx=0;
-  var THEMES=[{name:'Bleu Electrique',accent:'#2897FF'},{name:'Vert Matrix',accent:'#00FF41'},{name:'Violet Cyber',accent:'#BF00FF'},{name:'Dore Legendaire',accent:'#FFAA00'},{name:'Rose Sakura',accent:'#FF6B9D'}];
-  addCSS('#th-toast{position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-70px);z-index:99998;background:rgba(6,10,20,.93);border-radius:10px;padding:10px 22px;backdrop-filter:blur(16px);font-family:Satoshi,-apple-system,sans-serif;font-size:13px;color:#fff;white-space:nowrap;transition:transform .38s cubic-bezier(.22,1,.36,1),opacity .3s ease;opacity:0;pointer-events:none;}#th-toast.show{transform:translateX(-50%) translateY(0);opacity:1;}');
+  var themeIdx=0;
   function cycleTheme(){
-    thIdx=(thIdx+1)%THEMES.length; var t=THEMES[thIdx];
-    if(typeof setAccent==='function')setAccent(t.accent);
-    var prev=document.getElementById('th-toast'); if(prev)prev.remove();
-    var toast=document.createElement('div'); toast.id='th-toast';
-    toast.style.cssText+='border:1px solid '+t.accent+'44;box-shadow:0 0 24px '+t.accent+'28;';
-    toast.innerHTML='<span style="color:'+t.accent+';margin-right:8px;">■</span>Theme : '+t.name;
-    document.body.appendChild(toast);
-    requestAnimationFrame(function(){requestAnimationFrame(function(){toast.classList.add('show');});});
-    setTimeout(function(){toast.classList.remove('show');setTimeout(function(){toast.remove();},380);},2600);
+    themeIdx=(themeIdx+1)%themes.length;
+    var t=themes[themeIdx];
+    if(typeof setAccent==='function') setAccent(t.accent);
+    showToast('Theme: '+t.name,'#222','#fff');
   }
 
-  var gravOn=false;
-  addCSS('@keyframes gFall{0%{transform:translateY(0) rotate(0deg);opacity:1}100%{transform:translateY(120vh) rotate(calc(var(--gr)*1deg));opacity:0}}@keyframes gRise{0%{transform:translateY(120vh) rotate(calc(var(--gr)*1deg));opacity:0}100%{transform:translateY(0) rotate(0deg);opacity:1}}.g-fall{animation:gFall .9s cubic-bezier(.55,0,1,.45) forwards}.g-rise{animation:gRise .7s cubic-bezier(0,.55,.45,1) forwards}');
+  function showToast(msg,bg,col){
+    var d=document.getElementById('kb-toast');
+    if(!d){
+      d=document.createElement('div');d.id='kb-toast';
+      d.style.cssText='position:fixed;bottom:24px;left:50%;transform:translateX(-50%);padding:8px 18px;border-radius:4px;font-family:VT323,monospace;font-size:1.3rem;z-index:99999;pointer-events:none;transition:opacity .4s';
+      document.body.appendChild(d);
+    }
+    d.textContent=msg;d.style.background=bg||'#222';d.style.color=col||'#fff';
+    d.style.opacity='1';clearTimeout(d._t);
+    d._t=setTimeout(function(){d.style.opacity='0';},1800);
+  }
+
+  var gravityOn=false;
+  var gravStyle=null;
   function toggleGravity(){
+    gravityOn=!gravityOn;
+    if(!gravStyle){
+      gravStyle=document.createElement('style');
+      gravStyle.id='grav-style';
+      gravStyle.textContent='@keyframes gFall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(110vh) rotate(25deg);opacity:0}}@keyframes gRise{0%{transform:translateY(110vh) rotate(25deg);opacity:0}100%{transform:translateY(0) rotate(0);opacity:1}}.grav-fall{animation:gFall 1.2s ease-in forwards!important}.grav-rise{animation:gRise .8s ease-out forwards!important}';
+      document.head.appendChild(gravStyle);
+    }
     var els=document.querySelectorAll('section,nav,.hero-inner,footer');
-    if(!gravOn){
-      gravOn=true;
-      els.forEach(function(el,i){el.style.setProperty('--gr',(Math.random()*50-25).toFixed(1));el.classList.remove('g-rise');setTimeout(function(){el.classList.add('g-fall');},i*55);});
+    if(gravityOn){
+      els.forEach(function(el,i){
+        el.classList.remove('grav-rise');
+        el.style.animationDelay=(i*0.06)+'s';
+        el.classList.add('grav-fall');
+      });
+      showToast('⚠ Gravite activee','#1a1a1a','#ffaa00');
     } else {
-      gravOn=false;
-      els.forEach(function(el,i){el.classList.remove('g-fall');setTimeout(function(){el.classList.add('g-rise');setTimeout(function(){el.classList.remove('g-rise');},750);},i*40);});
+      els.forEach(function(el,i){
+        el.classList.remove('grav-fall');
+        el.style.animationDelay=(i*0.04)+'s';
+        el.classList.add('grav-rise');
+      });
+      showToast('✨ Gravite desactivee','#1a1a1a','#2897ff');
+    }
+  }
+
+  var consoleOpen=false;
+  var consoleHistory=[];
+  var histIdx=-1;
+  function openConsole(){
+    if(document.getElementById('kb-console')) return;
+    consoleOpen=true;
+    var ov=document.createElement('div');
+    ov.id='kb-console';
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.92);z-index:10000;display:flex;flex-direction:column;font-family:VT323,monospace;padding:24px;box-sizing:border-box';
+    var out=document.createElement('div');
+    out.id='kb-out';
+    out.style.cssText='flex:1;overflow-y:auto;color:#00ff41;font-size:1.1rem;line-height:1.5;white-space:pre-wrap';
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;color:#00ff41;margin-top:8px';
+    var pr=document.createElement('span');
+    pr.textContent='visitor@portfolio:~$ ';
+    pr.style.cssText='white-space:nowrap;font-size:1.2rem';
+    var inp=document.createElement('input');
+    inp.id='kb-inp';
+    inp.style.cssText='flex:1;background:transparent;border:none;outline:none;color:#00ff41;font-family:VT323,monospace;font-size:1.2rem;caret-color:#00ff41';
+    row.appendChild(pr);row.appendChild(inp);
+    ov.appendChild(out);ov.appendChild(row);
+    document.body.appendChild(ov);
+    appendOut(out,'Quentin Carriere Portfolio OS v2.0\nType "help" pour voir les commandes disponibles.\n','#00ff41');
+    inp.addEventListener('keydown',function(e){
+      if(e.key==='Enter'){
+        var cmd=inp.value.trim();inp.value='';
+        if(cmd){consoleHistory.unshift(cmd);histIdx=-1;}
+        appendOut(out,'visitor@portfolio:~$ '+cmd,'#00ff41');
+        runCmd(out,cmd);
+      } else if(e.key==='ArrowUp'){
+        histIdx=Math.min(histIdx+1,consoleHistory.length-1);
+        inp.value=consoleHistory[histIdx]||'';e.preventDefault();
+      } else if(e.key==='ArrowDown'){
+        histIdx=Math.max(histIdx-1,-1);
+        inp.value=histIdx>=0?consoleHistory[histIdx]:'';e.preventDefault();
+      }
+    });
+    setTimeout(function(){inp.focus();},50);
+  }
+  function appendOut(out,txt,col){
+    var sp=document.createElement('span');
+    sp.style.color=col||'#00ff41';
+    sp.textContent=txt+'\n';
+    out.appendChild(sp);
+    out.scrollTop=out.scrollHeight;
+  }
+  function closeConsole(){
+    var el=document.getElementById('kb-console');
+    if(el){el.remove();consoleOpen=false;}
+  }
+  function runCmd(out,raw){
+    var cmd=raw.toLowerCase().trim();
+    if(cmd==='help'){
+      appendOut(out,'Commandes disponibles:\n  whoami      - Qui suis-je ?\n  stack       - Ma stack de competences\n  clear       - Vider le terminal\n  ls          - Lister les sections\n  cd <sec>    - Naviguer vers une section\n  sudo hire me - Envoyer une offre\n  matrix      - ???\n  exit        - Fermer le terminal','#ffaa00');
+    } else if(cmd==='whoami'){
+      appendOut(out,"Quentin Carriere\nEtudiant en Master Marketing Digital & Communication\nEn recherche d'emploi - Alternance / Stage\nPassionne de design, branding et experiences utilisateur.",'#2897ff');
+    } else if(cmd==='stack'){
+      appendOut(out,'>>> COMPETENCES TECHNIQUES <<<\n\n[Design]      Figma ★★★★★  Photoshop ★★★☆☆  Canva ★★★★☆\n[Web]         WordPress ★★★☆☆  Framer ★★★☆☆  Wix ★★☆☆☆\n[E-commerce]  Shopify ★★★★☆\n[Video]       Premiere Pro ★★★★☆  CapCut ★★★☆☆\n[Office]      Word ★★★★☆  Excel ★★★☆☆  PowerPoint ★★★★☆','#00ff41');
+    } else if(cmd==='ls'){
+      appendOut(out,'hero/\nexperience/\nrealisations/\nskills/\nformation/\nlangues/\ninitiatives/\ncontact/','#aaa');
+    } else if(cmd.startsWith('cd ')){
+      var sec=cmd.slice(3).trim().replace(/\//,'');
+      var el=document.getElementById(sec);
+      if(el){el.scrollIntoView({behavior:'smooth'});appendOut(out,'> Navigating to #'+sec+' ...','#00ff41');}
+      else appendOut(out,'Section introuvable: '+sec,'#ff4444');
+    } else if(cmd==='clear'){
+      var kb=document.getElementById('kb-out');if(kb) kb.innerHTML='';
+    } else if(cmd==='sudo hire me'){
+      appendOut(out,'██████████████████████████████','#ffaa00');
+      appendOut(out,"██  OFFRE D'EMPLOI ENVOYEE  ██",'#ffaa00');
+      appendOut(out,'██████████████████████████████','#ffaa00');
+      setTimeout(function(){appendOut(out,"Felicitations ! Vous rejoignez l'equipe Quentin.",'#00ff41');},600);
+      setTimeout(function(){appendOut(out,'> Redirect vers contact...','#aaa');},1200);
+      setTimeout(function(){var el=document.getElementById('contact');if(el)el.scrollIntoView({behavior:'smooth'});},1800);
+    } else if(cmd==='matrix'){
+      trigMatrix();
+      appendOut(out,'> Initialisation protocole MATRIX...','#00ff41');
+    } else if(cmd==='exit'){
+      appendOut(out,'Goodbye.','#ff4444');
+      setTimeout(closeConsole,600);
+    } else {
+      appendOut(out,'Commande inconnue: "'+raw+'". Tapez "help".','#ff4444');
     }
   }
 
   function trigMatrix(){
-    var c=document.createElement('canvas'); c.style.cssText='position:fixed;inset:0;z-index:99997;pointer-events:none;';
-    c.width=window.innerWidth; c.height=window.innerHeight; document.body.appendChild(c);
-    var ctx=c.getContext('2d'),cols=Math.floor(c.width/14),drops=[];
-    for(var i=0;i<cols;i++) drops.push(Math.floor(Math.random()*c.height/14));
-    var fr=setInterval(function(){
-      ctx.fillStyle='rgba(0,0,0,.05)'; ctx.fillRect(0,0,c.width,c.height);
-      ctx.fillStyle='#00FF41'; ctx.font='13px monospace';
-      drops.forEach(function(y,x){ctx.fillText(String.fromCharCode(0x30A0+Math.random()*96),x*14,y*14);if(y*14>c.height&&Math.random()>.975)drops[x]=0;drops[x]++;});
-    },50);
-    setTimeout(function(){clearInterval(fr);c.style.transition='opacity 1s ease';c.style.opacity='0';setTimeout(function(){c.remove();},1000);},4000);
+    var canvas=document.getElementById('mc-mat');
+    if(canvas){canvas.remove();return;}
+    canvas=document.createElement('canvas');
+    canvas.id='mc-mat';
+    canvas.style.cssText='position:fixed;top:0;left:0;z-index:9998;pointer-events:none';
+    canvas.width=window.innerWidth;canvas.height=window.innerHeight;
+    document.body.appendChild(canvas);
+    var ctx=canvas.getContext('2d');
+    var cols=Math.floor(canvas.width/16);
+    var drops=Array(cols).fill(1);
+    var iv=setInterval(function(){
+      ctx.fillStyle='rgba(0,0,0,.05)';
+      ctx.fillRect(0,0,canvas.width,canvas.height);
+      ctx.fillStyle='#00ff41';
+      ctx.font='16px VT323,monospace';
+      drops.forEach(function(y,i){
+        var ch=String.fromCharCode(0x30A0+Math.random()*96);
+        ctx.fillText(ch,i*16,y*16);
+        if(y*16>canvas.height&&Math.random()>.975) drops[i]=0;
+        drops[i]++;
+      });
+    },40);
+    canvas._iv=iv;
+    setTimeout(function(){clearInterval(canvas._iv);canvas.remove();},8000);
   }
 
-  setTimeout(function(){
+  var SKILLS=[
+    {id:'figma',name:'Figma',rarity:'epic',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/figma.png',tip:'Maitrise avancee de Figma - Prototypage, design system, composants'},
+    {id:'shopify',name:'Shopify',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/shopify.png',tip:'Creation et gestion de boutiques Shopify'},
+    {id:'wordpress',name:'WordPress',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wordpress.png',tip:'Developpement WordPress - themes, plugins, SEO'},
+    {id:'premiere',name:'Premiere Pro',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/premiere.png',tip:'Montage video professionnel - reels, publicites'},
+    {id:'photoshop',name:'Photoshop',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/photoshop.png',tip:'Retouche et creation graphique'},
+    {id:'canva',name:'Canva',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/canva.png',tip:'Creation rapide de visuels'},
+    {id:'framer',name:'Framer',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/framer.png',tip:'Sites interactifs haut de gamme avec Framer'},
+    {id:'wix',name:'Wix',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wix.png',tip:'Creation de sites Wix'},
+    {id:'capcut',name:'CapCut',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/capcut.png',tip:'Edition video mobile et desktop'},
+    {id:'word',name:'Word',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/word.png',tip:'Maitrise de Microsoft Word'},
+    {id:'excel',name:'Excel',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/excel.png',tip:'Tableaux, formules, dashboards Excel'},
+    {id:'ppt',name:'PowerPoint',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/powerpoint.png',tip:'Presentations impactantes'}
+  ];
+  var FUN=[
+    {id:'cv',name:'CV Enchante',rarity:'legendary',emoji:'📜',tip:'Item legendaire - +50 en entretiens'},
+    {id:'coffee',name:'Cafe x64',rarity:'common',emoji:'☕',tip:'Consommable - +10 en concentration'},
+    {id:'sword',name:'Epee Deadline',rarity:'epic',emoji:'⚔️',tip:'Arme - Tue les delais dans les temps'},
+    {id:'diamond',name:'Idee Diamant',rarity:'rare',emoji:'💎',tip:'Materiau - Pour crafter des projets legendaires'},
+    {id:'door',name:'Reunion Evitee',rarity:'uncommon',emoji:'🚪',tip:'Esquive - Evite une reunion inutile'},
+    {id:'mana',name:'Brief Magique',rarity:'rare',emoji:'🔮',tip:'Parchemin - Transforme le client en allie'}
+  ];
+  var RARITIES={legendary:'#FFAA00',epic:'#A335EE',rare:'#0070FF',uncommon:'#1EFF00',common:'#9D9D9D'};
+
+  function openInventory(){
+    if(document.getElementById('mc-overlay')) return;
+    var ov=document.createElement('div');
+    ov.id='mc-overlay';
+    ov.style.cssText='position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);z-index:10000;display:flex;align-items:center;justify-content:center;font-family:VT323,monospace';
+    var box=document.createElement('div');
+    box.id='mc-inv';
+    box.style.cssText='background:#C6C6C6;padding:16px;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;min-width:540px;position:relative';
+    var title=document.createElement('div');
+    title.textContent='Inventaire de Quentin';
+    title.style.cssText='font-size:1.2rem;color:#3f3f3f;margin-bottom:10px';
+    box.appendChild(title);
+    var sg=document.createElement('div');
+    sg.style.cssText='display:grid;grid-template-columns:repeat(6,48px);gap:4px;margin-bottom:12px';
+    SKILLS.forEach(function(sk){sg.appendChild(makeSlot(sk,false));});
+    box.appendChild(sg);
+    var fg=document.createElement('div');
+    fg.style.cssText='display:flex;gap:4px;margin-bottom:12px';
+    FUN.forEach(function(it){fg.appendChild(makeSlot(it,true));});
+    box.appendChild(fg);
+    var al=document.createElement('div');
+    al.textContent='Armure';
+    al.style.cssText='font-size:1rem;color:#3f3f3f;margin-bottom:4px';
+    box.appendChild(al);
+    var ar=document.createElement('div');
+    ar.style.cssText='display:flex;gap:4px;margin-bottom:12px';
+    [{e:'🎯',n:'Casque Strategie'},{e:'👁️',n:'Plastron Vision'},{e:'⚡',n:'Jambiere Execution'},{e:'🚀',n:'Bottes Livraison'}].forEach(function(a){
+      var s=document.createElement('div');
+      s.style.cssText='width:48px;height:48px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:1.5rem;cursor:default';
+      s.title=a.n;s.textContent=a.e;ar.appendChild(s);
+    });
+    box.appendChild(ar);
+    var port=document.createElement('div');
+    port.style.cssText='position:absolute;top:16px;right:16px;width:80px;height:100px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:3rem';
+    port.textContent='🧑‍💻';
+    box.appendChild(port);
+    var cph=document.createElement('div');cph.id='mc-craft-ph';box.appendChild(cph);
     var hint=document.createElement('div');
-    hint.style.cssText='position:fixed;bottom:18px;left:18px;z-index:9990;background:rgba(6,10,20,.72);border:1px solid rgba(40,151,255,.18);border-radius:8px;padding:7px 14px;font-family:Satoshi,-apple-system,sans-serif;font-size:11px;color:rgba(255,255,255,.38);backdrop-filter:blur(10px);letter-spacing:.06em;transition:opacity 1.2s ease;pointer-events:none;';
-    hint.innerHTML='[I] Inventaire &nbsp;·&nbsp; [C] Console &nbsp;·&nbsp; [T] Theme &nbsp;·&nbsp; [G] Gravite';
-    document.body.appendChild(hint);
-    setTimeout(function(){hint.style.opacity='0';setTimeout(function(){hint.remove();},1200);},5000);
-  },2500);
+    hint.textContent='[E] ou [Echap] pour fermer';
+    hint.style.cssText='font-size:.9rem;color:#666;margin-top:8px;text-align:right';
+    box.appendChild(hint);
+    ov.appendChild(box);
+    document.body.appendChild(ov);
+  }
+
+  function makeSlot(item,isFun){
+    var s=document.createElement('div');
+    s.className='mc-slot';
+    s.dataset.id=item.id;
+    s.style.cssText='width:48px;height:48px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative';
+    if(isFun){
+      var em=document.createElement('span');em.style.fontSize='1.8rem';em.textContent=item.emoji;s.appendChild(em);
+    } else {
+      var img=document.createElement('img');
+      img.src=item.img;
+      img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';
+      img.onerror=function(){this.style.display='none';var fb=document.createElement('span');fb.textContent=item.name[0];fb.style.cssText='font-size:1.4rem;color:#333';s.appendChild(fb);};
+      s.appendChild(img);
+    }
+    s.style.outline='2px solid '+RARITIES[item.rarity];
+    s.style.outlineOffset='-2px';
+    s.addEventListener('mouseenter',function(e){showMCTip(item,e);});
+    s.addEventListener('mouseleave',hideMCTip);
+    return s;
+  }
+
+  var _tip=null;
+  function showMCTip(item,e){
+    hideMCTip();
+    var t=document.createElement('div');
+    t.id='mc-tip';
+    t.style.cssText='position:fixed;background:#100010;border:1px solid '+RARITIES[item.rarity]+';color:#fff;padding:8px 12px;font-family:VT323,monospace;font-size:1rem;z-index:99999;pointer-events:none;max-width:220px;box-shadow:2px 2px 0 rgba(0,0,0,.5)';
+    t.innerHTML='<div style="color:'+RARITIES[item.rarity]+';font-size:1.2rem">'+item.name+'</div><div style="color:'+RARITIES[item.rarity]+';font-size:.85rem;margin-bottom:4px">['+item.rarity+']</div><div style="color:#aaa;font-size:.9rem">'+item.tip+'</div>';
+    document.body.appendChild(t);_tip=t;moveTip(e);
+  }
+  function moveTip(e){if(!_tip)return;_tip.style.left=(e.clientX+14)+'px';_tip.style.top=(e.clientY-10)+'px';}
+  function hideMCTip(){if(_tip){_tip.remove();_tip=null;}}
+  function closeInventory(){var el=document.getElementById('mc-overlay');if(el){el.remove();hideMCTip();}}
 
   document.addEventListener('keydown',function(e){
-    var tag=((document.activeElement&&document.activeElement.tagName)||'').toLowerCase();
-    var typing=tag==='input'||tag==='textarea'||(document.activeElement&&document.activeElement.isContentEditable);
-    if(e.key==='Escape'){if(invOpen){closeInventory();return;}if(conOpen){closeConsole();return;}return;}
-    if(conOpen)return;
-    if(typing)return;
-    switch(e.key.toLowerCase()){
-      case 'i': case 'e': e.preventDefault(); if(invOpen)closeInventory();else openInventory(); break;
-      case 'c': if(invOpen)return; e.preventDefault(); openConsole(); break;
-      case 't': if(invOpen)return; e.preventDefault(); cycleTheme(); break;
-      case 'g': if(invOpen)return; e.preventDefault(); toggleGravity(); break;
+    if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName)) return;
+    var key=e.key.toUpperCase();
+    if(key==='I'||key==='E'){
+      if(document.getElementById('mc-overlay')) closeInventory();
+      else openInventory();
+    } else if(key==='C'){
+      if(document.getElementById('kb-console')) closeConsole();
+      else openConsole();
+    } else if(key==='T'){
+      cycleTheme();
+    } else if(key==='G'){
+      toggleGravity();
+    } else if(e.key==='Escape'){
+      closeInventory();closeConsole();
     }
   });
+
+  document.addEventListener('mousemove',moveTip);
 })();
 </script>
 
 <script>
-/* =========================================================
-   CRAFTING SYSTEM — patch MutationObserver sur l'inventaire
-========================================================= */
-(function () {
-  'use strict';
+/* ===== CRAFTING SYSTEM ===== */
+(function(){
+  var RARITIES={legendary:'#FFAA00',epic:'#A335EE',rare:'#0070FF',uncommon:'#1EFF00',common:'#9D9D9D'};
+  var heldItem=null;
+  var heldDiv=null;
 
-  var BASE2 = 'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/';
-
-  var RC = { common:'#FFFFFF', uncommon:'#55FF55', rare:'#5555FF', epic:'#AA00AA', legendary:'#FFAA00' };
-
-  var RECIPES = [
-    { need:['figma','shopify','wordpress'],  name:'Site E-commerce',      icon:'🌐', rarity:'legendary', desc:'Sainte trinite du web · +100 Conversions' },
-    { need:['canva','premiere','photoshop'], name:'Campagne Virale',      icon:'📈', rarity:'epic',      desc:'Reach infini · +500K impressions' },
-    { need:['cv','figma','diamond'],          name:'Portfolio Legendaire', icon:'💼', rarity:'legendary', desc:'Obtient un entretien en 3s' },
-    { need:['word','ppt','excel'],            name:'Brief Parfait',        icon:'📋', rarity:'rare',      desc:'Le client est satisfait' },
-    { need:['coffee','door','mana'],          name:'Anti-Burn-out',        icon:'🛡️', rarity:'epic',      desc:'Protection totale · Durabilite: Infinie' },
-    { need:['shopify','wordpress','framer'], name:'Full-Stack Marketer',  icon:'⚡', rarity:'legendary', desc:'Couteau suisse du digital · x3 Salaire' },
-    { need:['capcut','canva','premiere'],    name:'Contenu Viral',        icon:'🔥', rarity:'epic',      desc:'1M vues garantis · Trending' },
-    { need:['cv','sword','diamond'],          name:'Offre Recue',         icon:'💰', rarity:'legendary', desc:'GG, tu es embauche(e) !' },
-    { need:['coffee','coffee','coffee'],      name:'Overdose Cafeine',    icon:'💀', rarity:'epic',      desc:'+999 Focus · -1 Sommeil' },
-  ];
-
-  var craftGrid = [null,null,null,null,null,null,null,null,null];
-  var heldItem = null;
-  var heldEl = null;
-  var craftResultItem = null;
-  var gridSlotEls = [];
-  var resultSlotEl = null;
-
-  /* ---- CSS ---- */
-  var cs = document.createElement('style');
-  cs.textContent =
-    '#mc-held{position:fixed;pointer-events:none;z-index:100001;display:none;width:36px;height:36px;align-items:center;justify-content:center;transform:translate(-50%,-50%);}' +
-    '#mc-held img{width:28px;height:28px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 0 4px rgba(255,255,255,.7));}' +
-    '#mc-held .mc-em{font-size:22px;line-height:1;filter:drop-shadow(0 0 4px rgba(255,255,255,.7));}' +
-    '.mc-sl.mc-drop{background:#AEAEAE;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFF;}' +
-    '.mc-res.craftable{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA00,0 0 14px #FFAA0088;animation:mcRP .9s infinite alternate;}' +
-    '@keyframes mcRP{from{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA0088;}to{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA00,0 0 18px #FFAA00CC;}}' +
-    '.mc-craft-flash{animation:mcCF .38s ease !important;}' +
-    '@keyframes mcCF{0%{transform:scale(1)}45%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1)}}' +
-    '#mc-rbtn{margin-top:5px;width:100%;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -1px -1px 0 rgba(255,255,255,.3);padding:3px 8px;font-family:VT323,monospace;font-size:14px;color:#F2F5FA;cursor:pointer;border:none;text-align:left;}' +
-    '#mc-rbtn:hover{background:#9E9E9E;}' +
-    '#mc-rlist{background:#C6C6C6;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;padding:5px;margin-top:3px;max-height:150px;overflow-y:auto;}' +
-    '.mc-rrow{display:flex;align-items:center;gap:5px;margin-bottom:3px;font-family:VT323,monospace;font-size:13px;cursor:pointer;padding:2px 4px;}' +
-    '.mc-rrow:hover{background:rgba(0,0,0,.1);}' +
-    '.mc-rings{display:flex;gap:2px;}' +
-    '.mc-ring{width:22px;height:22px;background:#8B8B8B;box-shadow:inset 1px 1px 0 #373737;display:flex;align-items:center;justify-content:center;flex-shrink:0;}' +
-    '.mc-ring img{width:17px;height:17px;image-rendering:pixelated;object-fit:contain;}' +
-    '.mc-ring .mc-em{font-size:13px;line-height:1;}' +
-    '.mc-rres{font-size:18px;margin:0 3px;}' +
-    '.mc-rname{font-size:13px;flex:1;}';
-  document.head.appendChild(cs);
-
-  /* ---- Held item div ---- */
-  var heldDiv = document.createElement('div');
-  heldDiv.id = 'mc-held';
-  document.body.appendChild(heldDiv);
-
-  document.addEventListener('mousemove', function(e) {
-    if (heldItem) { heldDiv.style.left = e.clientX + 'px'; heldDiv.style.top = e.clientY + 'px'; }
-  });
-
-  document.addEventListener('contextmenu', function() { if (heldItem) releaseHeld(); });
-  document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && heldItem) releaseHeld(); });
-
-  /* ---- Observer ---- */
-  new MutationObserver(function(muts) {
-    for (var i = 0; i < muts.length; i++) {
-      for (var j = 0; j < muts[i].addedNodes.length; j++) {
-        if (muts[i].addedNodes[j].id === 'mc-overlay') {
-          var ov = muts[i].addedNodes[j];
-          setTimeout(function() { patchInv(ov); }, 0);
-        }
-      }
-      for (var j = 0; j < muts[i].removedNodes.length; j++) {
-        if (muts[i].removedNodes[j].id === 'mc-overlay') releaseHeld();
-      }
+  function getOrCreateHeld(){
+    if(!heldDiv){
+      heldDiv=document.createElement('div');
+      heldDiv.id='mc-held';
+      heldDiv.style.cssText='position:fixed;pointer-events:none;z-index:99999;width:40px;height:40px;display:none;align-items:center;justify-content:center;font-size:1.6rem;transform:translate(-50%,-50%)';
+      document.body.appendChild(heldDiv);
+      document.addEventListener('mousemove',function(e){
+        heldDiv.style.left=e.clientX+'px';heldDiv.style.top=e.clientY+'px';
+      });
     }
-  }).observe(document.body, { childList: true });
-
-  /* ---- Patch inventory ---- */
-  function patchInv(ov) {
-    craftGrid = [null,null,null,null,null,null,null,null,null];
-    craftResultItem = null;
-    gridSlotEls = [];
-
-    var g3 = ov.querySelector('.mc-3x3');
-    var resEl = ov.querySelector('.mc-res');
-    var ccol = ov.querySelector('.mc-ccol');
-    resultSlotEl = resEl;
-    if (!g3 || !resEl) return;
-
-    /* Re-make grid as interactive empty slots */
-    g3.innerHTML = '';
-    for (var i = 0; i < 9; i++) {
-      (function(idx) {
-        var sl = document.createElement('div'); sl.className = 'mc-sl';
-        sl.addEventListener('click', function(e) {
-          e.stopPropagation();
-          if (heldItem) {
-            craftGrid[idx] = heldItem;
-            fillSlot(sl, heldItem);
-            releaseHeld();
-            checkRecipe();
-          } else if (craftGrid[idx]) {
-            pickUp(craftGrid[idx]);
-            craftGrid[idx] = null;
-            fillSlot(sl, null);
-            checkRecipe();
-          }
-        });
-        sl.addEventListener('contextmenu', function(e) {
-          e.preventDefault();
-          if (craftGrid[idx]) { craftGrid[idx] = null; fillSlot(sl, null); checkRecipe(); }
-        });
-        sl.addEventListener('mouseenter', function() { if (heldItem) sl.classList.add('mc-drop'); });
-        sl.addEventListener('mouseleave', function() { sl.classList.remove('mc-drop'); });
-        g3.appendChild(sl);
-        gridSlotEls.push(sl);
-      })(i);
-    }
-
-    /* Result slot */
-    resEl.innerHTML = '<span class="mc-em" style="font-size:18px;color:#555;line-height:1;">?</span>';
-    resEl.onclick = function() { if (craftResultItem) doCraft(); };
-
-    /* Make all inventory slots pickupable */
-    ov.querySelectorAll('.mc-ig .mc-sl, .mc-hb .mc-sl, .mc-armor .mc-sl, .mc-off .mc-sl').forEach(function(sl) {
-      if (sl.querySelector('img, .mc-em')) {
-        sl.style.cursor = 'pointer';
-        sl.addEventListener('click', function(e) {
-          e.stopPropagation();
-          var item = slotToItem(sl);
-          if (item) pickUp(item);
-        });
-      }
-    });
-
-    /* Release on overlay click */
-    ov.addEventListener('click', function(e) { if (e.target === ov) releaseHeld(); });
-
-    /* Recipe book */
-    var rbtn = document.createElement('button'); rbtn.id = 'mc-rbtn';
-    rbtn.innerHTML = '📖 Livre de recettes (' + RECIPES.length + ')';
-    var rlist = document.createElement('div'); rlist.id = 'mc-rlist'; rlist.style.display = 'none';
-
-    rbtn.addEventListener('click', function(e) {
-      e.stopPropagation();
-      if (rlist.style.display === 'none') { rlist.style.display = 'block'; buildRecipeList(rlist); }
-      else rlist.style.display = 'none';
-    });
-
-    ccol.appendChild(rbtn);
-    ccol.appendChild(rlist);
+    return heldDiv;
   }
 
-  /* ---- Item helpers ---- */
-  var LOOKUP = {
-    figma:{id:'figma',name:'Figma',src:BASE2+'figma.png',rarity:'epic'},
-    shopify:{id:'shopify',name:'Shopify',src:BASE2+'shopify.png',rarity:'rare'},
-    wordpress:{id:'wordpress',name:'WordPress',src:BASE2+'wordpress.png',rarity:'uncommon'},
-    premiere:{id:'premiere',name:'Premiere Pro',src:BASE2+'premierepro.png',rarity:'rare'},
-    photoshop:{id:'photoshop',name:'Photoshop',src:BASE2+'photoshop.png',rarity:'uncommon'},
-    canva:{id:'canva',name:'Canva',src:BASE2+'canva.png',rarity:'common'},
-    framer:{id:'framer',name:'Framer',src:BASE2+'framer.png',rarity:'rare'},
-    wix:{id:'wix',name:'Wix',src:BASE2+'wix.png',rarity:'common'},
-    capcut:{id:'capcut',name:'CapCut',src:BASE2+'capcut.png',rarity:'common'},
-    word:{id:'word',name:'Word',src:BASE2+'word.png',rarity:'common'},
-    excel:{id:'excel',name:'Excel',src:BASE2+'excel.png',rarity:'uncommon'},
-    ppt:{id:'ppt',name:'PowerPoint',src:BASE2+'powerpoint.png',rarity:'common'},
-    cv:{id:'cv',name:'CV Enchante',icon:'📜',rarity:'legendary'},
-    coffee:{id:'coffee',name:'Cafe',icon:'☕',rarity:'common'},
-    sword:{id:'sword',name:'Epee Deadline',icon:'⚔️',rarity:'epic'},
-    diamond:{id:'diamond',name:'Idee Diamant',icon:'💎',rarity:'rare'},
-    door:{id:'door',name:'Reunion Evitee',icon:'🚪',rarity:'uncommon'},
-    mana:{id:'mana',name:'Brief Magique',icon:'🔮',rarity:'rare'}
-  };
+  function setHeld(item){
+    heldItem=item;
+    var hd=getOrCreateHeld();
+    if(!item){hd.style.display='none';hd.innerHTML='';return;}
+    hd.style.display='flex';
+    if(item.emoji){hd.innerHTML='<span>'+item.emoji+'</span>';}
+    else{hd.innerHTML='<img src="'+item.img+'" style="width:36px;height:36px;object-fit:contain;image-rendering:pixelated">';}
+  }
 
-  var FN2ID = {figma:'figma',shopify:'shopify',wordpress:'wordpress',premierepro:'premiere',
-    photoshop:'photoshop',canva:'canva',framer:'framer',wix:'wix',
-    capcut:'capcut',word:'word',excel:'excel',powerpoint:'ppt'};
-  var EM2ID = {'📜':'cv','☕':'coffee','⚔️':'sword','💎':'diamond','🚪':'door','🔮':'mana'};
+  var RECIPES=[
+    {inputs:{figma:1,shopify:1,wordpress:1},result:{name:'Site E-commerce',emoji:'🌐',rarity:'legendary',tip:'Un site e-commerce complet, cle en main'}},
+    {inputs:{canva:1,premiere:1,photoshop:1},result:{name:'Campagne Virale',emoji:'📈',rarity:'epic',tip:'Une campagne marketing qui explose les stats'}},
+    {inputs:{cv:1,figma:1,diamond:1},result:{name:'Portfolio Legendaire',emoji:'💼',rarity:'legendary',tip:'Le portfolio ultime - +100 en recrutement'}},
+    {inputs:{word:1,ppt:1,excel:1},result:{name:'Brief Parfait',emoji:'📋',rarity:'rare',tip:'Un brief client sans fautes'}},
+    {inputs:{coffee:1,door:1,mana:1},result:{name:'Anti-Burn-out',emoji:'🛡️',rarity:'epic',tip:"Protege de l'epuisement professionnel"}},
+    {inputs:{shopify:1,wordpress:1,framer:1},result:{name:'Full-Stack Marketer',emoji:'⚡',rarity:'legendary',tip:'Maitrise tous les outils web marketing'}},
+    {inputs:{capcut:1,canva:1,premiere:1},result:{name:'Contenu Viral',emoji:'🔥',rarity:'epic',tip:'Contenu qui fait x10 en reach'}},
+    {inputs:{cv:1,sword:1,diamond:1},result:{name:'Offre Recue',emoji:'💰',rarity:'legendary',tip:"L'offre d'emploi ideale !"}},
+    {inputs:{coffee:3},result:{name:'Overdose Cafeine',emoji:'💀',rarity:'epic',tip:'Attention : effets secondaires possibles'}}
+  ];
 
-  function slotToItem(sl) {
-    var img = sl.querySelector('img');
-    if (img) { var m = img.src.match(/\/logos\/(\w+)\.png/); if (m && FN2ID[m[1]]) return LOOKUP[FN2ID[m[1]]]; }
-    var em = sl.querySelector('.mc-em');
-    if (em) { var id = EM2ID[em.textContent.trim()]; if (id) return LOOKUP[id]; }
+  function slotToItem(slot){
+    var img=slot.querySelector('img');
+    if(img){var m=img.src.match(/\/logos\/(\w+)\.png/);if(m)return m[1];}
+    var em=slot.querySelector('span');
+    if(em){
+      var txt=em.textContent.trim();
+      var emap={'📜':'cv','☕':'coffee','⚔️':'sword','💎':'diamond','🚪':'door','🔮':'mana'};
+      return emap[txt]||null;
+    }
     return null;
   }
 
-  function fillSlot(el, item) {
-    el.innerHTML = ''; el.dataset.r = '';
-    if (!item) return;
-    el.dataset.r = item.rarity;
-    if (item.src) { var img = document.createElement('img'); img.src = item.src; img.alt = item.name; el.appendChild(img); }
-    else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; el.appendChild(em); }
-  }
-
-  function pickUp(item) {
-    if (!item) return;
-    releaseHeld();
-    heldItem = item;
-    heldDiv.innerHTML = '';
-    if (item.src) { var img = document.createElement('img'); img.src = item.src; img.alt = item.name; heldDiv.appendChild(img); }
-    else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; heldDiv.appendChild(em); }
-    heldDiv.style.display = 'flex';
-    document.body.style.cursor = 'none';
-  }
-
-  function releaseHeld() {
-    heldItem = null;
-    heldDiv.style.display = 'none';
-    heldDiv.innerHTML = '';
-    document.body.style.cursor = '';
-    document.querySelectorAll('.mc-drop').forEach(function(el) { el.classList.remove('mc-drop'); });
-  }
-
-  /* ---- Recipe logic ---- */
-  function checkRecipe() {
-    var filled = craftGrid.filter(Boolean);
-    if (!filled.length) { craftResultItem = null; showResult(null); return; }
-
-    for (var i = 0; i < RECIPES.length; i++) {
-      var r = RECIPES[i];
-      if (filled.length !== r.need.length) continue;
-
-      var gc = {}, nc = {};
-      filled.forEach(function(it) { gc[it.id] = (gc[it.id]||0)+1; });
-      r.need.forEach(function(id) { nc[id] = (nc[id]||0)+1; });
-
-      var ok = Object.keys(nc).length === Object.keys(gc).length &&
-        Object.keys(nc).every(function(id) { return gc[id] === nc[id]; });
-
-      if (ok) { craftResultItem = r; showResult(r); return; }
+  function matchRecipe(grid){
+    var counts={};
+    grid.forEach(function(slot){if(!slot)return;var id=slotToItem(slot);if(id)counts[id]=(counts[id]||0)+1;});
+    for(var i=0;i<RECIPES.length;i++){
+      var r=RECIPES[i];var match=true;
+      var rkeys=Object.keys(r.inputs);var ckeys=Object.keys(counts);
+      if(rkeys.length!==ckeys.length){match=false;}
+      else{for(var k=0;k<rkeys.length;k++){if(counts[rkeys[k]]!==r.inputs[rkeys[k]]){match=false;break;}}}
+      if(match)return r;
     }
-    craftResultItem = null; showResult(null);
+    return null;
   }
 
-  function showResult(r) {
-    if (!resultSlotEl) return;
-    resultSlotEl.innerHTML = ''; resultSlotEl.className = 'mc-res'; resultSlotEl.dataset.r = '';
-    if (!r) { resultSlotEl.innerHTML = '<span class="mc-em" style="font-size:18px;color:#555;line-height:1;">?</span>'; return; }
-    var em = document.createElement('span'); em.className = 'mc-em'; em.style.fontSize = '28px'; em.textContent = r.icon; resultSlotEl.appendChild(em);
-    resultSlotEl.classList.add('craftable'); resultSlotEl.dataset.r = r.rarity;
+  function craftToast(result){
+    var d=document.createElement('div');
+    d.style.cssText='position:fixed;bottom:32px;right:32px;background:#1a0a2e;border:2px solid '+RARITIES[result.rarity]+';color:#fff;padding:12px 20px;font-family:VT323,monospace;font-size:1.3rem;z-index:99999;box-shadow:0 0 16px '+RARITIES[result.rarity];
+    d.innerHTML=result.emoji+' <span style="color:'+RARITIES[result.rarity]+'">'+result.name+'</span> crafté !<br><span style="font-size:.9rem;color:#aaa">'+result.tip+'</span>';
+    document.body.appendChild(d);
+    setTimeout(function(){d.style.opacity='0';d.style.transition='opacity .5s';setTimeout(function(){d.remove();},500);},2800);
   }
 
-  function doCraft() {
-    if (!craftResultItem) return;
-    var r = craftResultItem;
-    resultSlotEl.classList.add('mc-craft-flash');
-    setTimeout(function() { resultSlotEl.classList.remove('mc-craft-flash'); }, 400);
-    craftGrid = [null,null,null,null,null,null,null,null,null];
-    gridSlotEls.forEach(function(sl) { fillSlot(sl, null); });
-    craftResultItem = null; showResult(null);
-    craftToast(r);
+  function findItemById(id){
+    var all=[
+      {id:'figma',name:'Figma',rarity:'epic',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/figma.png'},
+      {id:'shopify',name:'Shopify',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/shopify.png'},
+      {id:'wordpress',name:'WordPress',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wordpress.png'},
+      {id:'premiere',name:'Premiere Pro',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/premiere.png'},
+      {id:'photoshop',name:'Photoshop',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/photoshop.png'},
+      {id:'canva',name:'Canva',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/canva.png'},
+      {id:'framer',name:'Framer',rarity:'rare',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/framer.png'},
+      {id:'wix',name:'Wix',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/wix.png'},
+      {id:'capcut',name:'CapCut',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/capcut.png'},
+      {id:'word',name:'Word',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/word.png'},
+      {id:'excel',name:'Excel',rarity:'uncommon',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/excel.png'},
+      {id:'ppt',name:'PowerPoint',rarity:'common',img:'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/powerpoint.png'},
+      {id:'cv',name:'CV Enchante',rarity:'legendary',emoji:'📜'},
+      {id:'coffee',name:'Cafe x64',rarity:'common',emoji:'☕'},
+      {id:'sword',name:'Epee Deadline',rarity:'epic',emoji:'⚔️'},
+      {id:'diamond',name:'Idee Diamant',rarity:'rare',emoji:'💎'},
+      {id:'door',name:'Reunion Evitee',rarity:'uncommon',emoji:'🚪'},
+      {id:'mana',name:'Brief Magique',rarity:'rare',emoji:'🔮'}
+    ];
+    for(var i=0;i<all.length;i++)if(all[i].id===id)return all[i];
+    return null;
   }
 
-  function craftToast(r) {
-    var prev = document.getElementById('craft-toast'); if (prev) prev.remove();
-    var col = RC[r.rarity] || '#FFF';
-    var t = document.createElement('div'); t.id = 'craft-toast';
-    t.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:100002;background:rgba(8,16,32,.95);border:1px solid ' + col + '44;border-radius:16px;padding:16px 20px;backdrop-filter:blur(20px);font-family:Satoshi,-apple-system,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 30px ' + col + '18;transform:translateY(100px);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease;max-width:300px;';
-    t.innerHTML = '<div style="display:flex;align-items:center;gap:14px;"><div style="font-size:34px;line-height:1;">' + r.icon + '</div><div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);font-family:JetBrains Mono,monospace;margin-bottom:3px;">Crafting reussi !</div><div style="font-size:16px;font-weight:700;color:' + col + ';">' + r.name + '</div><div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px;">' + r.desc + '</div></div></div>';
-    document.body.appendChild(t);
-    requestAnimationFrame(function() { requestAnimationFrame(function() { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; }); });
-    setTimeout(function() { t.style.transform = 'translateY(100px)'; t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 500); }, 4500);
-  }
-
-  /* ---- Recipe book ---- */
-  function buildRecipeList(el) {
-    el.innerHTML = '';
-    RECIPES.forEach(function(r) {
-      var row = document.createElement('div'); row.className = 'mc-rrow';
-      var col = RC[r.rarity];
-
-      var ings = document.createElement('div'); ings.className = 'mc-rings';
-      var seen = {};
-      r.need.forEach(function(id) {
-        if (seen[id]) return; seen[id] = true;
-        var item = LOOKUP[id]; if (!item) return;
-        var ing = document.createElement('div'); ing.className = 'mc-ring';
-        if (item.src) { var img = document.createElement('img'); img.src = item.src; ing.appendChild(img); }
-        else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; ing.appendChild(em); }
-        ings.appendChild(ing);
-      });
-
-      var arw = document.createElement('span'); arw.textContent = '▶'; arw.style.color = '#666'; arw.style.fontSize = '11px';
-      var res = document.createElement('span'); res.className = 'mc-rres'; res.textContent = r.icon;
-      var nm = document.createElement('span'); nm.className = 'mc-rname'; nm.style.color = col; nm.textContent = r.name;
-
-      row.appendChild(ings); row.appendChild(arw); row.appendChild(res); row.appendChild(nm);
-
-      row.addEventListener('click', function(e) {
-        e.stopPropagation();
-        craftGrid = [null,null,null,null,null,null,null,null,null];
-        r.need.forEach(function(id, i) {
-          craftGrid[i] = LOOKUP[id];
-          if (gridSlotEls[i]) fillSlot(gridSlotEls[i], LOOKUP[id]);
+  function patchInv(ov){
+    var ph=ov.querySelector('#mc-craft-ph');
+    if(!ph||ph.dataset.patched)return;
+    ph.dataset.patched='1';
+    var ct=document.createElement('div');
+    ct.textContent='Atelier de Craft';
+    ct.style.cssText='font-size:1.1rem;color:#3f3f3f;margin-bottom:6px';
+    ph.appendChild(ct);
+    var row=document.createElement('div');
+    row.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:8px';
+    var grid=document.createElement('div');
+    grid.style.cssText='display:grid;grid-template-columns:repeat(3,44px);gap:3px';
+    var craftSlots=[];
+    for(var i=0;i<9;i++){
+      (function(idx){
+        var s=document.createElement('div');
+        s.className='mc-craft-slot';
+        s.style.cssText='width:44px;height:44px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;cursor:pointer;position:relative';
+        s.addEventListener('click',function(){
+          if(heldItem){
+            s.innerHTML='';
+            if(heldItem.emoji){var em=document.createElement('span');em.style.fontSize='1.6rem';em.textContent=heldItem.emoji;s.appendChild(em);}
+            else{var img=document.createElement('img');img.src=heldItem.img;img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';s.appendChild(img);}
+            s.dataset.itemId=heldItem.id;
+            setHeld(null);checkCraft();
+          } else if(s.innerHTML.trim()){
+            var id=s.dataset.itemId;var found=findItemById(id);
+            if(found)setHeld(found);
+            s.innerHTML='';s.dataset.itemId='';checkCraft();
+          }
         });
-        for (var i = r.need.length; i < 9; i++) { craftGrid[i] = null; if (gridSlotEls[i]) fillSlot(gridSlotEls[i], null); }
-        checkRecipe();
-        el.style.display = 'none';
-      });
+        craftSlots.push(s);grid.appendChild(s);
+      })(i);
+    }
+    var arrow=document.createElement('div');
+    arrow.textContent='➡️';
+    arrow.style.cssText='font-size:1.8rem;cursor:pointer';
+    arrow.title='Crafter';
+    var resultSlot=document.createElement('div');
+    resultSlot.id='mc-result-slot';
+    resultSlot.style.cssText='width:52px;height:52px;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 #FFF;display:flex;align-items:center;justify-content:center;font-size:1.8rem;cursor:pointer';
 
-      el.appendChild(row);
+    function checkCraft(){
+      var recipe=matchRecipe(craftSlots);
+      resultSlot.innerHTML='';resultSlot.dataset.result='';
+      if(recipe){
+        var sp=document.createElement('span');
+        sp.textContent=recipe.result.emoji;
+        sp.style.cssText='font-size:1.8rem;filter:drop-shadow(0 0 6px '+RARITIES[recipe.result.rarity]+')';
+        resultSlot.appendChild(sp);
+        resultSlot.dataset.result=JSON.stringify(recipe.result);
+        resultSlot.style.outline='2px solid '+RARITIES[recipe.result.rarity];
+      } else {resultSlot.style.outline='none';}
+    }
+
+    resultSlot.addEventListener('click',function(){
+      if(!resultSlot.dataset.result)return;
+      var res=JSON.parse(resultSlot.dataset.result);
+      craftToast(res);
+      craftSlots.forEach(function(s){s.innerHTML='';s.dataset.itemId='';});
+      resultSlot.innerHTML='';resultSlot.dataset.result='';resultSlot.style.outline='none';
     });
+    arrow.addEventListener('click',function(){if(resultSlot.dataset.result)resultSlot.click();});
+
+    row.appendChild(grid);row.appendChild(arrow);row.appendChild(resultSlot);
+    ph.appendChild(row);
+
+    var allSlots=ov.querySelectorAll('.mc-slot');
+    allSlots.forEach(function(slot){
+      slot.addEventListener('click',function(){
+        if(heldItem)return;
+        var id=slot.dataset.id;var found=findItemById(id);
+        if(found)setHeld(found);
+      });
+    });
+
+    var rbtn=document.createElement('button');
+    rbtn.textContent='📖 Livre de recettes';
+    rbtn.style.cssText='background:#8B8B8B;border:none;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #373737;font-family:VT323,monospace;font-size:1rem;padding:4px 10px;cursor:pointer;margin-top:4px';
+    rbtn.addEventListener('click',function(){toggleRecipeBook(ph,craftSlots,checkCraft);});
+    ph.appendChild(rbtn);
   }
 
+  function toggleRecipeBook(ph,craftSlots,checkCraft){
+    var existing=ph.querySelector('#mc-recipe-book');
+    if(existing){existing.remove();return;}
+    var rb=document.createElement('div');
+    rb.id='mc-recipe-book';
+    rb.style.cssText='background:#C6C6C6;border:2px solid #373737;padding:10px;margin-top:8px;max-height:220px;overflow-y:auto;font-family:VT323,monospace';
+    var rbtitle=document.createElement('div');
+    rbtitle.textContent='Recettes connues :';
+    rbtitle.style.cssText='font-size:1rem;color:#3f3f3f;margin-bottom:6px';
+    rb.appendChild(rbtitle);
+    RECIPES.forEach(function(r){
+      var row2=document.createElement('div');
+      row2.style.cssText='display:flex;align-items:center;gap:8px;padding:4px;cursor:pointer;border-bottom:1px solid #aaa';
+      row2.innerHTML='<span style="font-size:1.2rem">'+r.result.emoji+'</span><span style="color:'+RARITIES[r.result.rarity]+'">'+r.result.name+'</span><span style="color:#666;font-size:.85rem"> = '+Object.entries(r.inputs).map(function(e){return e[0]+(e[1]>1?' x'+e[1]:'');}).join(' + ')+'</span>';
+      row2.addEventListener('click',function(){
+        craftSlots.forEach(function(s){s.innerHTML='';s.dataset.itemId='';});
+        var keys=Object.keys(r.inputs);var idx2=0;
+        keys.forEach(function(k){
+          var count=r.inputs[k];
+          for(var c=0;c<count;c++){
+            if(idx2<9){
+              var item=findItemById(k);
+              if(item){
+                craftSlots[idx2].innerHTML='';
+                if(item.emoji){var em=document.createElement('span');em.style.fontSize='1.6rem';em.textContent=item.emoji;craftSlots[idx2].appendChild(em);}
+                else{var img=document.createElement('img');img.src=item.img;img.style.cssText='width:36px;height:36px;object-fit:contain;image-rendering:pixelated';craftSlots[idx2].appendChild(img);}
+                craftSlots[idx2].dataset.itemId=k;
+              }
+              idx2++;
+            }
+          }
+        });
+        checkCraft();rb.remove();
+      });
+      rb.appendChild(row2);
+    });
+    ph.appendChild(rb);
+  }
+
+  var observer=new MutationObserver(function(mutations){
+    mutations.forEach(function(m){
+      m.addedNodes.forEach(function(n){if(n.id==='mc-overlay')patchInv(n);});
+    });
+  });
+  observer.observe(document.body,{childList:true});
 })();
 </script>
+
 </body>
 </html>
 
