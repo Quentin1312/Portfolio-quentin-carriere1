@@ -2992,6 +2992,319 @@ function creationErr(img) {
   });
 })();
 </script>
+
+<script>
+/* =========================================================
+   CRAFTING SYSTEM — patch MutationObserver sur l'inventaire
+========================================================= */
+(function () {
+  'use strict';
+
+  var BASE2 = 'https://raw.githubusercontent.com/Quentin1312/Portfolio-quentin-carriere1/main/logos/';
+
+  var RC = { common:'#FFFFFF', uncommon:'#55FF55', rare:'#5555FF', epic:'#AA00AA', legendary:'#FFAA00' };
+
+  var RECIPES = [
+    { need:['figma','shopify','wordpress'],  name:'Site E-commerce',      icon:'🌐', rarity:'legendary', desc:'Sainte trinite du web · +100 Conversions' },
+    { need:['canva','premiere','photoshop'], name:'Campagne Virale',      icon:'📈', rarity:'epic',      desc:'Reach infini · +500K impressions' },
+    { need:['cv','figma','diamond'],          name:'Portfolio Legendaire', icon:'💼', rarity:'legendary', desc:'Obtient un entretien en 3s' },
+    { need:['word','ppt','excel'],            name:'Brief Parfait',        icon:'📋', rarity:'rare',      desc:'Le client est satisfait' },
+    { need:['coffee','door','mana'],          name:'Anti-Burn-out',        icon:'🛡️', rarity:'epic',      desc:'Protection totale · Durabilite: Infinie' },
+    { need:['shopify','wordpress','framer'], name:'Full-Stack Marketer',  icon:'⚡', rarity:'legendary', desc:'Couteau suisse du digital · x3 Salaire' },
+    { need:['capcut','canva','premiere'],    name:'Contenu Viral',        icon:'🔥', rarity:'epic',      desc:'1M vues garantis · Trending' },
+    { need:['cv','sword','diamond'],          name:'Offre Recue',         icon:'💰', rarity:'legendary', desc:'GG, tu es embauche(e) !' },
+    { need:['coffee','coffee','coffee'],      name:'Overdose Cafeine',    icon:'💀', rarity:'epic',      desc:'+999 Focus · -1 Sommeil' },
+  ];
+
+  var craftGrid = [null,null,null,null,null,null,null,null,null];
+  var heldItem = null;
+  var heldEl = null;
+  var craftResultItem = null;
+  var gridSlotEls = [];
+  var resultSlotEl = null;
+
+  /* ---- CSS ---- */
+  var cs = document.createElement('style');
+  cs.textContent =
+    '#mc-held{position:fixed;pointer-events:none;z-index:100001;display:none;width:36px;height:36px;align-items:center;justify-content:center;transform:translate(-50%,-50%);}' +
+    '#mc-held img{width:28px;height:28px;image-rendering:pixelated;object-fit:contain;filter:drop-shadow(0 0 4px rgba(255,255,255,.7));}' +
+    '#mc-held .mc-em{font-size:22px;line-height:1;filter:drop-shadow(0 0 4px rgba(255,255,255,.7));}' +
+    '.mc-sl.mc-drop{background:#AEAEAE;box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFF;}' +
+    '.mc-res.craftable{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA00,0 0 14px #FFAA0088;animation:mcRP .9s infinite alternate;}' +
+    '@keyframes mcRP{from{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA0088;}to{box-shadow:inset 2px 2px 0 #373737,inset -2px -2px 0 rgba(255,255,255,.4),0 0 0 2px #FFAA00,0 0 18px #FFAA00CC;}}' +
+    '.mc-craft-flash{animation:mcCF .38s ease !important;}' +
+    '@keyframes mcCF{0%{transform:scale(1)}45%{transform:scale(1.35) rotate(8deg)}100%{transform:scale(1)}}' +
+    '#mc-rbtn{margin-top:5px;width:100%;background:#8B8B8B;box-shadow:inset 2px 2px 0 #373737,inset -1px -1px 0 rgba(255,255,255,.3);padding:3px 8px;font-family:VT323,monospace;font-size:14px;color:#F2F5FA;cursor:pointer;border:none;text-align:left;}' +
+    '#mc-rbtn:hover{background:#9E9E9E;}' +
+    '#mc-rlist{background:#C6C6C6;box-shadow:inset 2px 2px 0 #FFF,inset -2px -2px 0 #555,0 0 0 2px #373737;padding:5px;margin-top:3px;max-height:150px;overflow-y:auto;}' +
+    '.mc-rrow{display:flex;align-items:center;gap:5px;margin-bottom:3px;font-family:VT323,monospace;font-size:13px;cursor:pointer;padding:2px 4px;}' +
+    '.mc-rrow:hover{background:rgba(0,0,0,.1);}' +
+    '.mc-rings{display:flex;gap:2px;}' +
+    '.mc-ring{width:22px;height:22px;background:#8B8B8B;box-shadow:inset 1px 1px 0 #373737;display:flex;align-items:center;justify-content:center;flex-shrink:0;}' +
+    '.mc-ring img{width:17px;height:17px;image-rendering:pixelated;object-fit:contain;}' +
+    '.mc-ring .mc-em{font-size:13px;line-height:1;}' +
+    '.mc-rres{font-size:18px;margin:0 3px;}' +
+    '.mc-rname{font-size:13px;flex:1;}';
+  document.head.appendChild(cs);
+
+  /* ---- Held item div ---- */
+  var heldDiv = document.createElement('div');
+  heldDiv.id = 'mc-held';
+  document.body.appendChild(heldDiv);
+
+  document.addEventListener('mousemove', function(e) {
+    if (heldItem) { heldDiv.style.left = e.clientX + 'px'; heldDiv.style.top = e.clientY + 'px'; }
+  });
+
+  document.addEventListener('contextmenu', function() { if (heldItem) releaseHeld(); });
+  document.addEventListener('keydown', function(e) { if (e.key === 'Escape' && heldItem) releaseHeld(); });
+
+  /* ---- Observer ---- */
+  new MutationObserver(function(muts) {
+    for (var i = 0; i < muts.length; i++) {
+      for (var j = 0; j < muts[i].addedNodes.length; j++) {
+        if (muts[i].addedNodes[j].id === 'mc-overlay') {
+          var ov = muts[i].addedNodes[j];
+          setTimeout(function() { patchInv(ov); }, 0);
+        }
+      }
+      for (var j = 0; j < muts[i].removedNodes.length; j++) {
+        if (muts[i].removedNodes[j].id === 'mc-overlay') releaseHeld();
+      }
+    }
+  }).observe(document.body, { childList: true });
+
+  /* ---- Patch inventory ---- */
+  function patchInv(ov) {
+    craftGrid = [null,null,null,null,null,null,null,null,null];
+    craftResultItem = null;
+    gridSlotEls = [];
+
+    var g3 = ov.querySelector('.mc-3x3');
+    var resEl = ov.querySelector('.mc-res');
+    var ccol = ov.querySelector('.mc-ccol');
+    resultSlotEl = resEl;
+    if (!g3 || !resEl) return;
+
+    /* Re-make grid as interactive empty slots */
+    g3.innerHTML = '';
+    for (var i = 0; i < 9; i++) {
+      (function(idx) {
+        var sl = document.createElement('div'); sl.className = 'mc-sl';
+        sl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          if (heldItem) {
+            craftGrid[idx] = heldItem;
+            fillSlot(sl, heldItem);
+            releaseHeld();
+            checkRecipe();
+          } else if (craftGrid[idx]) {
+            pickUp(craftGrid[idx]);
+            craftGrid[idx] = null;
+            fillSlot(sl, null);
+            checkRecipe();
+          }
+        });
+        sl.addEventListener('contextmenu', function(e) {
+          e.preventDefault();
+          if (craftGrid[idx]) { craftGrid[idx] = null; fillSlot(sl, null); checkRecipe(); }
+        });
+        sl.addEventListener('mouseenter', function() { if (heldItem) sl.classList.add('mc-drop'); });
+        sl.addEventListener('mouseleave', function() { sl.classList.remove('mc-drop'); });
+        g3.appendChild(sl);
+        gridSlotEls.push(sl);
+      })(i);
+    }
+
+    /* Result slot */
+    resEl.innerHTML = '<span class="mc-em" style="font-size:18px;color:#555;line-height:1;">?</span>';
+    resEl.onclick = function() { if (craftResultItem) doCraft(); };
+
+    /* Make all inventory slots pickupable */
+    ov.querySelectorAll('.mc-ig .mc-sl, .mc-hb .mc-sl, .mc-armor .mc-sl, .mc-off .mc-sl').forEach(function(sl) {
+      if (sl.querySelector('img, .mc-em')) {
+        sl.style.cursor = 'pointer';
+        sl.addEventListener('click', function(e) {
+          e.stopPropagation();
+          var item = slotToItem(sl);
+          if (item) pickUp(item);
+        });
+      }
+    });
+
+    /* Release on overlay click */
+    ov.addEventListener('click', function(e) { if (e.target === ov) releaseHeld(); });
+
+    /* Recipe book */
+    var rbtn = document.createElement('button'); rbtn.id = 'mc-rbtn';
+    rbtn.innerHTML = '📖 Livre de recettes (' + RECIPES.length + ')';
+    var rlist = document.createElement('div'); rlist.id = 'mc-rlist'; rlist.style.display = 'none';
+
+    rbtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (rlist.style.display === 'none') { rlist.style.display = 'block'; buildRecipeList(rlist); }
+      else rlist.style.display = 'none';
+    });
+
+    ccol.appendChild(rbtn);
+    ccol.appendChild(rlist);
+  }
+
+  /* ---- Item helpers ---- */
+  var LOOKUP = {
+    figma:{id:'figma',name:'Figma',src:BASE2+'figma.png',rarity:'epic'},
+    shopify:{id:'shopify',name:'Shopify',src:BASE2+'shopify.png',rarity:'rare'},
+    wordpress:{id:'wordpress',name:'WordPress',src:BASE2+'wordpress.png',rarity:'uncommon'},
+    premiere:{id:'premiere',name:'Premiere Pro',src:BASE2+'premierepro.png',rarity:'rare'},
+    photoshop:{id:'photoshop',name:'Photoshop',src:BASE2+'photoshop.png',rarity:'uncommon'},
+    canva:{id:'canva',name:'Canva',src:BASE2+'canva.png',rarity:'common'},
+    framer:{id:'framer',name:'Framer',src:BASE2+'framer.png',rarity:'rare'},
+    wix:{id:'wix',name:'Wix',src:BASE2+'wix.png',rarity:'common'},
+    capcut:{id:'capcut',name:'CapCut',src:BASE2+'capcut.png',rarity:'common'},
+    word:{id:'word',name:'Word',src:BASE2+'word.png',rarity:'common'},
+    excel:{id:'excel',name:'Excel',src:BASE2+'excel.png',rarity:'uncommon'},
+    ppt:{id:'ppt',name:'PowerPoint',src:BASE2+'powerpoint.png',rarity:'common'},
+    cv:{id:'cv',name:'CV Enchante',icon:'📜',rarity:'legendary'},
+    coffee:{id:'coffee',name:'Cafe',icon:'☕',rarity:'common'},
+    sword:{id:'sword',name:'Epee Deadline',icon:'⚔️',rarity:'epic'},
+    diamond:{id:'diamond',name:'Idee Diamant',icon:'💎',rarity:'rare'},
+    door:{id:'door',name:'Reunion Evitee',icon:'🚪',rarity:'uncommon'},
+    mana:{id:'mana',name:'Brief Magique',icon:'🔮',rarity:'rare'}
+  };
+
+  var FN2ID = {figma:'figma',shopify:'shopify',wordpress:'wordpress',premierepro:'premiere',
+    photoshop:'photoshop',canva:'canva',framer:'framer',wix:'wix',
+    capcut:'capcut',word:'word',excel:'excel',powerpoint:'ppt'};
+  var EM2ID = {'📜':'cv','☕':'coffee','⚔️':'sword','💎':'diamond','🚪':'door','🔮':'mana'};
+
+  function slotToItem(sl) {
+    var img = sl.querySelector('img');
+    if (img) { var m = img.src.match(/\/logos\/(\w+)\.png/); if (m && FN2ID[m[1]]) return LOOKUP[FN2ID[m[1]]]; }
+    var em = sl.querySelector('.mc-em');
+    if (em) { var id = EM2ID[em.textContent.trim()]; if (id) return LOOKUP[id]; }
+    return null;
+  }
+
+  function fillSlot(el, item) {
+    el.innerHTML = ''; el.dataset.r = '';
+    if (!item) return;
+    el.dataset.r = item.rarity;
+    if (item.src) { var img = document.createElement('img'); img.src = item.src; img.alt = item.name; el.appendChild(img); }
+    else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; el.appendChild(em); }
+  }
+
+  function pickUp(item) {
+    if (!item) return;
+    releaseHeld();
+    heldItem = item;
+    heldDiv.innerHTML = '';
+    if (item.src) { var img = document.createElement('img'); img.src = item.src; img.alt = item.name; heldDiv.appendChild(img); }
+    else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; heldDiv.appendChild(em); }
+    heldDiv.style.display = 'flex';
+    document.body.style.cursor = 'none';
+  }
+
+  function releaseHeld() {
+    heldItem = null;
+    heldDiv.style.display = 'none';
+    heldDiv.innerHTML = '';
+    document.body.style.cursor = '';
+    document.querySelectorAll('.mc-drop').forEach(function(el) { el.classList.remove('mc-drop'); });
+  }
+
+  /* ---- Recipe logic ---- */
+  function checkRecipe() {
+    var filled = craftGrid.filter(Boolean);
+    if (!filled.length) { craftResultItem = null; showResult(null); return; }
+
+    for (var i = 0; i < RECIPES.length; i++) {
+      var r = RECIPES[i];
+      if (filled.length !== r.need.length) continue;
+
+      var gc = {}, nc = {};
+      filled.forEach(function(it) { gc[it.id] = (gc[it.id]||0)+1; });
+      r.need.forEach(function(id) { nc[id] = (nc[id]||0)+1; });
+
+      var ok = Object.keys(nc).length === Object.keys(gc).length &&
+        Object.keys(nc).every(function(id) { return gc[id] === nc[id]; });
+
+      if (ok) { craftResultItem = r; showResult(r); return; }
+    }
+    craftResultItem = null; showResult(null);
+  }
+
+  function showResult(r) {
+    if (!resultSlotEl) return;
+    resultSlotEl.innerHTML = ''; resultSlotEl.className = 'mc-res'; resultSlotEl.dataset.r = '';
+    if (!r) { resultSlotEl.innerHTML = '<span class="mc-em" style="font-size:18px;color:#555;line-height:1;">?</span>'; return; }
+    var em = document.createElement('span'); em.className = 'mc-em'; em.style.fontSize = '28px'; em.textContent = r.icon; resultSlotEl.appendChild(em);
+    resultSlotEl.classList.add('craftable'); resultSlotEl.dataset.r = r.rarity;
+  }
+
+  function doCraft() {
+    if (!craftResultItem) return;
+    var r = craftResultItem;
+    resultSlotEl.classList.add('mc-craft-flash');
+    setTimeout(function() { resultSlotEl.classList.remove('mc-craft-flash'); }, 400);
+    craftGrid = [null,null,null,null,null,null,null,null,null];
+    gridSlotEls.forEach(function(sl) { fillSlot(sl, null); });
+    craftResultItem = null; showResult(null);
+    craftToast(r);
+  }
+
+  function craftToast(r) {
+    var prev = document.getElementById('craft-toast'); if (prev) prev.remove();
+    var col = RC[r.rarity] || '#FFF';
+    var t = document.createElement('div'); t.id = 'craft-toast';
+    t.style.cssText = 'position:fixed;bottom:32px;right:32px;z-index:100002;background:rgba(8,16,32,.95);border:1px solid ' + col + '44;border-radius:16px;padding:16px 20px;backdrop-filter:blur(20px);font-family:Satoshi,-apple-system,sans-serif;box-shadow:0 8px 40px rgba(0,0,0,.6),0 0 30px ' + col + '18;transform:translateY(100px);opacity:0;transition:transform .5s cubic-bezier(.22,1,.36,1),opacity .4s ease;max-width:300px;';
+    t.innerHTML = '<div style="display:flex;align-items:center;gap:14px;"><div style="font-size:34px;line-height:1;">' + r.icon + '</div><div><div style="font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,.4);font-family:JetBrains Mono,monospace;margin-bottom:3px;">Crafting reussi !</div><div style="font-size:16px;font-weight:700;color:' + col + ';">' + r.name + '</div><div style="font-size:12px;color:rgba(255,255,255,.45);margin-top:2px;">' + r.desc + '</div></div></div>';
+    document.body.appendChild(t);
+    requestAnimationFrame(function() { requestAnimationFrame(function() { t.style.transform = 'translateY(0)'; t.style.opacity = '1'; }); });
+    setTimeout(function() { t.style.transform = 'translateY(100px)'; t.style.opacity = '0'; setTimeout(function() { t.remove(); }, 500); }, 4500);
+  }
+
+  /* ---- Recipe book ---- */
+  function buildRecipeList(el) {
+    el.innerHTML = '';
+    RECIPES.forEach(function(r) {
+      var row = document.createElement('div'); row.className = 'mc-rrow';
+      var col = RC[r.rarity];
+
+      var ings = document.createElement('div'); ings.className = 'mc-rings';
+      var seen = {};
+      r.need.forEach(function(id) {
+        if (seen[id]) return; seen[id] = true;
+        var item = LOOKUP[id]; if (!item) return;
+        var ing = document.createElement('div'); ing.className = 'mc-ring';
+        if (item.src) { var img = document.createElement('img'); img.src = item.src; ing.appendChild(img); }
+        else if (item.icon) { var em = document.createElement('span'); em.className = 'mc-em'; em.textContent = item.icon; ing.appendChild(em); }
+        ings.appendChild(ing);
+      });
+
+      var arw = document.createElement('span'); arw.textContent = '▶'; arw.style.color = '#666'; arw.style.fontSize = '11px';
+      var res = document.createElement('span'); res.className = 'mc-rres'; res.textContent = r.icon;
+      var nm = document.createElement('span'); nm.className = 'mc-rname'; nm.style.color = col; nm.textContent = r.name;
+
+      row.appendChild(ings); row.appendChild(arw); row.appendChild(res); row.appendChild(nm);
+
+      row.addEventListener('click', function(e) {
+        e.stopPropagation();
+        craftGrid = [null,null,null,null,null,null,null,null,null];
+        r.need.forEach(function(id, i) {
+          craftGrid[i] = LOOKUP[id];
+          if (gridSlotEls[i]) fillSlot(gridSlotEls[i], LOOKUP[id]);
+        });
+        for (var i = r.need.length; i < 9; i++) { craftGrid[i] = null; if (gridSlotEls[i]) fillSlot(gridSlotEls[i], null); }
+        checkRecipe();
+        el.style.display = 'none';
+      });
+
+      el.appendChild(row);
+    });
+  }
+
+})();
+</script>
 </body>
 </html>
 
