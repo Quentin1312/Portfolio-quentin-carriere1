@@ -2724,6 +2724,261 @@ function creationErr(img) {
 
 
 <script>
+/* =========================================================
+   PIXEL PET - Heidi, the black cat
+========================================================= */
+(function () {
+  var PET_SIZE = 16;
+  var STATES = ['idle', 'walk', 'excited', 'sleep', 'scared'];
+  var state = 'idle';
+  var stateUntil = 0;
+  var frame = 0;
+  var dir = -1;
+  var lastReact = Date.now();
+  var x = 0, y = 0, tx = 0, ty = 0;
+  var bubbleTimer = null;
+  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  function init() {
+    if (document.getElementById('heidi-pet')) return;
+
+    var style = document.createElement('style');
+    style.textContent = ''
+      + '#heidi-pet{position:fixed;left:0;top:0;width:76px;height:76px;z-index:10020;pointer-events:auto;user-select:none;touch-action:manipulation;transform:translate3d(0,0,0);filter:drop-shadow(0 10px 18px rgba(0,0,0,.35))}'
+      + '#heidi-pet canvas{width:64px;height:64px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:10px 6px 2px}'
+      + '#heidi-pet .heidi-name{position:absolute;left:50%;bottom:-4px;transform:translateX(-50%);font:700 10px/1 JetBrains Mono,monospace;letter-spacing:.08em;color:#FFD84A;text-shadow:0 1px 0 #000,0 0 8px rgba(255,216,74,.35);text-transform:uppercase}'
+      + '#heidi-pet .heidi-bubble{position:absolute;right:54px;bottom:54px;max-width:190px;padding:8px 10px;border:1px solid rgba(255,216,74,.55);border-radius:8px;background:rgba(6,10,20,.92);color:#F2F5FA;font:500 12px/1.25 Satoshi,sans-serif;box-shadow:0 10px 28px rgba(0,0,0,.35);opacity:0;transform:translateY(6px) scale(.94);transition:opacity .18s ease,transform .18s ease;pointer-events:none;white-space:nowrap}'
+      + '#heidi-pet .heidi-bubble.show{opacity:1;transform:translateY(0) scale(1)}'
+      + '#heidi-pet .heidi-bubble::after{content:"";position:absolute;right:-6px;bottom:12px;width:10px;height:10px;background:rgba(6,10,20,.92);border-right:1px solid rgba(255,216,74,.55);border-bottom:1px solid rgba(255,216,74,.55);transform:rotate(-45deg)}'
+      + '@media (max-width:720px){#heidi-pet{width:62px;height:62px}#heidi-pet canvas{width:52px;height:52px;margin:7px 5px 0}#heidi-pet .heidi-bubble{right:44px;bottom:46px;max-width:150px;font-size:11px}}';
+    document.head.appendChild(style);
+
+    var pet = document.createElement('div');
+    pet.id = 'heidi-pet';
+    pet.setAttribute('aria-label', 'Heidi, chat pixel noir');
+    pet.innerHTML = '<canvas width="16" height="16"></canvas><div class="heidi-bubble" id="heidi-bubble"></div><div class="heidi-name">Heidi</div>';
+    document.body.appendChild(pet);
+
+    var canvas = pet.querySelector('canvas');
+    var ctx = canvas.getContext('2d');
+    ctx.imageSmoothingEnabled = false;
+
+    placeInCorner();
+    pickTarget();
+    setState('idle', 2600, 'Miaou, je surveille.');
+
+    pet.addEventListener('mouseenter', function () { react('hover'); });
+    pet.addEventListener('click', function () { react('pet'); });
+    document.addEventListener('heidi:react', function (e) {
+      var d = e.detail || {};
+      react(d.type || 'idle', d);
+    });
+
+    window.HeidiPet = {
+      react: react,
+      say: say,
+      setState: setState
+    };
+
+    function placeInCorner() {
+      var margin = window.innerWidth < 720 ? 72 : 94;
+      x = clamp(x || window.innerWidth - margin, Math.max(12, window.innerWidth - 250), window.innerWidth - margin);
+      y = clamp(y || window.innerHeight - margin, Math.max(84, window.innerHeight - 210), window.innerHeight - margin);
+      tx = x; ty = y;
+      pet.style.transform = 'translate3d(' + Math.round(x) + 'px,' + Math.round(y) + 'px,0)';
+    }
+
+    function pickTarget() {
+      var margin = window.innerWidth < 720 ? 70 : 96;
+      var minX = Math.max(10, window.innerWidth - 250);
+      var maxX = Math.max(minX + 20, window.innerWidth - margin);
+      var minY = Math.max(74, window.innerHeight - 210);
+      var maxY = Math.max(minY + 20, window.innerHeight - margin);
+      tx = minX + Math.random() * (maxX - minX);
+      ty = minY + Math.random() * (maxY - minY);
+      dir = tx < x ? -1 : 1;
+    }
+
+    function react(type, detail) {
+      lastReact = Date.now();
+      if (type === 'console') setState('excited', 3000, 'Console ouverte. Je prends la garde.');
+      else if (type === 'console-close') setState('idle', 1800, 'Retour au calme.');
+      else if (type === 'inventory') setState('walk', 3600, 'Inventaire detecte.');
+      else if (type === 'craft-table') setState('excited', 2600, 'Table de craft prete.');
+      else if (type === 'craft') setState('excited', 4200, detail && detail.name ? detail.name + ' craft !' : 'Craft reussi !');
+      else if (type === 'gravity') setState('scared', 3200, 'Aie. La gravite !');
+      else if (type === 'theme') setState('excited', 2200, 'Nouvelle couleur, nouveaux reflets.');
+      else if (type === 'matrix') setState('scared', 2600, 'Trop de code vert.');
+      else if (type === 'hover') setState('excited', 1600, 'Mrrp ?');
+      else if (type === 'pet') setState('excited', 2300, 'Heidi approuve.');
+      else setState('idle', 1600);
+    }
+
+    function setState(next, duration, msg) {
+      if (STATES.indexOf(next) === -1) next = 'idle';
+      state = next;
+      stateUntil = Date.now() + (duration || 1800);
+      if (next === 'walk') pickTarget();
+      if (msg) say(msg);
+    }
+
+    function say(msg) {
+      var bubble = document.getElementById('heidi-bubble');
+      if (!bubble) return;
+      bubble.textContent = msg;
+      bubble.classList.add('show');
+      clearTimeout(bubbleTimer);
+      bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, 2400);
+    }
+
+    function ai() {
+      var now = Date.now();
+      if (state === 'sleep' && now - lastReact < 3000) setState('idle', 1600);
+      if (now < stateUntil) return;
+
+      if (now - lastReact > 26000) {
+        setState('sleep', 4200, Math.random() > .65 ? 'zzZ' : null);
+        return;
+      }
+
+      if (state === 'walk' && distance(x, y, tx, ty) > 8) {
+        stateUntil = now + 900;
+        return;
+      }
+
+      if (Math.random() < .46) setState('walk', 2600);
+      else setState('idle', 2200 + Math.random() * 1800, Math.random() > .82 ? 'Miaou.' : null);
+    }
+
+    function move() {
+      if (!reduced && state === 'walk') {
+        x += (tx - x) * .035;
+        y += (ty - y) * .035;
+      } else if (state === 'excited') {
+        y += (ty - y) * .06;
+      }
+      x = clamp(x, 8, window.innerWidth - 62);
+      y = clamp(y, 70, window.innerHeight - 58);
+      var hop = state === 'excited' ? Math.sin(frame * .55) * 5 : 0;
+      var shiver = state === 'scared' ? Math.sin(frame * 1.8) * 2 : 0;
+      pet.style.transform = 'translate3d(' + Math.round(x + shiver) + 'px,' + Math.round(y - hop) + 'px,0)';
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, PET_SIZE, PET_SIZE);
+      ctx.save();
+      if (dir > 0) {
+        ctx.translate(PET_SIZE, 0);
+        ctx.scale(-1, 1);
+      }
+
+      if (state === 'sleep') drawSleep(ctx);
+      else if (state === 'scared') drawScared(ctx);
+      else if (state === 'excited') drawCat(ctx, 1);
+      else if (state === 'walk') drawCat(ctx, frame % 18 < 9 ? 2 : 3);
+      else drawCat(ctx, 0);
+
+      ctx.restore();
+    }
+
+    function loop() {
+      frame++;
+      ai();
+      move();
+      draw();
+      requestAnimationFrame(loop);
+    }
+
+    window.addEventListener('resize', function () {
+      x = 0; y = 0;
+      placeInCorner();
+    });
+
+    loop();
+  }
+
+  function drawCat(ctx, mood) {
+    var black = '#050507';
+    var dark = '#111116';
+    var shine = '#20202A';
+    var eye = '#FFD84A';
+    var yy = mood === 1 ? -1 : 0;
+    var paw = mood === 2 ? 1 : mood === 3 ? -1 : 0;
+    px(ctx, 6, 2 + yy, 1, 1, black);
+    px(ctx, 10, 2 + yy, 1, 1, black);
+    px(ctx, 5, 3 + yy, 2, 2, black);
+    px(ctx, 9, 3 + yy, 2, 2, black);
+    px(ctx, 4, 4 + yy, 8, 5, black);
+    px(ctx, 5, 5 + yy, 6, 4, dark);
+    px(ctx, 5, 6 + yy, 1, 1, eye);
+    px(ctx, 10, 6 + yy, 1, 1, eye);
+    px(ctx, 7, 8 + yy, 2, 1, '#2C1A1F');
+    px(ctx, 5, 9, 8, 4, black);
+    px(ctx, 6, 10, 6, 2, dark);
+    px(ctx, 12, 8, 1, 2, black);
+    px(ctx, 13, 7, 1, 2, black);
+    px(ctx, 14, 6, 1, 2, black);
+    px(ctx, 14, 5, 1, 1, mood === 1 ? shine : black);
+    px(ctx, 5, 13, 2, 2 + Math.max(0, paw), black);
+    px(ctx, 10, 13 + Math.max(0, -paw), 2, 2, black);
+    px(ctx, 8, 3 + yy, 1, 1, shine);
+  }
+
+  function drawSleep(ctx) {
+    var black = '#050507';
+    var dark = '#111116';
+    var eye = '#FFD84A';
+    px(ctx, 5, 7, 8, 5, black);
+    px(ctx, 6, 8, 6, 3, dark);
+    px(ctx, 3, 9, 4, 3, black);
+    px(ctx, 4, 8, 1, 1, black);
+    px(ctx, 6, 8, 1, 1, black);
+    px(ctx, 4, 10, 1, 1, eye);
+    px(ctx, 11, 11, 3, 1, black);
+    px(ctx, 13, 10, 2, 1, black);
+    px(ctx, 11, 3, 3, 1, '#9AA7BD');
+    px(ctx, 13, 2, 2, 1, '#9AA7BD');
+  }
+
+  function drawScared(ctx) {
+    var black = '#050507';
+    var dark = '#111116';
+    var eye = '#FFD84A';
+    px(ctx, 5, 3, 1, 1, black);
+    px(ctx, 10, 3, 1, 1, black);
+    px(ctx, 4, 4, 8, 5, black);
+    px(ctx, 5, 5, 6, 3, dark);
+    px(ctx, 5, 6, 1, 2, eye);
+    px(ctx, 10, 6, 1, 2, eye);
+    px(ctx, 6, 10, 7, 3, black);
+    px(ctx, 7, 9, 5, 1, black);
+    px(ctx, 13, 6, 1, 2, black);
+    px(ctx, 14, 4, 1, 2, black);
+    px(ctx, 15, 3, 1, 1, black);
+    px(ctx, 5, 13, 1, 2, black);
+    px(ctx, 11, 13, 1, 2, black);
+    px(ctx, 3, 2, 1, 1, '#FFD84A');
+    px(ctx, 12, 2, 1, 1, '#FFD84A');
+  }
+
+  function px(ctx, x, y, w, h, color) {
+    ctx.fillStyle = color;
+    ctx.fillRect(x, y, w, h);
+  }
+  function clamp(v, a, b) { return Math.max(a, Math.min(b, v)); }
+  function distance(ax, ay, bx, by) {
+    var dx = ax - bx, dy = ay - by;
+    return Math.sqrt(dx * dx + dy * dy);
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
+
+
+
+<script>
 /* ===== MINECRAFT INVENTORY + KEYBOARD FEATURES ===== */
 (function(){
   // ── Font ──
@@ -2956,6 +3211,7 @@ function creationErr(img) {
   }
 
   function craftToast(res){
+    if(window.HeidiPet)window.HeidiPet.react('craft',res);
     var d=document.createElement('div');
     d.style.cssText='position:fixed;bottom:28px;right:28px;background:#0a0018;border:2px solid '+RC[res.r]+';color:#fff;padding:10px 18px;font-family:VT323,monospace;font-size:1.2rem;z-index:99999;box-shadow:0 0 20px '+RC[res.r];
     d.innerHTML=res.emoji+' <span style="color:'+RC[res.r]+'">'+res.name+'</span> crafté !<br><span style="color:#888;font-size:.82rem">'+res.tip+'</span>';
@@ -2969,6 +3225,7 @@ function creationErr(img) {
   // ── Build inventory ──
   function openInventory(){
     if(document.getElementById('mc-ov'))return;
+    if(window.HeidiPet)window.HeidiPet.react('inventory');
     mainSlots=[];hotbarSlots=[];activeCraftSlots=[];craftResultSlot=null;
 
     var ov=document.createElement('div');ov.id='mc-ov';
@@ -3062,6 +3319,7 @@ function creationErr(img) {
   }
 
   function buildCraftTop(container){
+    if(window.HeidiPet)window.HeidiPet.react('craft-table');
     container.innerHTML='';activeCraftSlots=[];craftResultSlot=null;
 
     var header=document.createElement('div');header.style.cssText='display:flex;align-items:center;justify-content:space-between;margin-bottom:5px';
@@ -3152,6 +3410,7 @@ function creationErr(img) {
 
   function openConsole(){
     if(document.getElementById('kb-con'))return;
+    if(window.HeidiPet)window.HeidiPet.react('console');
     if(!document.getElementById('kb-con-css')){
       var s=document.createElement('style');s.id='kb-con-css';s.textContent=CON_CSS;document.head.appendChild(s);
     }
@@ -3249,7 +3508,7 @@ function creationErr(img) {
           +' <span style="color:#888">'+pct+'%</span>';
   }
 
-  function closeConsole(){var el=document.getElementById('kb-con');if(el)el.remove();}
+  function closeConsole(){var el=document.getElementById('kb-con');if(el){el.remove();if(window.HeidiPet)window.HeidiPet.react('console-close');}}
 
   function runCmd(out,raw){
     var cmd=raw.toLowerCase().trim();
@@ -3416,6 +3675,7 @@ function creationErr(img) {
     }
     else if(cmd==='matrix'){
       trigMatrix();
+      if(window.HeidiPet)window.HeidiPet.react('matrix');
       aLine(out,'> Initialisation MATRIX...','#00ff41');
     }
     else if(cmd==='banner'){
@@ -3504,12 +3764,13 @@ function creationErr(img) {
   // ── Themes ──
   var TH=[{name:'Bleu Électrique',a:'#2897FF'},{name:'Vert Matrix',a:'#00FF41'},{name:'Violet Cyber',a:'#BF00FF'},{name:'Doré Légendaire',a:'#FFAA00'},{name:'Rose Sakura',a:'#FF6B9D'}];
   var ti=0;
-  function cycleTheme(){ti=(ti+1)%TH.length;if(typeof setAccent==='function')setAccent(TH[ti].a);toast('Thème : '+TH[ti].name);}
+  function cycleTheme(){ti=(ti+1)%TH.length;if(typeof setAccent==='function')setAccent(TH[ti].a);if(window.HeidiPet)window.HeidiPet.react('theme');toast('Thème : '+TH[ti].name);}
 
   // ── Gravity ──
   var gOn=false;
   function toggleGravity(){
     gOn=!gOn;
+    if(window.HeidiPet)window.HeidiPet.react('gravity');
     var els=document.querySelectorAll('section,nav,.hero-inner,footer');
     if(gOn){els.forEach(function(el,i){el.classList.remove('grise');el.style.animationDelay=(i*.06)+'s';el.classList.add('gfall');});toast('⚠ Gravité activée');}
     else{els.forEach(function(el,i){el.classList.remove('gfall');el.style.animationDelay=(i*.04)+'s';el.classList.add('grise');});toast('✨ Gravité désactivée');}
