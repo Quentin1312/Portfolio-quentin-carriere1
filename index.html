@@ -3216,13 +3216,13 @@ function creationErr(img) {
 
   // ── Keyboard dispatcher ──
   document.addEventListener('keydown',function(e){
+    if(e.key==='Escape'){closeInventory();closeConsole();return;}
     if(['INPUT','TEXTAREA'].includes(document.activeElement.tagName))return;
     var k=e.key.toUpperCase();
     if(k==='I'||k==='E'){if(document.getElementById('mc-ov'))closeInventory();else openInventory();}
     else if(k==='C'){if(document.getElementById('kb-con'))closeConsole();else openConsole();}
     else if(k==='T')cycleTheme();
     else if(k==='G')toggleGravity();
-    else if(e.key==='Escape'){closeInventory();closeConsole();}
   });
 })();
 </script>
