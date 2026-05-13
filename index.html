@@ -3015,7 +3015,7 @@ function creationErr(img) {
         });
         if (!best || bestRatio < 0.25) return;
         var id = best.id;
-        if (id === lastSection || !sectionLines[id]) return;
+        if (id === lastSection || !sectionLines[id] || tourActive) return;
         lastSection = id;
         var pool = sectionLines[id].filter(function(l){ return l !== lastLine; });
         var line = pool[Math.floor(Math.random() * pool.length)];
@@ -3027,6 +3027,69 @@ function creationErr(img) {
         if (el) obs.observe(el);
       });
     }
+
+    /* --- Tour automatique apres 30s d'inactivite --- */
+    var lastActivity = Date.now();
+    var tourActive = false, tourStep = 0, tourStepTimer = null, inactivityTimer = null;
+
+    ['mousemove','mousedown','keydown','touchstart','click'].forEach(function(ev){
+      document.addEventListener(ev, function(){
+        lastActivity = Date.now();
+        if (tourActive) stopTour();
+      }, { passive: true });
+    });
+
+    var tourScript = [
+      { id:'hero',         msg:"Voila Quentin. Designer UX. Mon humain." },
+      { id:'experience',   msg:"Il a bossé partout. Moi je surveille depuis le canapé." },
+      { id:'realisations', msg:"Ses projets. Pas mal. Aucun sur les chats." },
+      { id:'skills',       msg:"Sait tout faire. Sauf ouvrir les boîtes correctement." },
+      { id:'formation',    msg:"Etudes sérieuses. Moi j'ai un PhD en siestes." },
+      { id:'langues',      msg:"Multilingue. Miaou reste ma langue préférée." },
+      { id:'initiatives',  msg:"Entrepreneur. Moi j'entreprends de dormir 18h/jour." },
+      { id:'creations',    msg:"Créatif. Je l'inspire clairement." },
+      { id:'contact',      msg:"Voilà. Fin de la visite. Contactez-le. (Et nourrissez le chat.)" }
+    ];
+
+    function stopTour() {
+      tourActive = false;
+      clearTimeout(tourStepTimer);
+      tourStep = 0;
+    }
+
+    function runTourStep() {
+      if (!tourActive || tourStep >= tourScript.length) { stopTour(); return; }
+      var step = tourScript[tourStep];
+      var el = document.getElementById(step.id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        tourStepTimer = setTimeout(function() {
+          if (!tourActive) return;
+          say(step.msg);
+          set('excited', 3000);
+          tourStep++;
+          tourStepTimer = setTimeout(runTourStep, 4800);
+        }, 1400);
+      } else {
+        tourStep++;
+        runTourStep();
+      }
+    }
+
+    function startTour() {
+      if (tourActive) return;
+      tourActive = true;
+      tourStep = 0;
+      say("Bon. 30 secondes sans rien faire... Je prends les commandes.");
+      set('excited', 2500);
+      tourStepTimer = setTimeout(runTourStep, 3000);
+    }
+
+    function checkInactivity() {
+      if (!tourActive && Date.now() - lastActivity > 30000) startTour();
+      inactivityTimer = setTimeout(checkInactivity, 5000);
+    }
+    inactivityTimer = setTimeout(checkInactivity, 5000);
 
     setEyes('normal');
     loop();
