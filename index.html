@@ -1,4 +1,4 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="fr">
 <head>
 <meta charset="utf-8" />
@@ -2724,368 +2724,223 @@ function creationErr(img) {
 
 
 <script>
+<script>
 /* =========================================================
-   PIXEL PET - Heidi v2  ★ sprite amélioré, drag, particules
+   PIXEL PET - Heidi v3
 ========================================================= */
 (function () {
-  var PET_SIZE = 16;
-  var STATES = ['idle', 'walk', 'excited', 'sleep', 'scared', 'stretch'];
-  var state = 'idle', stateUntil = 0, frame = 0, dir = -1;
-  var lastReact = Date.now();
-  var x = 0, y = 0, tx = 0, ty = 0;
-  var bubbleTimer = null, tailPhase = 0;
-  var dragging = false, dragOX = 0, dragOY = 0, wasDrag = false;
-  var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
   function init() {
     if (document.getElementById('heidi-pet')) return;
 
-    var style = document.createElement('style');
-    style.textContent = ''
-      + '#heidi-pet{position:fixed;left:0;top:0;width:80px;height:86px;z-index:10020;pointer-events:auto;user-select:none;touch-action:none;transform:translate3d(0,0,0);cursor:grab;filter:drop-shadow(0 0 9px rgba(255,255,255,.22)) drop-shadow(0 6px 18px rgba(0,0,0,.7))}'
-      + '#heidi-pet.drag{cursor:grabbing;filter:drop-shadow(0 0 10px rgba(40,151,255,.5)) drop-shadow(0 10px 22px rgba(0,0,0,.6))}'
-      + '#heidi-pet canvas{width:68px;height:68px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:6px auto 0;border-radius:4px}'
-      + '#heidi-pet .h-name{position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);font:700 9px/1 "JetBrains Mono",monospace;letter-spacing:.12em;color:#FFD84A;text-shadow:0 1px 0 #000,0 0 10px rgba(255,216,74,.5);text-transform:uppercase;white-space:nowrap;pointer-events:none}'
-      + '#heidi-pet .h-glow{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:46px;height:7px;border-radius:50%;filter:blur(7px);background:#2897FF;opacity:.4;transition:background .6s,opacity .4s;pointer-events:none}'
-      + '#heidi-pet .h-bubble{position:absolute;right:62px;bottom:62px;max-width:180px;padding:7px 11px;border:1px solid rgba(255,216,74,.45);border-radius:10px;background:rgba(5,8,18,.95);color:#F2F5FA;font:500 12px/1.35 Satoshi,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5);opacity:0;transform:translateY(5px) scale(.94);transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}'
-      + '#heidi-pet .h-bubble.on{opacity:1;transform:none}'
-      + '#heidi-pet .h-bubble::after{content:"";position:absolute;right:-6px;bottom:11px;width:10px;height:10px;background:rgba(5,8,18,.95);border-right:1px solid rgba(255,216,74,.45);border-bottom:1px solid rgba(255,216,74,.45);transform:rotate(-45deg)}'
-      + '.hp{position:fixed;pointer-events:none;z-index:10021;line-height:1;animation:hp-up 1.1s ease-out forwards}'
-      + '@keyframes hp-up{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-44px) scale(.4)}}'
-      + '.hpz{position:fixed;pointer-events:none;z-index:10021;font:700 10px/1 "JetBrains Mono",monospace;color:#9AA7BD;text-shadow:0 0 8px rgba(154,167,189,.55);animation:hp-zzz 2.2s ease-out forwards}'
-      + '@keyframes hp-zzz{0%{opacity:.9;transform:translate(0,0) scale(.65)}100%{opacity:0;transform:translate(10px,-36px) scale(.4)}}'
-      + '@media(max-width:720px){#heidi-pet{width:66px;height:70px}#heidi-pet canvas{width:56px;height:56px}#heidi-pet .h-bubble{right:50px;bottom:50px;max-width:148px;font-size:11px}}';
-    document.head.appendChild(style);
+    var st = document.createElement('style');
+    st.textContent =
+      '#heidi-pet{position:fixed;left:0;top:0;z-index:10020;pointer-events:auto;user-select:none;cursor:pointer;width:76px;height:82px}' +
+      '#heidi-pet canvas{display:block;width:64px;height:64px;margin:4px auto 0;image-rendering:pixelated;image-rendering:crisp-edges}' +
+      '#heidi-pet .h-name{display:block;text-align:center;font:700 9px/1 "JetBrains Mono",monospace;letter-spacing:.1em;color:#FFD84A;text-shadow:0 0 8px rgba(255,216,74,.6);text-transform:uppercase;margin-top:2px}' +
+      '#heidi-pet .h-bubble{position:absolute;right:68px;bottom:52px;max-width:170px;padding:6px 10px;border:1px solid rgba(255,216,74,.4);border-radius:8px;background:rgba(4,6,14,.96);color:#F2F5FA;font:500 12px/1.3 Satoshi,sans-serif;white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .2s,transform .2s}' +
+      '#heidi-pet .h-bubble.on{opacity:1;transform:none}' +
+      '.h-part{position:fixed;pointer-events:none;z-index:10021;animation:h-float 1s ease-out forwards}' +
+      '@keyframes h-float{to{opacity:0;transform:translateY(-40px) scale(.5)}}';
+    document.head.appendChild(st);
 
     var pet = document.createElement('div');
     pet.id = 'heidi-pet';
-    pet.setAttribute('aria-label', 'Heidi, chat pixel noir');
-    pet.innerHTML = '<canvas width="16" height="16"></canvas>'
-      + '<div class="h-glow" id="h-glow"></div>'
-      + '<div class="h-bubble" id="h-bubble"></div>'
-      + '<div class="h-name">Heidi</div>';
+    pet.innerHTML = '<canvas width="16" height="16"></canvas><div class="h-bubble" id="h-bubble"></div><span class="h-name">Heidi</span>';
     document.body.appendChild(pet);
 
-    var canvas = pet.querySelector('canvas');
-    var ctx = canvas.getContext('2d');
-    ctx.imageSmoothingEnabled = false;
+    var cv  = pet.querySelector('canvas');
+    var ctx = cv.getContext('2d');
 
-    /* ── Drag ── */
-    function dn(cx, cy) { dragging = true; wasDrag = false; dragOX = cx - x; dragOY = cy - y; pet.classList.add('drag'); }
-    function dm(cx, cy) {
-      if (!dragging) return;
-      wasDrag = true;
-      x = clamp(cx - dragOX, 8, window.innerWidth - 72);
-      y = clamp(cy - dragOY, 70, window.innerHeight - 72);
+    var state = 'idle', until = 0, frame = 0, dir = 1;
+    var x = 0, y = 0, tx = 0, ty = 0;
+    var lastReact = Date.now(), bubT = null, tp = 0;
+
+    /* couleurs inline pour aucun probleme de scope */
+    var CB = '#1E1C2E'; /* corps                  */
+    var CF = '#16141E'; /* fourrure interieure     */
+    var CS = '#2C2A40'; /* shine / ventre          */
+    var CE = '#FFD84A'; /* oeil jaune              */
+    var CP = '#06050C'; /* pupille                 */
+    var CN = '#E090A8'; /* nez rose                */
+    var CI = '#C03070'; /* interieur oreille       */
+    var CW = '#AAB8CC'; /* cils / yeux fermes      */
+
+    function corner() {
+      var m = 96;
+      x = window.innerWidth  - m;
+      y = window.innerHeight - m;
       tx = x; ty = y;
-      pet.style.transform = 'translate3d('+Math.round(x)+'px,'+Math.round(y)+'px,0)';
+      pet.style.transform = 'translate3d('+x+'px,'+y+'px,0)';
     }
-    function du() { if (!dragging) return; dragging = false; pet.classList.remove('drag'); if (wasDrag) react('hover'); }
-    pet.addEventListener('mousedown', function(e){ dn(e.clientX, e.clientY); e.preventDefault(); });
-    document.addEventListener('mousemove', function(e){ dm(e.clientX, e.clientY); });
-    document.addEventListener('mouseup', du);
-    pet.addEventListener('touchstart', function(e){ dn(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
-    document.addEventListener('touchmove', function(e){ if(dragging) dm(e.touches[0].clientX, e.touches[0].clientY); }, {passive:true});
-    document.addEventListener('touchend', du);
-
-    placeInCorner();
-    pickTarget();
-    setState('idle', 2600, 'Miaou — je surveille tout.');
-
-    pet.addEventListener('click', function(){ if (!wasDrag) react('pet'); });
-    pet.addEventListener('dblclick', function(){ react('scratch'); });
-    pet.addEventListener('mouseenter', function(){ if (!dragging && state !== 'sleep') react('hover'); });
-    document.addEventListener('heidi:react', function(e){ var d=e.detail||{}; react(d.type||'idle', d); });
-
-    window.HeidiPet = { react: react, say: say, setState: setState };
-
-    function placeInCorner() {
-      var m = window.innerWidth < 720 ? 74 : 96;
-      x = clamp(x || window.innerWidth - m, Math.max(12, window.innerWidth - 270), window.innerWidth - m);
-      y = clamp(y || window.innerHeight - m, Math.max(84, window.innerHeight - 230), window.innerHeight - m);
-      tx = x; ty = y;
-      pet.style.transform = 'translate3d('+Math.round(x)+'px,'+Math.round(y)+'px,0)';
-    }
-
-    function pickTarget() {
-      var m = window.innerWidth < 720 ? 72 : 98;
-      var minX = Math.max(10, window.innerWidth - 270), maxX = window.innerWidth - m;
-      var minY = Math.max(74, window.innerHeight - 230), maxY = window.innerHeight - m;
-      if (maxX <= minX) maxX = minX + 24;
-      if (maxY <= minY) maxY = minY + 24;
-      tx = minX + Math.random() * (maxX - minX);
-      ty = minY + Math.random() * (maxY - minY);
+    function newTarget() {
+      var mx = window.innerWidth  - 96, sx = Math.max(10, mx - 200);
+      var my = window.innerHeight - 96, sy = Math.max(74, my - 180);
+      tx = sx + Math.random() * (mx - sx);
+      ty = sy + Math.random() * (my - sy);
       dir = tx < x ? -1 : 1;
     }
-
-    var PH = {
-      hover: ['Mrrp ?', "T'es là !", 'Hmm ?', '▸ Heidi ▸'],
-      pet:   ['Purrrr ~', 'Heidi approuve ♥', 'Encore !', 'Miaou !', '♡♡'],
-      idle:  ['Miaou.', '...', 'Je surveille.', '’³³³']
-    };
-    function pick(k){ var a=PH[k]||PH.idle; return a[Math.floor(Math.random()*a.length)]; }
-
-    function react(type, detail) {
-      lastReact = Date.now();
-      if (type==='console')        setState('excited', 3000, 'Console ouverte — je prends la garde.');
-      else if (type==='console-close') setState('idle', 1800, 'Retour au calme…');
-      else if (type==='inventory') setState('walk', 3600, "C'est quoi tout ça ?");
-      else if (type==='craft-table') setState('excited', 2600, 'On fabrique quelque chose ?');
-      else if (type==='craft')     setState('excited', 4200, detail&&detail.name ? detail.name+' créé !' : 'Bravo !');
-      else if (type==='gravity')   setState('scared', 3200, 'La gravité ! Aïe !');
-      else if (type==='theme')     setState('excited', 2000, "J'adore cette couleur ~");
-      else if (type==='matrix')    setState('scared', 2600, 'Trop de code vert…');
-      else if (type==='hover')     setState('excited', 1200, pick('hover'));
-      else if (type==='pet')       { spawnParts('hearts'); setState('excited', 2600, pick('pet')); }
-      else if (type==='scratch')   { spawnParts('stars');  setState('stretch', 2200, 'Ahhhh ~'); }
-      else setState('idle', 1600);
-    }
-
-    var GLOWS = {idle:'#2897FF',walk:'#34D399',excited:'#FFD84A',sleep:'#9AA7BD',scared:'#FF6B6B',stretch:'#34D399'};
-    function setState(next, dur, msg) {
-      if (STATES.indexOf(next)===-1) next='idle';
-      state = next; stateUntil = Date.now()+(dur||1800);
-      if (next==='walk') pickTarget();
-      if (msg) say(msg);
-      var g=document.getElementById('h-glow');
-      if (g){ g.style.background=GLOWS[next]||'#2897FF'; g.style.opacity=next==='sleep'?'.2':'.4'; }
-    }
+    corner(); newTarget();
 
     function say(msg) {
-      var b=document.getElementById('h-bubble'); if (!b) return;
-      b.textContent=msg; b.classList.add('on');
-      clearTimeout(bubbleTimer);
-      bubbleTimer=setTimeout(function(){ b.classList.remove('on'); }, 2800);
+      var b = document.getElementById('h-bubble');
+      if (!b) return;
+      b.textContent = msg; b.classList.add('on');
+      clearTimeout(bubT);
+      bubT = setTimeout(function(){ b.classList.remove('on'); }, 2600);
     }
 
-    function spawnParts(kind) {
-      var r=pet.getBoundingClientRect();
-      var glyphs = kind==='hearts' ? ['♥','♡','♥','💕'] : ['✦','✧','★','✦'];
-      var cols   = kind==='hearts' ? ['#FF6B9D','#FF94C2','#FFD0E8'] : ['#FFD84A','#FFFFFF','#FFD84A'];
-      for (var i=0;i<5;i++) {
-        (function(i){ setTimeout(function(){
-          var el=document.createElement('div'); el.className='hp';
-          el.textContent=glyphs[i%glyphs.length];
-          el.style.cssText='left:'+(r.left+12+Math.random()*44)+'px;top:'+(r.top+8+Math.random()*16)+'px'
-            +';color:'+cols[i%cols.length]+';font-size:'+(10+Math.random()*10)+'px'
-            +';animation-duration:'+(0.8+Math.random()*0.5)+'s';
+    function hearts() {
+      var r = pet.getBoundingClientRect();
+      var gs = ['hearts','hearts','hearts','hearts','hearts'];
+      gs.forEach(function(_, i){
+        setTimeout(function(){
+          var el = document.createElement('div');
+          el.className = 'h-part';
+          el.textContent = i%2===0 ? '♥' : '♡';
+          el.style.cssText = 'left:'+(r.left+10+Math.random()*44)+'px;top:'+(r.top+8+Math.random()*14)+'px;color:#FF6B9D;font-size:'+(10+Math.random()*9)+'px;animation-duration:'+(0.7+Math.random()*0.5)+'s';
           document.body.appendChild(el);
-          setTimeout(function(){el.remove();},1600);
-        },i*110); })(i);
-      }
+          setTimeout(function(){ el.remove(); }, 1400);
+        }, i * 100);
+      });
     }
 
-    function tickZzz() {
-      if (state!=='sleep') return;
-      var r=pet.getBoundingClientRect();
-      var el=document.createElement('div'); el.className='hpz';
-      el.textContent=['z','Z','Z…'][Math.floor(Math.random()*3)];
-      el.style.cssText='left:'+(r.left+40)+'px;top:'+(r.top+2)+'px;font-size:'+(8+Math.random()*8)+'px';
-      document.body.appendChild(el);
-      setTimeout(function(){el.remove();},2400);
+    var STATES = ['idle','walk','excited','sleep','scared'];
+    function set(s, dur, msg) {
+      if (STATES.indexOf(s) === -1) s = 'idle';
+      state = s; until = Date.now() + (dur || 1800);
+      if (s === 'walk') newTarget();
+      if (msg) say(msg);
+    }
+    function react(type, d) {
+      lastReact = Date.now();
+      if      (type==='console')       set('excited',3000,'Console ouverte !');
+      else if (type==='console-close') set('idle',1800,'Retour au calme.');
+      else if (type==='inventory')     set('walk',3600,'C\'est quoi tout ca ?');
+      else if (type==='craft-table')   set('excited',2600,'On fabrique ?');
+      else if (type==='craft')         set('excited',4000, d&&d.name ? d.name+' cree !' : 'Bravo !');
+      else if (type==='gravity')       set('scared',3000,'Aie la gravite !');
+      else if (type==='theme')         set('excited',2000,'J\'adore cette couleur ~');
+      else if (type==='matrix')        set('scared',2600,'Trop de code vert.');
+      else if (type==='hover')         { if(state!=='sleep') set('excited',1200,'Mrrp ?'); }
+      else if (type==='pet')           { hearts(); set('excited',2400,'Purrrr ~'); }
+      else                             set('idle',1600);
     }
 
-    var nextBlink=Date.now()+2200+Math.random()*3000, blinkEnd=0;
-    function isBlink(){
-      var n=Date.now();
-      if (n>blinkEnd+150&&n>nextBlink){ blinkEnd=n+115; nextBlink=n+2400+Math.random()*3600; }
-      return Date.now()<blinkEnd;
-    }
+    pet.addEventListener('click',      function(){ react('pet'); });
+    pet.addEventListener('mouseenter', function(){ react('hover'); });
+    document.addEventListener('heidi:react', function(e){ var dd=e.detail||{}; react(dd.type||'idle',dd); });
+    window.HeidiPet = { react: react, say: say, setState: function(s,d,m){ set(s,d,m); } };
+    window.addEventListener('resize', corner);
 
     function ai() {
-      var now=Date.now();
-      if (state==='sleep'&&now-lastReact<3000){ setState('idle',1800); return; }
-      if (now<stateUntil) return;
-      if (now-lastReact>28000){ setState('sleep',6000,null); return; }
-      if (state==='walk'&&distance(x,y,tx,ty)>8){ stateUntil=now+800; return; }
-      var r=Math.random();
-      if (r<.38)      setState('walk',2800);
-      else if (r<.47) setState('stretch',1700, Math.random()>.6?'Bâillement…':null);
-      else setState('idle',2000+Math.random()*2200, Math.random()>.75?pick('idle'):null);
+      var now = Date.now();
+      if (state==='sleep' && now-lastReact < 3000) { set('idle',1800); return; }
+      if (now < until) return;
+      if (now - lastReact > 26000) { set('sleep',5000,null); return; }
+      if (state==='walk' && Math.abs(tx-x)+Math.abs(ty-y) > 10) { until = now+900; return; }
+      Math.random() < .42 ? set('walk',2800) : set('idle', 1800+Math.random()*2000, Math.random()>.8?'Miaou.':null);
     }
 
     function move() {
-      if (dragging) return;
-      if (!reduced&&state==='walk'){ x+=(tx-x)*.032; y+=(ty-y)*.032; }
-      else if (state==='excited')  { y+=(ty-y)*.06; }
-      x=clamp(x,8,window.innerWidth-64); y=clamp(y,70,window.innerHeight-60);
-      var hop=0,shiver=0,bob=0;
-      if (state==='excited') hop=Math.abs(Math.sin(frame*.55))*6;
-      if (state==='scared')  shiver=Math.sin(frame*2)*2.5;
-      if (state==='walk')    bob=Math.sin(frame*.3)*1.5;
-      if (state==='stretch') hop=Math.sin(frame*.15)*1;
-      pet.style.transform='translate3d('+Math.round(x+shiver)+'px,'+Math.round(y-hop-bob)+'px,0)';
+      if (state==='walk') { x+=(tx-x)*.03; y+=(ty-y)*.03; }
+      x = Math.max(8, Math.min(window.innerWidth-72, x));
+      y = Math.max(70, Math.min(window.innerHeight-72, y));
+      var hop  = state==='excited' ? Math.abs(Math.sin(frame*.55))*5 : 0;
+      var shiv = state==='scared'  ? Math.sin(frame*2)*2 : 0;
+      var bob  = state==='walk'    ? Math.sin(frame*.3)*1.2 : 0;
+      pet.style.transform = 'translate3d('+Math.round(x+shiv)+'px,'+Math.round(y-hop-bob)+'px,0)';
     }
 
+    var blinkNext = Date.now()+2500, blinkEnd = 0;
+    function blink() {
+      var n=Date.now();
+      if (n>blinkEnd+200 && n>blinkNext){ blinkEnd=n+110; blinkNext=n+2200+Math.random()*3500; }
+      return Date.now()<blinkEnd;
+    }
+
+    function f(x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,y,w,h); }
+
     function draw() {
-      ctx.clearRect(0,0,PET_SIZE,PET_SIZE);
-      /* fond très légèrement teinté pour distinguer la silhouette du fond de page */
-      ctx.fillStyle='rgba(18,14,30,0.55)';
-      ctx.fillRect(0,0,PET_SIZE,PET_SIZE);
+      ctx.clearRect(0,0,16,16);
+
+      /* fond opaque indispensable pour voir le chat noir */
+      ctx.fillStyle = '#0C0A16';
+      ctx.fillRect(0,0,16,16);
+
       ctx.save();
-      if (dir>0){ ctx.translate(PET_SIZE,0); ctx.scale(-1,1); }
-      tailPhase+=.09;
-      var leg=Math.sin(frame*.28), blink=isBlink();
-      if      (state==='sleep')   drawSleep(ctx,tailPhase);
-      else if (state==='scared')  drawScared(ctx,blink,tailPhase);
-      else if (state==='stretch') drawStretch(ctx,tailPhase);
-      else                        drawCat(ctx,state,blink,tailPhase,leg);
+      if (dir < 0) { ctx.translate(16,0); ctx.scale(-1,1); }
+
+      tp += .09;
+      var tw  = Math.round(Math.sin(tp)*2);
+      var blk = blink();
+      var ex  = (state==='excited');
+      var sl  = (state==='sleep');
+      var sc  = (state==='scared');
+      var yy  = ex ? -1 : 0;
+
+      if (sl) {
+        f(3,7,10,7,CB); f(4,8,8,5,CF); f(5,9,6,3,CS);
+        f(3,5,8,3,CB);  f(4,6,6,2,CF);
+        f(4,8,3,1,CW);  f(9,8,3,1,CW);
+        var st2=Math.round(Math.sin(tp*.4));
+        f(12,9+st2,3,1,CB); f(13,8+st2,2,2,CB);
+        f(4,3,3,3,CB); f(5,4,1,1,CI);
+
+      } else if (sc) {
+        f(2,4,12,10,CB); f(3,5,10,8,CF); f(4,6,8,5,CS);
+        f(3,2,10,3,CB);  f(4,3,8,2,CF);
+        f(4,5,3,3,CE); f(9,5,3,3,CE);
+        f(5,5,1,3,CP); f(10,5,1,3,CP);
+        f(4,5,1,1,CS); f(9,5,1,1,CS);
+        f(7,9,2,1,CN);
+        f(13,0,2,9,CB); f(13,1,1,4,CF);
+        f(2,1,3,4,CB); f(3,2,1,1,CI);
+        f(11,1,3,4,CB); f(12,2,1,1,CI);
+        f(3,13,3,2,CB); f(10,13,3,2,CB);
+
+      } else {
+        /* queue */
+        f(13,9,1,2,CB); f(14,7+tw,1,3,CB); f(15,5+tw,1,2,CB); f(14,5+tw,1,1,CS);
+        /* corps */
+        f(3,8,10,6,CB); f(4,9,8,4,CF); f(5,10,6,2,CS);
+        /* oreilles */
+        f(4,1+yy,3,3,CB); f(5,2+yy,1,1,CI);
+        f(9,1+yy,3,3,CB); f(10,2+yy,1,1,CI);
+        /* tete */
+        f(3,4+yy,10,5,CB); f(4,5+yy,8,3,CF); f(6,4+yy,4,1,CS);
+        /* yeux */
+        if (blk) {
+          f(5,6+yy,3,1,CF); f(9,6+yy,3,1,CF);
+        } else if (ex) {
+          f(5,5+yy,1,1,CE); f(6,6+yy,2,1,CE);
+          f(9,5+yy,1,1,CE); f(10,6+yy,2,1,CE);
+        } else {
+          f(5,5+yy,3,2,CE); f(9,5+yy,3,2,CE);
+          f(7,5+yy,1,2,CP); f(11,5+yy,1,2,CP);
+          f(5,5+yy,1,1,CS);
+        }
+        /* nez */
+        f(7,8+yy,2,1,CN);
+        /* moustaches */
+        f(2,7+yy,2,1,CS); f(12,7+yy,2,1,CS);
+        /* pattes */
+        var wk = (state==='walk');
+        var pL = wk ? Math.round(Math.sin(frame*.28)*1.5) : 0;
+        var pR = wk ? Math.round(-Math.sin(frame*.28)*1.5) : 0;
+        f(4,13+pL,3,2,CB); f(4,14+pL,3,1,CF);
+        f(9,13+pR,3,2,CB); f(9,14+pR,3,1,CF);
+      }
+
       ctx.restore();
     }
 
     function loop() {
       frame++;
-      ai(); if (!dragging) move(); draw();
-      if (frame%90===0&&state==='sleep') tickZzz();
+      ai(); move(); draw();
       requestAnimationFrame(loop);
     }
-
-    window.addEventListener('resize',function(){ x=0;y=0;placeInCorner(); });
     loop();
-  }
-
-  /* ─── palette ─── */
-  /* B=corps, F=fourrure intérieure, S=reflet, E=œil, P=pupille, N=nez, I=intérieur oreille */
-  /* Noir apparent: le fond est #060A14, le corps doit être assez distinct pour être vu */
-  var K = {
-    B:'#2E2C48', F:'#231F38', S:'#3C3860',
-    E:'#FFD84A', P:'#08070E', N:'#E090A8',
-    I:'#CC4080', W:'#B8C8E0', T:'#1B3050'
-  };
-
-  /* ─── sprite helpers ─── */
-  function px(ctx,x,y,w,h,c){ ctx.fillStyle=c; ctx.fillRect(x,y,w,h); }
-  function clamp(v,a,b){ return Math.max(a,Math.min(b,v)); }
-  function distance(ax,ay,bx,by){ var dx=ax-bx,dy=ay-by; return Math.sqrt(dx*dx+dy*dy); }
-
-  /* ─── Normal / walk / excited ─── */
-  function drawCat(ctx, mood, blink, tp, leg) {
-    var ex = mood==='excited', wk = mood==='walk';
-    var yy = ex ? -1 : 0;
-
-    /* tail — swaying arc */
-    var tw = Math.round(Math.sin(tp)*2);
-    px(ctx,13, 9,    1,2, K.B);
-    px(ctx,14, 7+tw, 1,3, K.B);
-    px(ctx,15, 5+tw, 1,2, K.B);
-    px(ctx,14, 5+tw, 1,1, K.F);   /* tip highlight */
-
-    /* body */
-    px(ctx,3,8,  10,6, K.B);
-    px(ctx,4,9,   8,4, K.F);
-    px(ctx,5,10,  6,2, K.S);      /* belly lighter */
-
-    /* ears */
-    px(ctx,4,1+yy, 3,3, K.B);    /* left ear */
-    px(ctx,5,2+yy, 1,1, K.I);    /* inner */
-    px(ctx,9,1+yy, 3,3, K.B);    /* right ear */
-    px(ctx,10,2+yy,1,1, K.I);
-
-    /* head */
-    px(ctx,3,4+yy, 10,5, K.B);
-    px(ctx,4,5+yy,  8,3, K.F);
-    px(ctx,6,4+yy,  4,1, K.S);   /* forehead shine */
-
-    /* eyes */
-    if (blink) {
-      px(ctx,5,6+yy, 3,1, K.F);
-      px(ctx,9,6+yy, 3,1, K.F);
-    } else if (ex) {
-      /* happy ^^  */
-      px(ctx,5,5+yy, 1,1, K.E); px(ctx,6,6+yy, 2,1, K.E);
-      px(ctx,9,5+yy, 1,1, K.E); px(ctx,10,6+yy,2,1, K.E);
-    } else {
-      /* normal eye: 3×2, vertical slit pupil */
-      px(ctx,5,5+yy, 3,2, K.E);
-      px(ctx,9,5+yy, 3,2, K.E);
-      px(ctx,7,5+yy, 1,2, K.P); /* pupil */
-      px(ctx,11,5+yy,1,2, K.P);
-      px(ctx,5,5+yy, 1,1, K.S); /* glint */
-    }
-
-    /* nose */
-    px(ctx,7,8+yy, 2,1, K.N);
-
-    /* whisker dots */
-    px(ctx,2,7+yy, 2,1, K.S);
-    px(ctx,12,7+yy,2,1, K.S);
-
-    /* paws — animated when walking */
-    var pL = wk ? Math.round(leg*2) : 0;
-    var pR = wk ? Math.round(-leg*2): 0;
-    px(ctx,4, 13+pL, 3,2, K.B); px(ctx,4, 14+pL, 3,1, K.F);
-    px(ctx,9, 13+pR, 3,2, K.B); px(ctx,9, 14+pR, 3,1, K.F);
-  }
-
-  /* ─── Sleep ─── */
-  function drawSleep(ctx, tp) {
-    /* curled ball */
-    px(ctx,2,9,  12,6, K.B);
-    px(ctx,3,10, 10,4, K.F);
-    px(ctx,4,11,  8,2, K.S);
-    /* head tucked */
-    px(ctx,3,6,   9,4, K.B);
-    px(ctx,4,7,   7,2, K.F);
-    /* shut eyes — curved lines */
-    px(ctx,4,8, 3,1, K.W);
-    px(ctx,9,8, 3,1, K.W);
-    /* curled tail */
-    var tw=Math.round(Math.sin(tp*.5));
-    px(ctx,12,9+tw, 3,1, K.B);
-    px(ctx,13,8+tw, 2,2, K.B);
-    px(ctx,13,8+tw, 1,1, K.F);
-    /* ear */
-    px(ctx,4,4, 3,3, K.B); px(ctx,5,5,1,1, K.I);
-  }
-
-  /* ─── Scared ─── */
-  function drawScared(ctx, blink, tp) {
-    /* puffed-up arched silhouette */
-    px(ctx,2,5,  12,9, K.B);
-    px(ctx,3,6,  10,7, K.F);
-    px(ctx,4,7,   8,4, K.S);
-    /* arched back fur spike row */
-    px(ctx,3,3,  10,3, K.B);
-    px(ctx,4,4,   8,2, K.F);
-    /* big round scared eyes */
-    px(ctx,4,5, 3,3, K.E); px(ctx,4,5, 1,1, K.S);
-    px(ctx,9,5, 3,3, K.E); px(ctx,9,5, 1,1, K.S);
-    px(ctx,6,5, 1,3, K.P); px(ctx,11,5,1,3, K.P);
-    /* nose */
-    px(ctx,7,9, 2,1, K.N);
-    /* spiked upright tail */
-    px(ctx,13,0, 2,8, K.B); px(ctx,13,0, 1,4, K.F);
-    /* big ears */
-    px(ctx,2,1, 3,5, K.B); px(ctx,3,2,1,1, K.I);
-    px(ctx,11,1,3,5, K.B); px(ctx,12,2,1,1,K.I);
-    /* paws */
-    px(ctx,3,13, 3,2, K.B); px(ctx,10,13,3,2, K.B);
-  }
-
-  /* ─── Stretch / yawn ─── */
-  function drawStretch(ctx, tp) {
-    /* elongated body */
-    px(ctx,0,9,  15,4, K.B);
-    px(ctx,1,10, 13,2, K.F);
-    px(ctx,2,11,  9,1, K.S);
-    /* butt raised */
-    px(ctx,0,6,  5,4, K.B);
-    px(ctx,1,7,  3,2, K.F);
-    /* head down, open mouth */
-    px(ctx,10,7, 5,6, K.B);
-    px(ctx,11,8, 4,4, K.F);
-    px(ctx,11,9, 2,1, K.E);   /* squint eye */
-    px(ctx,11,11,3,2, K.S);   /* open mouth */
-    px(ctx,12,12,1,1, K.B);
-    /* ear */
-    px(ctx,11,6,2,2, K.B); px(ctx,11,6,1,1, K.I);
-    /* tail swaying up */
-    var tw=Math.round(Math.sin(tp)*3);
-    px(ctx,1,3+tw, 1,4, K.B);
-    px(ctx,2,2+tw, 1,2, K.B);
-    px(ctx,2,2+tw, 1,1, K.F);
-    /* extended front paws */
-    px(ctx,5,12, 4,3, K.B); px(ctx,5,13, 4,1, K.F);
+    say('Miaou — je surveille.');
   }
 
   if (document.readyState==='loading') document.addEventListener('DOMContentLoaded',init);
