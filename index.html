@@ -2865,7 +2865,7 @@ function creationErr(img) {
       ty = sy + Math.random() * (my - sy);
       dir = tx < x ? -1 : 1;
     }
-    corner(); newTarget();
+    corner();
 
     function applyDir() {
       svg.style.transform = dir < 0 ? 'scaleX(-1)' : '';
@@ -2980,17 +2980,12 @@ function creationErr(img) {
       if (state==='sleep' && now-lastReact<3000){ set('idle',1800); return; }
       if (now < until) return;
       if (now-lastReact > 28000){ set('sleep',5000,null); return; }
-      if (state==='walk' && Math.abs(tx-x)+Math.abs(ty-y)>10){ until=now+900; return; }
-      Math.random()<.4 ? set('walk',2800) : set('idle',1800+Math.random()*2200, Math.random()>.8?'Miaou.':null);
+      set('idle',2000+Math.random()*2000, Math.random()>.85?'Miaou.':null);
     }
 
     function move() {
       if (dragging) return;
-      if (state==='walk'){ x+=(tx-x)*.03; y+=(ty-y)*.03; }
-      x=Math.max(8, Math.min(window.innerWidth-90,x));
-      y=Math.max(90,Math.min(window.innerHeight-90,y));
       pet.style.transform='translate3d('+Math.round(x)+'px,'+Math.round(y)+'px,0)';
-      applyDir();
     }
 
     function loop(){
