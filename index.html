@@ -2994,6 +2994,40 @@ function creationErr(img) {
       requestAnimationFrame(loop);
     }
 
+    /* --- Repliques par section --- */
+    var sectionLines = {
+      'hero':        ["C'est moi la vraie star ici.", "Belle page. T'as pas mis ma photo.", "Quentin... et Heidi. Dans cet ordre."],
+      'experience':  ["Il a de l'exp. Moi j'ai 9 vies.", "Impressionnant. Moi j'ai une sieste a 14h.", "Beaucoup de boulot. Moi je supervise."],
+      'realisations':["T'as fait une app pour chats ?", "Ooh des projets ! Y'en a un pour moi ?", "Joli travail. La prochaine fois mets-moi dedans."],
+      'skills':      ["Figma, Shopify... pas de jeu pour chats.", "Sait-il ouvrir une boite de thon ?", "Skills niveau max. Moi aussi j'ai des skills."],
+      'formation':   ["Bac+5 en UX ? Moi master en ronrons.", "Etudiant serieux... moi diplômee en siestes.", "Clermont-Fd ! Je connais, y'a des pigeons."],
+      'langues':     ["Il parle miaou ? Non ? Dommage.", "Multilingue. Mais le chat c'est universel.", "FR, EN... et ronronnements ?"],
+      'initiatives': ["Moi mon initiative : dormir 16h/jour.", "Entrepreneur comme moi quand je chasse.", "Des initiatives ! Chapeau. (Ronron)"],
+      'creations':   ["Il m'a pas dessinee mieux que ca ??", "Oh des creations ! Est-ce que je suis dedans ?", "Creatif ! J'approuve. (En tant qu'artiste)"],
+      'contact':     ["N'oublie pas de mentionner Heidi.", "Moi aussi j'accepte les calins.", "Contacte-le ! Il repond (moi aussi)."]
+    };
+    var lastSection = null, lastLine = null;
+    if ('IntersectionObserver' in window) {
+      var obs = new IntersectionObserver(function(entries) {
+        var best = null, bestRatio = 0;
+        entries.forEach(function(en) {
+          if (en.intersectionRatio > bestRatio) { bestRatio = en.intersectionRatio; best = en.target; }
+        });
+        if (!best || bestRatio < 0.25) return;
+        var id = best.id;
+        if (id === lastSection || !sectionLines[id]) return;
+        lastSection = id;
+        var pool = sectionLines[id].filter(function(l){ return l !== lastLine; });
+        var line = pool[Math.floor(Math.random() * pool.length)];
+        lastLine = line;
+        setTimeout(function(){ say(line); }, 400);
+      }, { threshold: [0.25, 0.5, 0.75] });
+      ['hero','experience','realisations','skills','formation','langues','initiatives','creations','contact'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) obs.observe(el);
+      });
+    }
+
     setEyes('normal');
     loop();
     say('Miaou ~ je suis Heidi !');
