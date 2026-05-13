@@ -2742,9 +2742,9 @@ function creationErr(img) {
 
     var style = document.createElement('style');
     style.textContent = ''
-      + '#heidi-pet{position:fixed;left:0;top:0;width:80px;height:86px;z-index:10020;pointer-events:auto;user-select:none;touch-action:none;transform:translate3d(0,0,0);cursor:grab;filter:drop-shadow(0 0 7px rgba(255,255,255,.13)) drop-shadow(0 6px 18px rgba(0,0,0,.7))}'
+      + '#heidi-pet{position:fixed;left:0;top:0;width:80px;height:86px;z-index:10020;pointer-events:auto;user-select:none;touch-action:none;transform:translate3d(0,0,0);cursor:grab;filter:drop-shadow(0 0 9px rgba(255,255,255,.22)) drop-shadow(0 6px 18px rgba(0,0,0,.7))}'
       + '#heidi-pet.drag{cursor:grabbing;filter:drop-shadow(0 0 10px rgba(40,151,255,.5)) drop-shadow(0 10px 22px rgba(0,0,0,.6))}'
-      + '#heidi-pet canvas{width:68px;height:68px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:6px auto 0}'
+      + '#heidi-pet canvas{width:68px;height:68px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:6px auto 0;border-radius:4px}'
       + '#heidi-pet .h-name{position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);font:700 9px/1 "JetBrains Mono",monospace;letter-spacing:.12em;color:#FFD84A;text-shadow:0 1px 0 #000,0 0 10px rgba(255,216,74,.5);text-transform:uppercase;white-space:nowrap;pointer-events:none}'
       + '#heidi-pet .h-glow{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:46px;height:7px;border-radius:50%;filter:blur(7px);background:#2897FF;opacity:.4;transition:background .6s,opacity .4s;pointer-events:none}'
       + '#heidi-pet .h-bubble{position:absolute;right:62px;bottom:62px;max-width:180px;padding:7px 11px;border:1px solid rgba(255,216,74,.45);border-radius:10px;background:rgba(5,8,18,.95);color:#F2F5FA;font:500 12px/1.35 Satoshi,sans-serif;box-shadow:0 8px 28px rgba(0,0,0,.5);opacity:0;transform:translateY(5px) scale(.94);transition:opacity .2s,transform .2s;pointer-events:none;white-space:nowrap}'
@@ -2919,6 +2919,9 @@ function creationErr(img) {
 
     function draw() {
       ctx.clearRect(0,0,PET_SIZE,PET_SIZE);
+      /* fond très légèrement teinté pour distinguer la silhouette du fond de page */
+      ctx.fillStyle='rgba(18,14,30,0.55)';
+      ctx.fillRect(0,0,PET_SIZE,PET_SIZE);
       ctx.save();
       if (dir>0){ ctx.translate(PET_SIZE,0); ctx.scale(-1,1); }
       tailPhase+=.09;
@@ -2942,10 +2945,11 @@ function creationErr(img) {
   }
 
   /* ─── palette ─── */
-  /* B=corps, F=fourrure intérieure, S=reflet, E=œil, P=pupille, N=nez, I=intérieur oreille, W=cils */
+  /* B=corps, F=fourrure intérieure, S=reflet, E=œil, P=pupille, N=nez, I=intérieur oreille */
+  /* Noir apparent: le fond est #060A14, le corps doit être assez distinct pour être vu */
   var K = {
-    B:'#1A1828', F:'#221F32', S:'#2E2B42',
-    E:'#FFD84A', P:'#0A0910', N:'#E090A8',
+    B:'#2E2C48', F:'#231F38', S:'#3C3860',
+    E:'#FFD84A', P:'#08070E', N:'#E090A8',
     I:'#CC4080', W:'#B8C8E0', T:'#1B3050'
   };
 
