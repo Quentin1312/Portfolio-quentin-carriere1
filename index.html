@@ -2755,6 +2755,9 @@ function creationErr(img) {
       '#heidi-pet.state-excited #heidi-svg{animation:excited-bounce 0.48s ease-in-out infinite}',
       '@keyframes scared-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-3px)}75%{transform:translateX(3px)}}',
       '#heidi-pet.state-scared #heidi-svg{animation:scared-shake 0.12s ease-in-out infinite}',
+      '#heidi-laser{position:fixed;width:13px;height:13px;background:radial-gradient(circle,#FF4040,#CC0000);border-radius:50%;pointer-events:none;z-index:10019;transform:translate(-50%,-50%);box-shadow:0 0 10px 5px rgba(255,40,40,.65)}',
+      '@keyframes laser-pulse{0%,100%{box-shadow:0 0 10px 5px rgba(255,40,40,.65)}50%{box-shadow:0 0 18px 9px rgba(255,40,40,.35)}}',
+      '#heidi-laser{animation:laser-pulse 0.35s ease-in-out infinite}',
     ].join('');
     document.head.appendChild(st);
 
@@ -2926,6 +2929,11 @@ function creationErr(img) {
       else                         set('idle',1600);
     }
 
+    document.addEventListener('click', function(e){
+      if (pet.contains(e.target)) return;
+      spawnLaser(e.clientX, e.clientY);
+    });
+
     pet.addEventListener('mouseenter', function(){ react('hover'); });
     document.addEventListener('heidi:react', function(e){ var dd=e.detail||{}; react(dd.type||'idle'); });
     window.HeidiPet = { react:react, say:say, setState:function(s2,d,m){ set(s2,d,m); } };
@@ -2976,6 +2984,7 @@ function creationErr(img) {
     });
 
     function ai() {
+      if (state==='laser') return;
       var now = Date.now();
       if (state==='sleep' && now-lastReact<3000){ set('idle',1800); return; }
       if (now < until) return;
@@ -2983,9 +2992,55 @@ function creationErr(img) {
       set('idle',2000+Math.random()*2000, Math.random()>.85?'Miaou.':null);
     }
 
+    var laserEl = null, laserX = 0, laserY = 0;
+
+    function spawnLaser(cx, cy) {
+      laserX = cx; laserY = cy;
+      if (!laserEl) {
+        laserEl = document.createElement('div');
+        laserEl.id = 'heidi-laser';
+        document.body.appendChild(laserEl);
+      }
+      laserEl.style.left = cx + 'px';
+      laserEl.style.top  = cy + 'px';
+      tx = cx - 36; ty = cy - 34;
+      dir = tx < x ? -1 : 1;
+      if (tourActive) stopTour();
+      lastActivity = Date.now();
+      lastReact = Date.now();
+      state = 'laser';
+      until = Date.now() + 9000;
+      pet.className = 'state-walk';
+      setEyes('normal');
+    }
+
+    function removeLaser() {
+      if (laserEl) { laserEl.remove(); laserEl = null; }
+    }
+
+    var catchPhrases = ["Je l'ai eu !", "Trop facile.", "...Disparu. Comme d'hab.", "Capturé !", "Hm. C'était quoi ?", "J'savais qu'il était là."];
+
     function move() {
       if (dragging) return;
+      if (state === 'laser') {
+        x += (tx - x) * .08;
+        y += (ty - y) * .08;
+        dir = tx < x ? -1 : 1;
+        var dist = Math.sqrt(Math.pow(x+36-laserX,2) + Math.pow(y+34-laserY,2));
+        if (dist < 22) {
+          say(catchPhrases[Math.floor(Math.random()*catchPhrases.length)]);
+          removeLaser();
+          set('excited', 1800);
+        } else if (Date.now() > until) {
+          say("Il a disparu... mystère.");
+          removeLaser();
+          set('idle', 1800);
+        }
+      }
+      x = Math.max(8, Math.min(window.innerWidth-90, x));
+      y = Math.max(8, Math.min(window.innerHeight-90, y));
       pet.style.transform='translate3d('+Math.round(x)+'px,'+Math.round(y)+'px,0)';
+      applyDir();
     }
 
     function loop(){
