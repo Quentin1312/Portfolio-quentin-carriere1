@@ -2742,8 +2742,8 @@ function creationErr(img) {
 
     var style = document.createElement('style');
     style.textContent = ''
-      + '#heidi-pet{position:fixed;left:0;top:0;width:80px;height:86px;z-index:10020;pointer-events:auto;user-select:none;touch-action:none;transform:translate3d(0,0,0);cursor:grab;filter:drop-shadow(0 6px 14px rgba(0,0,0,.5))}'
-      + '#heidi-pet.drag{cursor:grabbing;filter:drop-shadow(0 12px 24px rgba(0,0,0,.55)) drop-shadow(0 0 14px rgba(40,151,255,.35))}'
+      + '#heidi-pet{position:fixed;left:0;top:0;width:80px;height:86px;z-index:10020;pointer-events:auto;user-select:none;touch-action:none;transform:translate3d(0,0,0);cursor:grab;filter:drop-shadow(0 0 7px rgba(255,255,255,.13)) drop-shadow(0 6px 18px rgba(0,0,0,.7))}'
+      + '#heidi-pet.drag{cursor:grabbing;filter:drop-shadow(0 0 10px rgba(40,151,255,.5)) drop-shadow(0 10px 22px rgba(0,0,0,.6))}'
       + '#heidi-pet canvas{width:68px;height:68px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;margin:6px auto 0}'
       + '#heidi-pet .h-name{position:absolute;left:50%;bottom:-1px;transform:translateX(-50%);font:700 9px/1 "JetBrains Mono",monospace;letter-spacing:.12em;color:#FFD84A;text-shadow:0 1px 0 #000,0 0 10px rgba(255,216,74,.5);text-transform:uppercase;white-space:nowrap;pointer-events:none}'
       + '#heidi-pet .h-glow{position:absolute;left:50%;bottom:14px;transform:translateX(-50%);width:46px;height:7px;border-radius:50%;filter:blur(7px);background:#2897FF;opacity:.4;transition:background .6s,opacity .4s;pointer-events:none}'
@@ -2942,10 +2942,11 @@ function creationErr(img) {
   }
 
   /* ─── palette ─── */
+  /* B=corps, F=fourrure intérieure, S=reflet, E=œil, P=pupille, N=nez, I=intérieur oreille, W=cils */
   var K = {
-    B:'#252535', F:'#343448', S:'#464660',
-    E:'#FFD84A', P:'#12121E', N:'#E090A8',
-    I:'#CC4080', W:'#AAC0DD', T:'#1B3050'
+    B:'#1A1828', F:'#221F32', S:'#2E2B42',
+    E:'#FFD84A', P:'#0A0910', N:'#E090A8',
+    I:'#CC4080', W:'#B8C8E0', T:'#1B3050'
   };
 
   /* ─── sprite helpers ─── */
